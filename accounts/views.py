@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .forms import (
@@ -68,10 +69,28 @@ def user_logout(request):
     logout(request)
     return redirect('login')
 
+
 @login_required
 def dashboard(request):
-    return render(request, 'accounts/dashboard.html')
+    user = request.user  # Get the logged-in user
+    
+    # Determine user type
+    if hasattr(user, 'admin'):
+        user_type = f"Admin: {user.name}"
+    elif hasattr(user, 'gymowner'):
+        print(hasattr(user, 'gymowner'))
+        print()
+        return redirect('gym_owner_deshboard')
+    elif hasattr(user, 'trainer'):
+        user_type = f"Trainer: {user.name}"
+    elif hasattr(user, 'gymuser'):
+        user_type = f"GymUser: {user.name}"
+    else:
+        user_type = "User"
 
+    context = {'user_type': user_type}
+    return render(request, 'accounts/dashboard.html', context)
 
-
-  
+@login_required
+def gym_owner_deshboard(request):
+    return HttpResponse("gymOwner")
