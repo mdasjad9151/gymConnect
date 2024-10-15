@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (
     register_admin, register_gym_owner, register_trainer, register_gym_user, 
-    user_login, user_logout, dashboard,gym_owner_deshboard
+    user_login, user_logout, dashboard
 )
 
 urlpatterns = [
@@ -12,7 +12,7 @@ urlpatterns = [
     path('login/', user_login, name='login'),
     path('logout/', user_logout, name='logout'),
     path('dashboard/', dashboard, name='dashboard'),
-    path('dashboard-gym/', gym_owner_deshboard, name='gym_owner_deshboard'),
+    
 
 ]
 

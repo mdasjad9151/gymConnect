@@ -91,6 +91,3 @@ def dashboard(request):
     context = {'user_type': user_type}
     return render(request, 'accounts/dashboard.html', context)
 
-@login_required
-def gym_owner_deshboard(request):
-    return HttpResponse("gymOwner")
