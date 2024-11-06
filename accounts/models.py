@@ -60,7 +60,7 @@ class GymOwner(BaseUser):
 # Trainer class
 class Trainer(BaseUser):
     name = models.CharField(max_length=255)
-    gym_id = models.ForeignKey(GymOwner, on_delete=models.CASCADE)
+    gym_id = models.ForeignKey(GymOwner, on_delete=models.CASCADE,  blank= True)
 
     def __str__(self):
         return f"Trainer: {self.name} - {self.email}"

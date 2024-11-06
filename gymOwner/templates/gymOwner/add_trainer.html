@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Select Trainer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Popup styling */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-10">
+        <h1 class="text-2xl font-bold mb-6">Select Trainer</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.trainer.label_tag }}
+            {{ form.trainer }}
+            <button type="button" class="ml-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700" onclick="fetchTrainerInfo()">Info</button>
+        </form>
+
+        <!-- Trainer Details Popup -->
+        <div class="overlay" id="overlay"></div>
+        <div class="popup" id="popup">
+            <h2 class="text-xl font-semibold" id="trainer-name"></h2>
+            <p><strong>Address:</strong> <span id="trainer-address"></span></p>
+            <p><strong>Contact No:</strong> <span id="trainer-contact"></span></p>
+            <p><strong>Gym:</strong> <span id="trainer-gym"></span></p>
+            <p><strong>Gym Address:</strong> <span id="trainer-gym-address"></span></p>
+            <button class="mt-4 bg-red-500 text-white p-2 rounded" onclick="closePopup()">Close</button>
+            <button type="button" class="ml-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700" onclick="createRequest()">Request</button>
+        </div>
+    </div>
+
+    <script>
+        // Pass CSRF token from Django to JavaScript
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        // Fetch and display trainer details when "Info" button is clicked
+        function fetchTrainerInfo() {
+            const trainerSelect = document.querySelector("select[name='trainer']");
+            const trainerId = trainerSelect.value;
+            
+            if (trainerId) {
+                fetch(`/gym-owner/get-trainer-details/${trainerId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById("trainer-name").textContent = data.name;
+                        document.getElementById("trainer-address").textContent = data.address;
+                        document.getElementById("trainer-contact").textContent = data.contact_no;
+                        document.getElementById("trainer-gym").textContent = data.gym_name;
+                        document.getElementById("trainer-gym-address").textContent = data.gym_address;
+                        openPopup();
+                    });
+            } else {
+                alert("Please select a trainer first.");
+            }
+        }
+
+        function openPopup() {
+            document.getElementById("popup").style.display = "block";
+            document.getElementById("overlay").style.display = "block";
+        }
+
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+            document.getElementById("overlay").style.display = "none";
+        }
+
+        function createRequest() {
+            const trainerSelect = document.querySelector("select[name='trainer']");
+            const trainerId = trainerSelect.value;
+
+            if (trainerId) {
+                fetch(`/gym-owner/create-trainer-request/`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrftoken,
+                    },
+                    body: JSON.stringify({ "trainer_id": trainerId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                    } else {
+                        alert(data.error);
+                    }
+                });
+            } else {
+                alert("Please select a trainer first.");
+            } 
+            console.log("hello")
+        }
+    </script>
+</body>
+</html>
