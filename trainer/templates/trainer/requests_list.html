@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request</title>
+</head>
+<body>
+    
+  <h2>Your Trainer Requests</h2>
+  <ul>
+    {% for request in trainer_requests %}
+      <li>
+        <p>{{ request.request_data }}</p>
+        <p>Status: {{ request.get_status_display }}</p>
+        
+        {% if request.status == 'pending' %}
+          <a href="{% url 'trainer:update_request_status' request.id 'accept' %}">Accept</a>
+          <a href="{% url 'trainer:update_request_status' request.id 'reject' %}">Reject</a>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+
+</body>
+</html>

@@ -21,6 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.urls')),  # Home page URL
     path('accounts/', include("accounts.urls")), #account urls 
-    path('gym-owner/', include("gymOwner.urls")), #account urls 
+    path('gym-owner/', include("gymOwner.urls")), #gym owner urls 
+    path('gym-trainer/', include("trainer.urls")), #trainer urls 
 
 ]

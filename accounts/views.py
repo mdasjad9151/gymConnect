@@ -77,12 +77,14 @@ def dashboard(request):
     # Determine user type
     if hasattr(user, 'admin'):
         user_type = f"Admin: {user.name}"
+
     elif hasattr(user, 'gymowner'):
         print(hasattr(user, 'gymowner'))
-        print()
         return redirect('gym_owner_deshboard')
+
     elif hasattr(user, 'trainer'):
-        user_type = f"Trainer: {user.name}"
+        return redirect('trainer_dashboard')
+
     elif hasattr(user, 'gymuser'):
         user_type = f"GymUser: {user.name}"
     else:
