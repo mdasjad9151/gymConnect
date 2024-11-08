@@ -2,25 +2,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Request</title>
+    <title>Trainer Requests</title>
+    {% comment %} <link rel="stylesheet" href="{% static 'css/styles.css' %}"> {% endcomment %}
+    <script>
+        function openGymDetails(gymName, email, contact, address) {
+            document.getElementById('gym-name').textContent = gymName;
+            document.getElementById('gym-email').textContent = email;
+            document.getElementById('gym-contact').textContent = contact;
+            document.getElementById('gym-address').textContent = address;
+            document.getElementById('gym-details-popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('gym-details-popup').style.display = 'none';
+        }
+    </script>
 </head>
 <body>
-    
-  <h2>Your Trainer Requests</h2>
-  <ul>
-    {% for request in trainer_requests %}
-      <li>
-        <p>{{ request.request_data }}</p>
-        <p>Status: {{ request.get_status_display }}</p>
-        
-        {% if request.status == 'pending' %}
-          <a href="{% url 'trainer:update_request_status' request.id 'accept' %}">Accept</a>
-          <a href="{% url 'trainer:update_request_status' request.id 'reject' %}">Reject</a>
-        {% endif %}
-      </li>
-    {% endfor %}
-  </ul>
+    <h3>Requests</h3>
+    <div class="requests-container">
+        {% for request in trainer_requests %}
+            <div class="request-item">
+                <span class="gym-name" onclick="openGymDetails('{{ request.gym.gym_name }}', '{{ request.gym.email }}', '{{ request.gym.contact }}', '{{ request.gym.address }}')">
+                    {{ request.gym.gym_name }}
+                </span>
+                <span class="request-date">{{ request.request_date }}</span>
+                <form action="{% url 'update_request_status' request.id 'accept' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit">Accept</button>
+                </form>
+                <form action="{% url 'update_request_status' request.id 'reject' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit">Reject</button>
+                </form>
+            </div>
+        {% empty %}
+            <p>No requests.</p>
+        {% endfor %}
+    </div>
 
+    <!-- Gym Details Popup -->
+    <div id="gym-details-popup" class="popup" style="display: none;">
+        <div class="popup-content">
+            <h3>Gym Details</h3>
+            <p>Name: <span id="gym-name"></span></p>
+            <p>Email: <span id="gym-email"></span></p>
+            <p>Contact No: <span id="gym-contact"></span></p>
+            <p>Address: <span id="gym-address"></span></p>
+            <button onclick="closePopup()">Close</button>
+        </div>
+    </div>
 </body>
 </html>

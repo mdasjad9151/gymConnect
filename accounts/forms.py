@@ -21,7 +21,7 @@ class GymOwnerRegistrationForm(forms.ModelForm):
 
     class Meta:
         model = GymOwner
-        fields = ['gym_name', 'email', 'password', 'address']
+        fields = ['gym_name', 'email', 'contact','password', 'address']
 
     def save(self, commit=True):
         owner = super().save(commit=False)

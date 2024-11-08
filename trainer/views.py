@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse,Http404
 from django.contrib.auth.decorators import login_required
 
@@ -12,9 +12,9 @@ def trainer_dashboard(request):
 
 @login_required
 def trainer_requests(request):
-    # Assuming trainer is a user, fetch the requests for that trainer
-    trainer_requests = TrainerRequest.objects.filter(trainer=request.user)
-
+    # Fetch requests for the logged-in trainer
+    trainer_requests = TrainerRequest.objects.filter(trainer=request.user,status='pending')
+    # print(request.user)
     return render(request, 'trainer/requests_list.html', {
         'trainer_requests': trainer_requests,
     })
@@ -22,10 +22,7 @@ def trainer_requests(request):
 
 @login_required
 def update_request_status(request, request_id, action):
-    try:
-        trainer_request = TrainerRequest.objects.get(id=request_id, trainer=request.user)
-    except TrainerRequest.DoesNotExist:
-        raise Http404("Request not found or you're not authorized to update it.")
+    trainer_request = get_object_or_404(TrainerRequest, id=request_id, trainer=request.user)
     
     if action == 'accept':
         trainer_request.status = 'accepted'
@@ -35,9 +32,7 @@ def update_request_status(request, request_id, action):
         raise Http404("Invalid action.")
     
     trainer_request.save()
-
-    return redirect('trainer:requests_list')  # Redirect to the requests list page after updating
-
+    return redirect('trainer_requests')
 
 
 @login_required

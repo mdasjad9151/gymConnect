@@ -53,6 +53,7 @@ class Admin(BaseUser):
 class GymOwner(BaseUser):
     gym_name = models.CharField(max_length=255)
     address = models.TextField()
+    contact = models.CharField(max_length=10, blank=True,null=True, default="00000000")
 
     def __str__(self):
         return f"GymOwner: {self.gym_name} - {self.email}"
