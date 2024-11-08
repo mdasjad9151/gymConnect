@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trainer Add Plans</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Add styles for the popup form here */
+    </style>
+</head>
+<body>
+    <h1>Trainer Plans</h1>
+    <ul>
+        {% for user in gym_users %}
+            <li>
+                {{ user.name }}
+                <button onclick="openPlanPopup({{ user.id }})">Update</button>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Popup Form -->
+    <div id="plan-popup" style="display:none;">
+    <h3>Plans</h3>
+    <div>Update Date: <span id="update-date">NA</span></div>
+    
+    <label>Workout:</label>
+    <div id="workout-container"></div>
+    <input type="text" id="workout-input">
+    <button onclick="addItem('workout')">Add</button>
+    
+    <label>Diet Plan:</label>
+    <div id="diet-container"></div>
+    <input type="text" id="diet-input">
+    <button onclick="addItem('diet')">Add</button>
+    
+    <button onclick="closePopup()">Close</button>
+    <button onclick="submitPlan()">Submit</button>
+</div>
+
+<script>
+    function openPlanPopup(userId) {
+        fetch(`/gym-trainer/get-user-plans/${userId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("update-date").innerText = data.update_date || 'NA';
+                loadPreviousItems("workout", data.previous_workout);
+                loadPreviousItems("diet", data.previous_diet);
+                document.getElementById("plan-popup").style.display = "block";
+            });
+    }
+    
+    function loadPreviousItems(field, items) {
+        const container = document.getElementById(`${field}-container`);
+        container.innerHTML = ''; // Clear existing items
+        if (items !== 'NA') {
+            items.split(',').forEach(item => addItemToContainer(field, item));
+        } else {
+            container.innerHTML = '<p>NA</p>';
+        }
+    }
+    
+    function addItem(field) {
+        const input = document.getElementById(`${field}-input`);
+        const item = input.value.trim();
+        if (item) {
+            addItemToContainer(field, item);
+            input.value = ''; // Clear input field
+        }
+    }
+
+    function addItemToContainer(field, item) {
+        const container = document.getElementById(`${field}-container`);
+        const itemDiv = document.createElement("div");
+        itemDiv.innerText = item;
+        const removeBtn = document.createElement("button");
+        removeBtn.innerText = "Remove";
+        removeBtn.onclick = () => itemDiv.remove();
+        itemDiv.appendChild(removeBtn);
+        container.appendChild(itemDiv);
+    }
+
+    function submitPlan() {
+        const workoutItems = Array.from(document.getElementById("workout-container").children)
+            .map(div => div.firstChild.textContent)
+            .join(',');
+        const dietItems = Array.from(document.getElementById("diet-container").children)
+            .map(div => div.firstChild.textContent)
+            .join(',');
+
+        const formData = new FormData();
+        formData.append("workout", workoutItems);
+        formData.append("diet", dietItems);
+
+        fetch("/update-plan/", {
+            method: "POST",
+            body: formData,
+            headers: { "X-CSRFToken": "{{ csrf_token }}" }
+        }).then(response => response.json()).then(data => {
+            if (data.success) closePopup();
+        });
+    }
+
+    function closePopup() {
+        document.getElementById("plan-popup").style.display = "none";
+    }
+</script>

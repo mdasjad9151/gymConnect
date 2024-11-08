@@ -86,7 +86,7 @@ def dashboard(request):
         return redirect('trainer_dashboard')
 
     elif hasattr(user, 'gymuser'):
-        user_type = f"GymUser: {user.name}"
+        return HttpResponse("user")
     else:
         user_type = "User"
 
