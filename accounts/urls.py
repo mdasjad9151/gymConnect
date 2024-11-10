@@ -1,4 +1,6 @@
 from django.urls import path
+from django.conf.urls.static import static
+from django.conf import settings
 from .views import (
     register_admin, register_gym_owner, register_trainer, register_gym_user, 
     user_login, user_logout, dashboard
@@ -14,7 +16,7 @@ urlpatterns = [
     path('dashboard/', dashboard, name='dashboard'),
     
 
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
 

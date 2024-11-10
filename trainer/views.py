@@ -7,6 +7,7 @@ from django.utils import timezone
 from accounts.models import GymUser
 from gymOwner.models import TrainerRequest
 from .models import Plan
+from .forms import PlanForm
 
 @login_required
 def trainer_dashboard(request):
@@ -17,7 +18,7 @@ def trainer_dashboard(request):
 @login_required
 def trainer_requests(request):
     # Fetch requests for the logged-in trainer
-    trainer_requests = TrainerRequest.objects.filter(trainer=request.user,status='pending')
+    trainer_requests = TrainerRequest.objects.filter(trainer=request.user, status='pending')
     # print(request.user)
     return render(request, 'trainer/requests_list.html', {
         'trainer_requests': trainer_requests,
@@ -30,6 +31,10 @@ def update_request_status(request, request_id, action):
     
     if action == 'accept':
         trainer_request.status = 'accepted'
+        # Update the gym_id in the trainer table if accepted
+        trainer = trainer_request.trainer
+        trainer.gym_id = trainer_request.gym  # Set the trainer's gym to the gym of the request
+        trainer.save()  # Save the trainer with the updated gym_id
     elif action == 'reject':
         trainer_request.status = 'rejected'
     else:
@@ -41,66 +46,57 @@ def update_request_status(request, request_id, action):
 
 @login_required
 def trainer_add_plans(request):
-    # Assuming the logged-in user is a trainer
     trainer = request.user
-    print(trainer)
-    # Fetch all users associated with this trainer
     gym_users = GymUser.objects.filter(trainer_id=trainer)
-    print(gym_users)
+
     return render(request, 'trainer/add_plans.html', {
         'gym_users': gym_users,
     })
 
-@csrf_exempt
 @login_required
-def submit_plan(request):
-    if request.method == "POST":
-        user_id = request.POST.get("user_id")
-        workout = request.POST.get("workout")
-        diet = request.POST.get("diet")
+def get_user_plan(request, user_id):
+    try:
+        gym_user = GymUser.objects.get(id=user_id, trainer_id=request.user)
+        plan = Plan.objects.filter(user_id=gym_user).first()
 
-        # Fetch the GymUser instance
-        user = get_object_or_404(GymUser, id=user_id)
+        data = {
+            'monday_workout': plan.monday_workout if plan else '',
+            'tuesday_workout': plan.tuesday_workout if plan else '',
+            'wednesday_workout': plan.wednesday_workout if plan else '',
+            'thursday_workout': plan.thursday_workout if plan else '',
+            'friday_workout': plan.friday_workout if plan else '',
+            'saturday_workout': plan.saturday_workout if plan else '',
+            'breakfast': plan.breakfast if plan else '',
+            'lunch': plan.lunch if plan else '',
+            'dinner': plan.dinner if plan else '',
+            'preworkout_diet': plan.preworkout_diet if plan else '',
+            'update_date': plan.update_date if plan else 'NA',
+        }
 
-        # Create or update the Plan record
-        Plan.objects.update_or_create(
-            user=user,
-            defaults={
-                'workout': workout,
-                'diet': diet,
-                'update_date': timezone.now()
-            }
-        )
+        return JsonResponse(data)
 
-        return JsonResponse({"status": "success"})
-    return JsonResponse({"status": "failed"}, status=400)
+    except GymUser.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
 
 @login_required
-def get_user_plans(request, user_id):
-    user = get_object_or_404(GymUser, id=user_id)
-    plan = Plan.objects.filter(user_id=user).first()
-    
-    if request.method == 'GET':
-        # Fetch previous plan data or set to 'NA' if it doesn’t exist
-        previous_workout = plan.workout if plan else 'NA'
-        previous_diet = plan.diet if plan else 'NA'
-        update_date = plan.update_date if plan else 'NA'
+def update_plan(request):
+    if request.method == 'POST':
+        gym_user_id = request.POST.get('gym_user_id')
+        gym_user = GymUser.objects.get(id=gym_user_id, trainer_id=request.user)
+        plan, created = Plan.objects.get_or_create(user_id=gym_user)
 
-        return JsonResponse({
-            'previous_workout': previous_workout,
-            'previous_diet': previous_diet,
-            'update_date': update_date
-        })
+        # Extract data from the request and update the plan
+        plan.monday_workout = request.POST.get('monday_div')
+        plan.tuesday_workout = request.POST.get('tuesday_div')
+        plan.wednesday_workout = request.POST.get('wednesday_div')
+        plan.thursday_workout = request.POST.get('thursday_div')
+        plan.friday_workout = request.POST.get('friday_div')
+        plan.saturday_workout = request.POST.get('saturday_div')
+        plan.breakfast = request.POST.get('breakfast_div')
+        plan.lunch = request.POST.get('lunch_div')
+        plan.dinner = request.POST.get('dinner_div')
+        plan.preworkout_diet = request.POST.get('preworkout_diet_div')
 
-    elif request.method == 'POST':
-        # Handle form submission from popup
-        workout = request.POST.get('workout')
-        diet = request.POST.get('diet')
-        
-        # Save or update the plan for this user
-        plan, created = Plan.objects.update_or_create(
-            user_id=user,
-            defaults={'workout': workout, 'diet': diet, 'updated_date': datetime.now()}
-        )
-        
+        plan.save()
         return JsonResponse({'success': True})
+    return JsonResponse({'error': 'Invalid request'}, status=400)

@@ -2,106 +2,182 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Trainer Add Plans</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        /* Add styles for the popup form here */
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
 </head>
 <body>
-    <h1>Trainer Plans</h1>
+    <!-- Display Gym Users List -->
     <ul>
-        {% for user in gym_users %}
+        {% for gym_user in gym_users %}
             <li>
-                {{ user.name }}
-                <button onclick="openPlanPopup({{ user.id }})">Update</button>
+                <img src="{{ gym_user.profile_picture.url }}" alt="Profile Picture" width="50">
+                <strong>{{ gym_user.user.username }}</strong><br>
+                Last Update: {{ gym_user.plan.update_date|default:"NA" }}
+                <button onclick="openPlanPopup({{ gym_user.id }})">Plan Update</button>
             </li>
+            <script>
+                console.log({{gym_user.id}});
+            </script>
         {% endfor %}
+        
     </ul>
 
-    <!-- Popup Form -->
+    <!-- Plan Update Popup -->
     <div id="plan-popup" style="display:none;">
-    <h3>Plans</h3>
-    <div>Update Date: <span id="update-date">NA</span></div>
-    
-    <label>Workout:</label>
-    <div id="workout-container"></div>
-    <input type="text" id="workout-input">
-    <button onclick="addItem('workout')">Add</button>
-    
-    <label>Diet Plan:</label>
-    <div id="diet-container"></div>
-    <input type="text" id="diet-input">
-    <button onclick="addItem('diet')">Add</button>
-    
-    <button onclick="closePopup()">Close</button>
-    <button onclick="submitPlan()">Submit</button>
-</div>
+        <h3>Update Plan</h3>
+        <div>Last Update: <span id="update-date">NA</span></div>
 
-<script>
-    function openPlanPopup(userId) {
-        fetch(`/gym-trainer/get-user-plans/${userId}`)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("update-date").innerText = data.update_date || 'NA';
-                loadPreviousItems("workout", data.previous_workout);
-                loadPreviousItems("diet", data.previous_diet);
-                document.getElementById("plan-popup").style.display = "block";
+        <form action="" method="post">
+            {% csrf_token %}
+            <!-- Monday Workout -->
+            <label>Monday Workout:</label>
+            <div id="monday_div"></div>
+            <input type="text" id="monday">
+            <button type="button" onclick="addItem('monday')">Add</button><br>
+
+            <!-- Tuesday Workout -->
+            <label>Tuesday Workout:</label>
+            <div id="tuesday_div"></div>
+            <input type="text" id="tuesday">
+            <button type="button" onclick="addItem('tuesday')">Add</button><br>
+
+            <!-- Wednesday Workout -->
+            <label>Wednesday Workout:</label>
+            <div id="wednesday_div"></div>
+            <input type="text" id="wednesday">
+            <button type="button" onclick="addItem('wednesday')">Add</button><br>
+
+            <!-- Thursday Workout -->
+            <label>Thursday Workout:</label>
+            <div id="thursday_div"></div>
+            <input type="text" id="thursday">
+            <button type="button" onclick="addItem('thursday')">Add</button><br>
+
+            <!-- Friday Workout -->
+            <label>Friday Workout:</label>
+            <div id="friday_div"></div>
+            <input type="text" id="friday">
+            <button type="button" onclick="addItem('friday')">Add</button><br>
+
+            <!-- Saturday Workout -->
+            <label>Saturday Workout:</label>
+            <div id="saturday_div"></div>
+            <input type="text" id="saturday">
+            <button type="button" onclick="addItem('saturday')">Add</button><br>
+
+            <!-- Breakfast -->
+            <label>Breakfast:</label>
+            <div id="breakfast_div"></div>
+            <input type="text" id="breakfast">
+            <button type="button" onclick="addItem('breakfast')">Add</button><br>
+
+            <!-- Lunch -->
+            <label>Lunch:</label>
+            <div id="lunch_div"></div>
+            <input type="text" id="lunch">
+            <button type="button" onclick="addItem('lunch')">Add</button><br>
+
+            <!-- Dinner -->
+            <label>Dinner:</label>
+            <div id="dinner_div"></div>
+            <input type="text" id="dinner">
+            <button type="button" onclick="addItem('dinner')">Add</button><br>
+
+            <!-- Pre-workout Diet -->
+            <label>Pre-workout Diet:</label>
+            <div id="preworkout_diet_div"></div>
+            <input type="text" id="preworkout_diet">
+            <button type="button" onclick="addItem('preworkout_diet')">Add</button><br>
+
+            <!-- Action buttons -->
+            <button type="button" onclick="closePopup()">Close</button>
+            <button type="button" onclick="submitPlan()">Submit</button>
+        </form>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        let gymUserId;
+
+        function openPlanPopup(userId) {
+            gymUserId = userId;
+            fetch(`/gym-trainer/get-user-plan/${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("update-date").innerText = data.update_date || 'NA';
+                    loadPreviousItems("monday", data.monday_workout);
+                    loadPreviousItems("tuesday", data.tuesday_workout);
+                    loadPreviousItems("wednesday", data.wednesday_workout);
+                    loadPreviousItems("thursday", data.thursday_workout);
+                    loadPreviousItems("friday", data.friday_workout);
+                    loadPreviousItems("saturday", data.saturday_workout);
+                    loadPreviousItems("breakfast", data.breakfast);
+                    loadPreviousItems("lunch", data.lunch);
+                    loadPreviousItems("dinner", data.dinner);
+                    loadPreviousItems("preworkout_diet", data.preworkout_diet);
+                    
+                    document.getElementById("plan-popup").style.display = "block";
+                });
+        }
+
+        function loadPreviousItems(field, items) {
+            const container = document.getElementById(`${field}_div`);
+          
+
+            if (items === '') {
+                console.log("shjhujanfe")
+            } else {
+                items.split(',').forEach(item => addItemToContainer(field, item));
+            }
+        }
+
+        function addItem(field) {
+            const input = document.getElementById(`${field}`);
+            console.log(input)
+            const item = input.value;
+            console.log(item)
+            if (item) {
+                addItemToContainer(field, item);
+                input.value = ''; // Clear input field
+            }
+        }
+
+        function addItemToContainer(field, item) {
+            const container = document.getElementById(`${field}_div`);
+            const itemDiv = document.createElement("div");
+            itemDiv.innerText = item;
+            const removeBtn = document.createElement("button");
+            removeBtn.innerText = "Remove";
+            removeBtn.onclick = () => itemDiv.remove();
+            itemDiv.appendChild(removeBtn);
+            container.appendChild(itemDiv);
+        }
+
+        function submitPlan() {
+            const fields = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "breakfast", "lunch", "dinner", "preworkout_diet"];
+            const formData = new FormData();
+
+            fields.forEach(field => {
+                const items = Array.from(document.getElementById(`${field}_div`).children)
+                    .map(div => div.firstChild.textContent)
+                    .join(',');
+                formData.append(`${field}_div`, items);
             });
-    }
-    
-    function loadPreviousItems(field, items) {
-        const container = document.getElementById(`${field}-container`);
-        container.innerHTML = ''; // Clear existing items
-        if (items !== 'NA') {
-            items.split(',').forEach(item => addItemToContainer(field, item));
-        } else {
-            container.innerHTML = '<p>NA</p>';
+
+            formData.append("gym_user_id", gymUserId);
+
+            fetch("/gym-trainer/update-plan/", {
+                method: "POST",
+                body: formData,
+                headers: { "X-CSRFToken": "{{ csrf_token }}" }
+            }).then(response => response.json()).then(data => {
+                if (data.success) closePopup();
+            });
         }
-    }
-    
-    function addItem(field) {
-        const input = document.getElementById(`${field}-input`);
-        const item = input.value.trim();
-        if (item) {
-            addItemToContainer(field, item);
-            input.value = ''; // Clear input field
+
+        function closePopup() {
+            document.getElementById("plan-popup").style.display = "none";
         }
-    }
-
-    function addItemToContainer(field, item) {
-        const container = document.getElementById(`${field}-container`);
-        const itemDiv = document.createElement("div");
-        itemDiv.innerText = item;
-        const removeBtn = document.createElement("button");
-        removeBtn.innerText = "Remove";
-        removeBtn.onclick = () => itemDiv.remove();
-        itemDiv.appendChild(removeBtn);
-        container.appendChild(itemDiv);
-    }
-
-    function submitPlan() {
-        const workoutItems = Array.from(document.getElementById("workout-container").children)
-            .map(div => div.firstChild.textContent)
-            .join(',');
-        const dietItems = Array.from(document.getElementById("diet-container").children)
-            .map(div => div.firstChild.textContent)
-            .join(',');
-
-        const formData = new FormData();
-        formData.append("workout", workoutItems);
-        formData.append("diet", dietItems);
-
-        fetch("/update-plan/", {
-            method: "POST",
-            body: formData,
-            headers: { "X-CSRFToken": "{{ csrf_token }}" }
-        }).then(response => response.json()).then(data => {
-            if (data.success) closePopup();
-        });
-    }
-
-    function closePopup() {
-        document.getElementById("plan-popup").style.display = "none";
-    }
-</script>
+    </script>
+</body>
+</html>

@@ -22,7 +22,7 @@ def register_admin(request):
 
 def register_gym_owner(request):
     if request.method == 'POST':
-        form = GymOwnerRegistrationForm(request.POST)
+        form = GymOwnerRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('login')
@@ -32,7 +32,7 @@ def register_gym_owner(request):
 
 def register_trainer(request):
     if request.method == 'POST':
-        form = TrainerRegistrationForm(request.POST)
+        form = TrainerRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('login')
@@ -42,7 +42,7 @@ def register_trainer(request):
 
 def register_gym_user(request):
     if request.method == 'POST':
-        form = GymUserRegistrationForm(request.POST)
+        form = GymUserRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('login')

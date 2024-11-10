@@ -16,47 +16,41 @@ class AdminRegistrationForm(forms.ModelForm):
             admin.save()
         return admin
 
+# GymOwnerForm
 class GymOwnerRegistrationForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput())
-
     class Meta:
         model = GymOwner
-        fields = ['gym_name', 'email', 'contact','password', 'address']
+        fields = [
+            'email', 'password', 'gym_name', 'contact_no', 'address', 
+            'city', 'state', 'profile_picture'
+        ]
+        widgets = {
+            'password': forms.PasswordInput(),
+        }
 
-    def save(self, commit=True):
-        owner = super().save(commit=False)
-        owner.set_password(self.cleaned_data["password"])
-        if commit:
-            owner.save()
-        return owner
-
+# TrainerForm
 class TrainerRegistrationForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput())
-
     class Meta:
         model = Trainer
-        fields = ['name', 'email', 'password', 'gym_id']
+        fields = [
+            'email', 'password', 'name',  'contact_no', 
+            'address', 'city', 'state', 'profile_picture', 'certificate_image'
+        ]
+        widgets = {
+            'password': forms.PasswordInput(),
+        }
 
-    def save(self, commit=True):
-        trainer = super().save(commit=False)
-        trainer.set_password(self.cleaned_data["password"])
-        if commit:
-            trainer.save()
-        return trainer
-
+# GymUserForm
 class GymUserRegistrationForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput())
-
     class Meta:
         model = GymUser
-        fields = ['name', 'email', 'password', 'trainer_id']
-
-    def save(self, commit=True):
-        gym_user = super().save(commit=False)
-        gym_user.set_password(self.cleaned_data["password"])
-        if commit:
-            gym_user.save()
-        return gym_user
+        fields = [
+            'email', 'password', 'name', 'trainer_id', 'gym_id', 'contact_no', 
+            'address', 'city', 'state', 'profile_picture'
+        ]
+        widgets = {
+            'password': forms.PasswordInput(),
+        }
 
 class CustomLoginForm(AuthenticationForm):
     username = forms.EmailField(label="Email")
@@ -76,19 +70,4 @@ class CustomLoginForm(AuthenticationForm):
 
 
 
-# from django import forms
-# from .models import Admin
 
-# class AdminForm(forms.ModelForm):
-#     password = forms.CharField(widget=forms.PasswordInput())  # Render password field with password input
-
-#     class Meta:
-#         model = Admin
-#         fields = ['name', 'email', 'password']  # Specify the fields you want in the form
-
-#     def save(self, commit=True):
-#         admin = super().save(commit=False)
-#         admin.set_password(self.cleaned_data["password"])  # Hash the password before saving
-#         if commit:
-#             admin.save()
-#         return admin
