@@ -3,34 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GymConnect Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <title>Gym Owner Dashboard</title>
 </head>
-<body class="bg-gray-100">
-    <div class="container mx-auto p-10">
-        <h1 class="text-3xl font-bold text-center mb-8">GymConnect Dashboard</h1>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- Add User Button -->
-            <a href="{% url 'assign_trainer' %}" class="block p-6 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-700">
-                <h2 class="text-xl font-semibold">Assign Trainer</h2>
-            </a>
-
-            <!-- Add Trainer Button -->
-            <a href="{% url 'add_trainer' %}" class="block p-6 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-700">
-                <h2 class="text-xl font-semibold">Add Trainer</h2>
-            </a>
-
-            <!-- List of Users -->
-            <a href="{% url 'list_users' %}" class="block p-6 bg-yellow-500 text-white rounded-lg shadow-md hover:bg-yellow-600">
-                <h2 class="text-xl font-semibold">List of Users</h2>
-            </a>
-
-            <!-- List of Trainers -->
-            <a href="{% url 'list_trainers' %}" class="block p-6 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-700">
-                <h2 class="text-xl font-semibold">List of Trainers</h2>
-            </a>
+<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+{% load static %}
+    <!-- Header Section -->
+    <header class="bg-blue-500 text-white py-6">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="logo flex items-center space-x-4 px-10">
+                <img src="{% static 'core/image/logo.png' %}" class="w-16 h-16 rounded-full" alt="GymConnect Logo"/>
+                <div class="logoname text-xl font-semibold">GymConnect</div>
+            </div>
+            <div class="login px-20">
+                <a href="{% url 'login' %}" class="text-lg font-medium hover:text-gray-300">Login</a>
+            </div>
         </div>
-    </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center py-10">
+        <div class="container mx-auto p-10 flex flex-col items-center justify-center">
+            <h1 class="text-3xl font-bold text-center mb-8">Owner Dashboard</h1>
+            
+            <!-- Main Button Container -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-5xl">
+                <!-- Add User Button -->
+                <a href="{% url 'assign_trainer' %}" class="block p-6 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105">
+                    <h2 class="text-xl font-semibold">Assign Trainer</h2>
+                </a>
+
+                <!-- Add Trainer Button -->
+                <a href="{% url 'add_trainer' %}" class="block p-6 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-700 transition duration-300 ease-in-out transform hover:scale-105">
+                    <h2 class="text-xl font-semibold">Add Trainer</h2>
+                </a>
+
+                <!-- List of Users -->
+                <a href="{% url 'list_users' %}" class="block p-6 bg-yellow-500 text-white rounded-lg shadow-md hover:bg-yellow-600 transition duration-300 ease-in-out transform hover:scale-105">
+                    <h2 class="text-xl font-semibold">List of Users</h2>
+                </a>
+
+                <!-- List of Trainers -->
+                <a href="{% url 'list_trainers' %}" class="block p-6 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-700 transition duration-300 ease-in-out transform hover:scale-105">
+                    <h2 class="text-xl font-semibold">List of Trainers</h2>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-white py-6 shadow-inner">
+        <div class="container mx-auto flex items-center justify-between px-4">
+            <div class="footer-logo flex items-center">
+                <img src="{% static 'core/image/footer-logo.png' %}" class="w-10 h-10 rounded-full hover:scale-105 transition-transform duration-300" alt="Footer Logo" />
+                <span class="ml-2 text-sm font-medium">Developed By - MOHD ASJAD</span>
+            </div>
+            <div class="social-links flex space-x-4">
+                <a href="#" class="hover:text-blue-400 transition duration-200">Facebook</a>
+                <a href="#" class="hover:text-blue-400 transition duration-200">Twitter</a>
+                <a href="#" class="hover:text-blue-400 transition duration-200">LinkedIn</a>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

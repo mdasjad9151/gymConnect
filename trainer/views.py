@@ -27,20 +27,27 @@ def trainer_requests(request):
 
 @login_required
 def update_request_status(request, request_id, action):
+    # Get the specific TrainerRequest and ensure the current user is the trainer for this request
     trainer_request = get_object_or_404(TrainerRequest, id=request_id, trainer=request.user)
-    
+
     if action == 'accept':
         trainer_request.status = 'accepted'
+        
         # Update the gym_id in the trainer table if accepted
         trainer = trainer_request.trainer
         trainer.gym_id = trainer_request.gym  # Set the trainer's gym to the gym of the request
         trainer.save()  # Save the trainer with the updated gym_id
+
     elif action == 'reject':
         trainer_request.status = 'rejected'
+        
     else:
         raise Http404("Invalid action.")
-    
+
+    # Save the status update and delete the request instance
     trainer_request.save()
+    trainer_request.delete()  # Remove the request after updating its status
+
     return redirect('trainer_requests')
 
 
@@ -81,9 +88,10 @@ def get_user_plan(request, user_id):
 @login_required
 def update_plan(request):
     if request.method == 'POST':
-        gym_user_id = request.POST.get('gym_user_id')
+        gym_user_id = int(request.POST.get('gym_user_id'))
+        print(gym_user_id)
         gym_user = GymUser.objects.get(id=gym_user_id, trainer_id=request.user)
-        plan, created = Plan.objects.get_or_create(user_id=gym_user)
+        plan, created = Plan.objects.get_or_create(user_id=gym_user.id)
 
         # Extract data from the request and update the plan
         plan.monday_workout = request.POST.get('monday_div')

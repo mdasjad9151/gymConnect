@@ -1,183 +1,349 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <!-- Display Gym Users List -->
-    <ul>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GymConnect</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+        .remove-img {
+    width: 1em;      /* Match font size */
+    height: 1em;     /* Match font size */
+    vertical-align: middle; /* Aligns image with text */
+}
+    </style>
+  </head>
+  <body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+    {% load static %}
+    <!-- Header Section -->
+    <header class="bg-blue-500 text-white py-6 shadow-lg">
+      <div class="container mx-auto flex items-center justify-between px-10">
+        <div class="logo flex items-center space-x-4">
+          <img
+            src="{% static 'trainer/image/logo.png' %}"
+            class="w-16 h-16 rounded-full hover:scale-105 transition-transform duration-300"
+            alt="GymConnect Logo"
+          />
+          <div class="logoname text-xl font-semibold">GymConnect</div>
+        </div>
+        <div class="login">
+          <a
+            href="{% url 'home' %}"
+            class="text-lg font-medium hover:text-gray-300 transition duration-200"
+            >Home</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto py-8 flex space-x-8">
+      <!-- Gym Users List -->
+      <ul class="w-1/4 space-y-6">
         {% for gym_user in gym_users %}
-            <li>
-                <img src="{{ gym_user.profile_picture.url }}" alt="Profile Picture" width="50">
-                <strong>{{ gym_user.user.username }}</strong><br>
+        <li
+          class="p-4 bg-white shadow-md rounded-lg flex items-center justify-between space-x-4"
+        >
+          <div class="flex items-center space-x-4">
+            <img
+              src="{{ gym_user.profile_picture.url }}"
+              alt="Profile Picture"
+              class="w-12 h-12 rounded-full"
+            />
+            <div>
+              <strong class="text-lg">{{ gym_user.name }}</strong>
+              <p class="text-sm text-gray-600">
                 Last Update: {{ gym_user.plan.update_date|default:"NA" }}
-                <button onclick="openPlanPopup({{ gym_user.id }})">Plan Update</button>
-            </li>
-            <script>
-                console.log({{gym_user.id}});
-            </script>
+              </p>
+            </div>
+          </div>
+          <button
+            class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+            onclick="openPlanPopup({{ gym_user.id }})"
+          >
+            Plan Update
+          </button>
+        </li>
         {% endfor %}
-        
-    </ul>
+      </ul>
 
-    <!-- Plan Update Popup -->
-    <div id="plan-popup" style="display:none;">
-        <h3>Update Plan</h3>
-        <div>Last Update: <span id="update-date">NA</span></div>
+      <!-- Plan Update Popup -->
+      <div
+        id="plan-popup"
+        class="w-3/4 bg-white shadow-lg rounded-lg p-6 fixed inset-y-0 right-0 flex flex-col space-y-6 hidden overflow-y-auto max-h-full"
+      >
+        <h3 class="text-2xl font-bold mb-4 text-center">Update Plan</h3>
+        <div class="text-center mb-4">
+          Last Update: <span id="update-date" class="text-gray-600">NA</span>
+        </div>
+        <form action="" method="post" class="space-y-4">
+    {% csrf_token %}
+    <div class="grid grid-cols-2 gap-4">
 
-        <form action="" method="post">
-            {% csrf_token %}
-            <!-- Monday Workout -->
-            <label>Monday Workout:</label>
-            <div id="monday_div"></div>
-            <input type="text" id="monday">
-            <button type="button" onclick="addItem('monday')">Add</button><br>
+        <!-- Monday Workout -->
+        <div>
+            <label class="block font-semibold">Monday Workout:</label>
+            <div id="monday_div" class="mb-2 p-2 border border-gray-200 rounded flex flex-wrap gap-2"></div>
+            <div class="flex items-center space-x-2">
+                <input type="text" id="monday" class="border border-gray-300 rounded px-3 py-2 w-full">
+                <button type="button" onclick="addItemToContainer('monday', document.getElementById('monday').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
+            </div>
+        </div>
 
-            <!-- Tuesday Workout -->
-            <label>Tuesday Workout:</label>
-            <div id="tuesday_div"></div>
-            <input type="text" id="tuesday">
-            <button type="button" onclick="addItem('tuesday')">Add</button><br>
+        <!-- Tuesday Workout -->
+        <div>
+            <label class="block font-semibold">Tuesday Workout:</label>
+            <div id="tuesday_div" class="mb-2 p-2 border border-gray-200 rounded flex flex-wrap gap-2"></div>
+            <div class="flex items-center space-x-2">
+                <input type="text" id="tuesday" class="border border-gray-300 rounded px-3 py-2 w-full">
+                <button type="button" onclick="addItemToContainer('tuesday', document.getElementById('tuesday').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
+            </div>
+        </div>
 
-            <!-- Wednesday Workout -->
-            <label>Wednesday Workout:</label>
-            <div id="wednesday_div"></div>
-            <input type="text" id="wednesday">
-            <button type="button" onclick="addItem('wednesday')">Add</button><br>
+        <!-- Wednesday Workout -->
+        <div>
+            <label class="block font-semibold">Wednesday Workout:</label>
+            <div id="wednesday_div" class="mb-2 p-2 border border-gray-200 rounded flex flex-wrap gap-2"></div>
+            <div class="flex items-center space-x-2">
+                <input type="text" id="wednesday" class="border border-gray-300 rounded px-3 py-2 w-full">
+                <button type="button" onclick="addItemToContainer('wednesday', document.getElementById('wednesday').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
+            </div>
+        </div>
 
-            <!-- Thursday Workout -->
-            <label>Thursday Workout:</label>
-            <div id="thursday_div"></div>
-            <input type="text" id="thursday">
-            <button type="button" onclick="addItem('thursday')">Add</button><br>
+        <!-- Thursday Workout -->
+        <div>
+            <label class="block font-semibold">Thursday Workout:</label>
+            <div id="thursday_div" class="mb-2 p-2 border border-gray-200 rounded flex flex-wrap gap-2"></div>
+            <div class="flex items-center space-x-2">
+                <input type="text" id="thursday" class="border border-gray-300 rounded px-3 py-2 w-full">
+                <button type="button" onclick="addItemToContainer('thursday', document.getElementById('thursday').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
+            </div>
+        </div>
 
-            <!-- Friday Workout -->
-            <label>Friday Workout:</label>
-            <div id="friday_div"></div>
-            <input type="text" id="friday">
-            <button type="button" onclick="addItem('friday')">Add</button><br>
+        <!-- Friday Workout -->
+        <div>
+            <label class="block font-semibold">Friday Workout:</label>
+            <div id="friday_div" class="mb-2 p-2 border border-gray-200 rounded flex flex-wrap gap-2"></div>
+            <div class="flex items-center space-x-2">
+                <input type="text" id="friday" class="border border-gray-300 rounded px-3 py-2 w-full">
+                <button type="button" onclick="addItemToContainer('friday', document.getElementById('friday').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
+            </div>
+        </div>
 
-            <!-- Saturday Workout -->
-            <label>Saturday Workout:</label>
-            <div id="saturday_div"></div>
-            <input type="text" id="saturday">
-            <button type="button" onclick="addItem('saturday')">Add</button><br>
+        <!-- Saturday Workout -->
+        <div>
+            <label class="block font-semibold">Saturday Workout:</label>
+            <div id="saturday_div" class="mb-2 p-2 border border-gray-200 rounded flex flex-wrap gap-2"></div>
+            <div class="flex items-center space-x-2">
+                <input type="text" id="saturday" class="border border-gray-300 rounded px-3 py-2 w-full">
+                <button type="button" onclick="addItemToContainer('saturday', document.getElementById('saturday').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
+            </div>
+        </div>
 
-            <!-- Breakfast -->
-            <label>Breakfast:</label>
-            <div id="breakfast_div"></div>
-            <input type="text" id="breakfast">
-            <button type="button" onclick="addItem('breakfast')">Add</button><br>
+        <!-- Breakfast -->
+        <div>
+            <label class="block font-semibold">Breakfast:</label>
+            <div id="breakfast_div" class="mb-2 p-2 border border-gray-200 rounded flex flex-wrap gap-2"></div>
+            <div class="flex items-center space-x-2">
+                <input type="text" id="breakfast" class="border border-gray-300 rounded px-3 py-2 w-full">
+                <button type="button" onclick="addItemToContainer('breakfast', document.getElementById('breakfast').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
+            </div>
+        </div>
 
-            <!-- Lunch -->
-            <label>Lunch:</label>
-            <div id="lunch_div"></div>
-            <input type="text" id="lunch">
-            <button type="button" onclick="addItem('lunch')">Add</button><br>
+        <!-- Lunch -->
+        <div>
+            <label class="block font-semibold">Lunch:</label>
+            <div id="lunch_div" class="mb-2 p-2 border border-gray-200 rounded flex flex-wrap gap-2"></div>
+            <div class="flex items-center space-x-2">
+                <input type="text" id="lunch" class="border border-gray-300 rounded px-3 py-2 w-full">
+                <button type="button" onclick="addItemToContainer('lunch', document.getElementById('lunch').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
+            </div>
+        </div>
 
-            <!-- Dinner -->
-            <label>Dinner:</label>
-            <div id="dinner_div"></div>
-            <input type="text" id="dinner">
-            <button type="button" onclick="addItem('dinner')">Add</button><br>
+        <!-- Dinner -->
+        <div>
+            <label class="block font-semibold">Dinner:</label>
+            <div id="dinner_div" class="mb-2 p-2 border border-gray-200 rounded flex flex-wrap gap-2"></div>
+            <div class="flex items-center space-x-2">
+                <input type="text" id="dinner" class="border border-gray-300 rounded px-3 py-2 w-full">
+                <button type="button" onclick="addItemToContainer('dinner', document.getElementById('dinner').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
+            </div>
+        </div>
 
-            <!-- Pre-workout Diet -->
-            <label>Pre-workout Diet:</label>
-            <div id="preworkout_diet_div"></div>
-            <input type="text" id="preworkout_diet">
-            <button type="button" onclick="addItem('preworkout_diet')">Add</button><br>
+        <!-- Pre-workout Diet -->
+        <div>
+            <label class="block font-semibold">Pre-workout Diet:</label>
+            <div id="preworkout_diet_div" class="mb-2 p-2 border border-gray-200 rounded flex flex-wrap gap-2"></div>
+            <div class="flex items-center space-x-2">
+                <input type="text" id="preworkout_diet" class="border border-gray-300 rounded px-3 py-2 w-full">
+                <button type="button" onclick="addItemToContainer('preworkout_diet', document.getElementById('preworkout_diet').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
+            </div>
+        </div>
 
-            <!-- Action buttons -->
-            <button type="button" onclick="closePopup()">Close</button>
-            <button type="button" onclick="submitPlan()">Submit</button>
-        </form>
     </div>
+
+    <!-- Action buttons -->
+    <div class="flex justify-end space-x-4 mt-4">
+        <button type="button" onclick="closePopup()" class="px-6 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">Close</button>
+        <button type="button" onclick="submitPlan()" class="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Submit</button>
+    </div>
+</form>
+
+      </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-white py-6 shadow-inner">
+      <div class="container mx-auto flex items-center justify-between px-10">
+        <div class="footer-logo flex items-center space-x-2">
+          <img
+            src="{% static 'gymOwner/image/footer-logo.png' %}"
+            class="w-10 h-10 rounded-full hover:scale-105 transition-transform duration-300"
+            alt="Footer Logo"
+          />
+          <span class="text-sm font-medium">Developed By - MOHD ASJAD</span>
+        </div>
+        <div class="social-links flex space-x-4">
+          <a href="#" class="hover:text-blue-400 transition duration-200"
+            >Facebook</a
+          >
+          <a href="#" class="hover:text-blue-400 transition duration-200"
+            >Twitter</a
+          >
+          <a href="#" class="hover:text-blue-400 transition duration-200"
+            >LinkedIn</a
+          >
+        </div>
+      </div>
+    </footer>
 
     <!-- JavaScript -->
     <script>
-        let gymUserId;
+      let gymUserId;
 
-        function openPlanPopup(userId) {
-            gymUserId = userId;
-            fetch(`/gym-trainer/get-user-plan/${userId}`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("update-date").innerText = data.update_date || 'NA';
-                    loadPreviousItems("monday", data.monday_workout);
-                    loadPreviousItems("tuesday", data.tuesday_workout);
-                    loadPreviousItems("wednesday", data.wednesday_workout);
-                    loadPreviousItems("thursday", data.thursday_workout);
-                    loadPreviousItems("friday", data.friday_workout);
-                    loadPreviousItems("saturday", data.saturday_workout);
-                    loadPreviousItems("breakfast", data.breakfast);
-                    loadPreviousItems("lunch", data.lunch);
-                    loadPreviousItems("dinner", data.dinner);
-                    loadPreviousItems("preworkout_diet", data.preworkout_diet);
-                    
-                    document.getElementById("plan-popup").style.display = "block";
-                });
+      function openPlanPopup(userId) {
+        gymUserId = userId;
+        fetch(`/gym-trainer/get-user-plan/${userId}`)
+          .then((response) => response.json())
+          .then((data) => {
+            document.getElementById("update-date").innerText =
+              data.update_date || "NA";
+            loadPreviousItems("monday", data.monday_workout);
+            loadPreviousItems("tuesday", data.tuesday_workout);
+            loadPreviousItems("wednesday", data.wednesday_workout);
+            loadPreviousItems("thursday", data.thursday_workout);
+            loadPreviousItems("friday", data.friday_workout);
+            loadPreviousItems("saturday", data.saturday_workout);
+            loadPreviousItems("breakfast", data.breakfast);
+            loadPreviousItems("lunch", data.lunch);
+            loadPreviousItems("dinner", data.dinner);
+            loadPreviousItems("preworkout_diet", data.preworkout_diet);
+
+            document.getElementById("plan-popup").style.display = "block";
+          });
+      }
+
+      function loadPreviousItems(field, items) {
+        const container = document.getElementById(`${field}_div`);
+
+        if (items === "") {
+          console.log("shjhujanfe");
+        } else {
+          items.split(",").forEach((item) => addItemToContainer(field, item));
         }
+      }
 
-        function loadPreviousItems(field, items) {
-            const container = document.getElementById(`${field}_div`);
-          
-
-            if (items === '') {
-                console.log("shjhujanfe")
-            } else {
-                items.split(',').forEach(item => addItemToContainer(field, item));
-            }
+      function addItem(field) {
+        const input = document.getElementById(`${field}`);
+        console.log(input);
+        const item = input.value;
+        console.log(item);
+        if (item) {
+          addItemToContainer(field, item);
+          input.value = ""; // Clear input field
         }
+      }
 
-        function addItem(field) {
-            const input = document.getElementById(`${field}`);
-            console.log(input)
-            const item = input.value;
-            console.log(item)
-            if (item) {
-                addItemToContainer(field, item);
-                input.value = ''; // Clear input field
-            }
-        }
+function addItemToContainer(field, item) {
+    const container = document.getElementById(`${field}_div`);
+    const itemDiv = document.createElement("div");
+    itemDiv.classList.add("item"); // Optional: Add a class for styling
 
-        function addItemToContainer(field, item) {
-            const container = document.getElementById(`${field}_div`);
-            const itemDiv = document.createElement("div");
-            itemDiv.innerText = item;
-            const removeBtn = document.createElement("button");
-            removeBtn.innerText = "Remove";
-            removeBtn.onclick = () => itemDiv.remove();
-            itemDiv.appendChild(removeBtn);
-            container.appendChild(itemDiv);
-        }
+    // Add the item text
+    const itemText = document.createElement("span");
+    itemText.innerText = item;
+    itemDiv.appendChild(itemText);
 
-        function submitPlan() {
-            const fields = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "breakfast", "lunch", "dinner", "preworkout_diet"];
-            const formData = new FormData();
+    // Create the remove button with an image (cross.png)
+    const removeBtn = document.createElement("button");
+    removeBtn.classList.add("remove-btn"); // Optional: Add a class for styling
 
-            fields.forEach(field => {
-                const items = Array.from(document.getElementById(`${field}_div`).children)
-                    .map(div => div.firstChild.textContent)
-                    .join(',');
-                formData.append(`${field}_div`, items);
-            });
+    const removeImg = document.createElement("img");
+    removeImg.src = "{% static 'trainer/image/cross.png' %}";  // Replace with actual path
+    removeImg.alt = "Remove";  // Alt text for accessibility
+    removeImg.classList.add("remove-img"); // Add a class for styling the image size
 
-            formData.append("gym_user_id", gymUserId);
+    // Style the image to match the font size
+    removeImg.style.width = "1em";  // Set width to font-size
+    removeImg.style.height = "1em";  // Set height to font-size
 
-            fetch("/gym-trainer/update-plan/", {
-                method: "POST",
-                body: formData,
-                headers: { "X-CSRFToken": "{{ csrf_token }}" }
-            }).then(response => response.json()).then(data => {
-                if (data.success) closePopup();
-            });
-        }
+    // Append the image to the button
+    removeBtn.appendChild(removeImg);
 
-        function closePopup() {
-            document.getElementById("plan-popup").style.display = "none";
-        }
+    // Set up the remove button functionality
+    removeBtn.onclick = () => itemDiv.remove();
+
+    // Append the remove button to the item div
+    itemDiv.appendChild(removeBtn);
+
+    // Append the item div to the container
+    container.appendChild(itemDiv);
+}
+
+
+      function submitPlan() {
+        const fields = [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+          "breakfast",
+          "lunch",
+          "dinner",
+          "preworkout_diet",
+        ];
+        const formData = new FormData();
+
+        fields.forEach((field) => {
+          const items = Array.from(
+            document.getElementById(`${field}_div`).children
+          )
+            .map((div) => div.firstChild.textContent)
+            .join(",");
+          formData.append(`${field}_div`, items);
+        });
+
+        formData.append("gym_user_id", gymUserId);
+
+        fetch("/gym-trainer/update-plan/", {
+          method: "POST",
+          body: formData,
+          headers: { "X-CSRFToken": "{{ csrf_token }}" },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) closePopup();
+          });
+      }
+
+      function closePopup() {
+        document.getElementById("plan-popup").style.display = "none";
+      }
     </script>
-</body>
+  </body>
 </html>

@@ -19,6 +19,8 @@
         box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
         z-index: 1000;
         width: 300px;
+        max-width: 90%;
+        border-radius: 8px;
       }
       .overlay {
         display: none;
@@ -31,89 +33,115 @@
         z-index: 999;
       }
       /* Style the success message */
-#success-message {
-    display: none;  /* Initially hidden */
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 10px 20px;
-    background-color: #38a169; /* Green background */
-    color: white;
-    border-radius: 5px;
-    font-size: 16px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    opacity: 0; /* Initially invisible */
-}
+      #success-message {
+        display: none; /* Initially hidden */
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 10px 20px;
+        background-color: #38a169; /* Green background */
+        color: white;
+        border-radius: 5px;
+        font-size: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        opacity: 0; /* Initially invisible */
+      }
     </style>
   </head>
-  <body class="bg-gray-100">
-    <!-- The container for the success message -->
-<div id="success-message" class="fixed top-1/2 right-0 p-4 bg-green-500 text-white rounded-lg shadow-md opacity-0 transition-opacity duration-500">
-    <span id="success-text"></span>
-</div>
+  <body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+{% load static %}
 
-    <div class="container mx-auto p-10">
-      <h1 class="text-2xl font-bold mb-6">Select Trainer</h1>
+    <!-- Header Section -->
+    <header class="bg-blue-500 text-white py-6 shadow-lg">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="logo flex items-center space-x-4 px-10">
+                <img src="{% static 'core/image/logo.png' %}" class="w-16 h-16 rounded-full hover:scale-105 transition-transform duration-300" alt="GymConnect Logo"/>
+                <div class="logoname text-xl font-semibold">GymConnect</div>
+            </div>
+            <div class="login px-20">
+                <a href="{% url 'home' %}" class="text-lg font-medium hover:text-gray-300 transition duration-200">Home</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex">
+    <!-- The container for the success message -->
+    <div
+      id="success-message"
+      class="fixed top-1/2 right-0 p-4 bg-green-500 text-white rounded-lg shadow-md opacity-0 transition-opacity duration-500"
+    >
+      <span id="success-text"></span>
+    </div>
+
+    <div class="container mx-auto px-10">
+      <h1 class="text-2xl font-bold my-3">Search</h1>
 
       <!-- Search bar for filtering trainers -->
       <div class="mb-4">
         <input
           type="text"
           id="search-input"
-          class="border p-2 rounded"
+          class="border p-2 rounded w-1/4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Search trainers..."
           oninput="searchTrainers()"
         />
       </div>
 
-      <div id="trainer-list">
-        {% for trainer in trainers %}
-        <div
-          class="trainer-item flex items-center mb-4 p-4 bg-white shadow-md rounded"
-          data-trainer-id="{{ trainer.id }}"
-        >
-          <!-- Display Trainer Profile Picture -->
-          <img
-            src="{{ trainer.profile_picture.url }}"
-            alt="Trainer Image"
-            class="w-20 h-20 rounded-full mr-4"
-          />
+<div id="trainer-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+  {% for trainer in trainers %}
+  <div
+    class="trainer-item bg-white p-4 shadow-lg rounded-lg transform hover:scale-105 transition-transform"
+    data-trainer-id="{{ trainer.id }}"
+  >
+    <!-- Trainer Profile Picture (centered) -->
+    <div class="mb-4 flex justify-center">
+      <img
+        src="{{ trainer.profile_picture.url }}"
+        alt="Trainer Image"
+        class="w-24 h-24 rounded-full object-cover"
+      />
+    </div>
 
-          <div class="flex-grow">
-            <!-- Display Trainer Name with link to open popup -->
-            <h2
-              class="text-xl font-semibold cursor-pointer"
-              onclick="openTrainerPopup({{ trainer.id }})"
-            >
-              {{ trainer.name }}
-            </h2>
+    <!-- Trainer Name -->
+    <h2
+      class="text-xl font-semibold text-center cursor-pointer hover:text-blue-600 mb-2"
+      onclick="openTrainerPopup({{ trainer.id }})"
+    >
+      {{ trainer.name }}
+    </h2>
 
-            <!-- Display Trainer Gym Name or "No Gym" -->
-            <p class="text-sm text-gray-500">
-              {% if trainer.gym_id %} {{ trainer.gym_id.gym_name }} {% else %}
-              No Gym {% endif %}
-            </p>
-          </div>
+    <!-- Trainer Gym Name or "No Gym" -->
+    <p class="text-sm text-gray-500 text-center mb-4">
+      {% if trainer.gym_id %}
+        {{ trainer.gym_id.gym_name }}
+      {% else %}
+        No Gym
+      {% endif %}
+    </p>
 
-          <!-- Connect Button -->
-           <form method="post">
-            {% csrf_token %}
-            <button
-            id="connect-btn-{{ trainer.id }}"
-            onclick="sendConnectionRequest({{ trainer.id }})"
-            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">
-            Connect
-          </button>
-           </form>
-        </div>
-        {% empty %}
-        <p>No trainers available.</p>
-        {% endfor %}
-      </div>
+    <!-- Connect Button -->
+    <form method="post" class="text-center">
+      {% csrf_token %}
+      <button
+        id="connect-btn-{{ trainer.id }}"
+        onclick="sendConnectionRequest({{ trainer.id }})"
+        class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+      >
+        Connect
+      </button>
+    </form>
+  </div>
+  {% empty %}
+  <p>No trainers available.</p>
+  {% endfor %}
+</div>
 
+</div>
+    </main>
       <!-- Trainer Details Popup -->
       <div class="overlay" id="overlay" onclick="closePopup()"></div>
-      <div class="popup" id="popup">
+      <div class="popup p-6" id="popup">
         <!-- Hidden input for storing trainer ID -->
         <input type="hidden" id="trainer-id" />
         <div class="mb-4">
@@ -122,7 +150,7 @@
             id="trainer-image"
             src=""
             alt="Trainer Image"
-            class="w-32 h-32 object-cover mb-4"
+            class="w-32 h-32 object-cover mb-4 rounded-full mx-auto"
           />
           <p><strong>Address:</strong> <span id="trainer-address"></span></p>
           <p><strong>Contact No:</strong> <span id="trainer-contact"></span></p>
@@ -144,13 +172,13 @@
 
         <div class="mt-4 flex justify-between">
           <button
-            class="bg-red-500 text-white px-4 py-2 rounded"
+            class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
             onclick="closePopup()"
           >
             Close
           </button>
           <button
-            class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
+            class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-700"
             onclick="sendConnectionRequestPopup()"
           >
             Connect
@@ -159,142 +187,36 @@
       </div>
     </div>
 
-    <script type="text/javascript">
-        // Function to show the success message
-function showSuccessMessage(message) {
-    const messageElement = document.getElementById("success-message");
-    const successText = document.getElementById("success-text");
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-white py-6 shadow-inner">
+      <div class="container mx-auto flex items-center justify-between px-4">
+        <div class="footer-logo flex items-center">
+          <img
+            src="{% static 'gymOwner/image/footer-logo.png' %}"
+            class="w-10 h-10 rounded-full hover:scale-105 transition-transform duration-300"
+            alt="Footer Logo"
+          />
+          <span class="ml-2 text-sm font-medium"
+            >Developed By - MOHD ASJAD</span
+          >
+        </div>
+        <div class="social-links flex space-x-4">
+          <a href="#" class="hover:text-blue-400 transition duration-200"
+            >Facebook</a
+          >
+          <a href="#" class="hover:text-blue-400 transition duration-200"
+            >Twitter</a
+          >
+          <a href="#" class="hover:text-blue-400 transition duration-200"
+            >LinkedIn</a
+          >
+        </div>
+      </div>
+    </footer>
 
-    successText.textContent = message;
-
-    // Show the message and fade it in
-    messageElement.style.display = "block";
-    setTimeout(() => {
-        messageElement.style.opacity = 1;
-    }, 10); // Delay to allow the transition to work
-
-    // Hide the message after 5 seconds
-    setTimeout(() => {
-        setTimeout(() => {
-            messageElement.style.display = "none";
-        }, 500); // Wait for the fade-out transition to complete
-    }, 5000); // Wait for 5 seconds before hiding
-}
-      // Function to open the popup with trainer details
-      function openTrainerPopup(trainerId) {
-        console.log(`/gym-owner/get-trainer-details/${trainerId}/`);
-        fetch(`/gym-owner/get-trainer-details/${trainerId}/`)
-          .then((response) => response.json())
-          .then((data) => {
-            document.getElementById("trainer-name").textContent = data.name;
-            document.getElementById("trainer-address").textContent =
-              data.address;
-            document.getElementById("trainer-contact").textContent =
-              data.contact_no;
-            document.getElementById("trainer-gym").textContent = data.gym_name;
-            document.getElementById("trainer-gym-address").textContent =
-              data.gym_address;
-            document.getElementById("trainer-certificate").href =
-              data.certificate_link;
-
-            if (data.image_url) {
-              document.getElementById("trainer-image").src = data.image_url;
-              document.getElementById("trainer-image").style.display = "block";
-            } else {
-              document.getElementById("trainer-image").style.display = "none";
-            }
-
-            // Set the trainer ID in the hidden input
-            document.getElementById("trainer-id").value = trainerId;
-
-            // Show the popup and overlay
-            document.getElementById("popup").style.display = "block";
-            document.getElementById("overlay").style.display = "block";
-          })
-          .catch((error) => console.error("Error:", error));
-      }
-
-      // Function to close the popup
-      function closePopup() {
-        document.getElementById("popup").style.display = "none";
-        document.getElementById("overlay").style.display = "none";
-      }
-
-      // Function to send a connection request from the trainer list
-      function sendConnectionRequest(trainerId) {
-        
-        const csrftoken = document.querySelector(
-          "[name=csrfmiddlewaretoken]"
-        ).value;
-        console.log(csrftoken)
-        // Check if the csrftoken is properly fetched
-        if (!csrftoken) {
-          console.error("CSRF token not found!");
-          return;
-        }
-
-        const trainerItem = document.querySelector(
-          `[data-trainer-id="${trainerId}"]`
-        );
-        
-        if (!trainerItem) {
-          console.error("Trainer item not found!");
-          return;
-        }
-
-        const connectButton = trainerItem.querySelector("button"); // Get the "Connect" button
-        console.log(connectButton)
-        fetch(`/gym-owner/create-trainer-request/`, {
-          method: "POST", // Ensure POST method is used
-          headers: {
-            "Content-Type": "application/json", // Send as JSON
-            "X-CSRFToken": csrftoken,
-          },
-          body: JSON.stringify({ trainer_id: trainerId }), // Send trainer_id as JSON
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.message) {
-              // Remove the trainer item from the list
-              trainerItem.remove(); // Removes the trainer's entry from the DOM
-
-              // Optionally, you can display a message or alert the user about the successful request
-              // Display the success message
-            showSuccessMessage("Request Sent Successfully!");
-            } else {
-              alert(data.error);
-            }
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-          });
-      }
-
-      // Function to send a connection request from the popup
-      function sendConnectionRequestPopup() {
-        const trainerId = document.getElementById("trainer-id").value; // Get trainer ID from the hidden input
-        sendConnectionRequest(trainerId);
-        closePopup();
-      }
-
-      // Search function to filter trainers
-      function searchTrainers() {
-        const input = document
-          .getElementById("search-input")
-          .value.toLowerCase();
-        const trainerItems = document.querySelectorAll(".trainer-item");
-
-        trainerItems.forEach((item) => {
-          const trainerName = item
-            .querySelector("h2")
-            .textContent.toLowerCase();
-          if (trainerName.includes(input)) {
-            item.style.display = "flex"; // Show if it matches
-          } else {
-            item.style.display = "none"; // Hide if it doesn't match
-          }
-        });
-      }
-    </script>
+    <script
+      type="text/javascript"
+      src="{% static 'gymOwner/js/script.js' %}"
+    ></script>
   </body>
 </html>

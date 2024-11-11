@@ -58,7 +58,14 @@ def get_trainer_details(request, trainer_id):
     
     return JsonResponse(trainer_data)
 
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+import json
+from .models import Trainer, TrainerRequest
+
 @login_required
+@require_POST
 def create_trainer_request(request):
     try:
         # Parse JSON from the request body
@@ -66,42 +73,37 @@ def create_trainer_request(request):
 
         # Get trainer_id from the parsed data
         trainer_id = data.get('trainer_id')
-
-        # Check if trainer_id is valid
+        print(trainer_id)
         if not trainer_id:
             return JsonResponse({'error': 'Trainer ID is required'}, status=400)
 
-        # Check if the trainer exists in the database
+        # Check if the trainer exists
         trainer = Trainer.objects.filter(id=trainer_id).first()
         if not trainer:
             return JsonResponse({'error': 'Trainer not found'}, status=404)
 
-        # Get the logged-in gym owner (assuming gym_owner is related to the user)
-        gym_owner = request.user.gymowner  # Replace with correct logic if necessary
+        # Get the logged-in gym owner (replace with correct logic if necessary)
+        gym_owner = request.user.gymowner
 
-        # Check if a request for this trainer already exists
-        existing_request = TrainerRequest.objects.filter(gym=gym_owner, trainer=trainer).exists()
-        if existing_request:
+        # Check if a request for this trainer already exists for the gym owner
+        if TrainerRequest.objects.filter(gym=gym_owner, trainer=trainer).exists():
             return JsonResponse({'error': 'You have already sent a request to this trainer'}, status=400)
 
-        # Create a new trainer request
-        trainer_request = TrainerRequest.objects.create(
+        # Create a new trainer request with default status 'pending'
+        TrainerRequest.objects.create(
             gym=gym_owner,
             trainer=trainer,
-            request_data="Request for collaboration",  # Customize if you need more info
-            status='pending'  # Default status is 'pending'
+            request_data="Request for collaboration"  # Customize as needed
         )
-
-        # Return success message
+        
+        # Return success response
         return JsonResponse({'message': 'Request Sent Successfully'}, status=201)
 
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON data'}, status=400)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
-
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except AttributeError:
+        # Catch attribute error if user does not have a gymowner profile
+        return JsonResponse({'error': 'You are not authorized as a gym owner'}, status=403)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 

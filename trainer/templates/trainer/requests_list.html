@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
     <title>Trainer Requests</title>
-    {% comment %} <link rel="stylesheet" href="{% static 'css/styles.css' %}"> {% endcomment %}
     <script>
         function openGymDetails(gymName, email, contact, address) {
             document.getElementById('gym-name').textContent = gymName;
@@ -18,39 +21,74 @@
         }
     </script>
 </head>
-<body>
-    <h3>Requests</h3>
-    <div class="requests-container">
-        {% for request in trainer_requests %}
-            <div class="request-item">
-                <span class="gym-name" onclick="openGymDetails('{{ request.gym.gym_name }}', '{{ request.gym.email }}', '{{ request.gym.contact }}', '{{ request.gym.address }}')">
+<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+{% load static %}
+    <!-- Header Section -->
+    <header class="bg-blue-500 text-white py-4 shadow-lg">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-4 px-10">
+                <img src="{% static 'core/image/logo.png' %}" class="w-16 h-16 rounded-full" alt="GymConnect Logo"/>
+                <div class="text-xl font-semibold">GymConnect</div>
+            </div>
+            <nav class="px-10">
+                <a href="{% url 'home' %}" class="text-lg font-medium hover:text-gray-300 transition duration-200">Home</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto py-8 px-6">
+        <h3 class="text-2xl font-semibold mb-4">Trainer Requests</h3>
+        <div class="space-y-4 flex item-center ">
+            {% for request in trainer_requests %}
+            <div class="flex items-center space-x-10 bg-white shadow-sm rounded-lg p-4 hover:bg-gray-50 transition duration-200">
+                <span class="text-lg font-medium text-gray-800 cursor-pointer" onclick="openGymDetails('{{ request.gym.gym_name }}', '{{ request.gym.email }}', '{{ request.gym.contact_no }}', '{{ request.gym.address }}, {{request.gym.city}}')">
                     {{ request.gym.gym_name }}
                 </span>
-                <span class="request-date">{{ request.request_date }}</span>
-                <form action="{% url 'update_request_status' request.id 'accept' %}" method="post" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit">Accept</button>
-                </form>
-                <form action="{% url 'update_request_status' request.id 'reject' %}" method="post" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit">Reject</button>
-                </form>
+                <span class="text-sm text-gray-600">{{ request.request_date }}</span>
+                <div class="flex space-x-4">
+                    <form action="{% url 'update_request_status' request.id 'accept' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">Accept</button>
+                    </form>
+                    <form action="{% url 'update_request_status' request.id 'reject' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Reject</button>
+                    </form>
+                </div>
             </div>
-        {% empty %}
+            {% empty %}
             <p>No requests.</p>
-        {% endfor %}
-    </div>
+            {% endfor %}
+        </div>
+    </main>
 
     <!-- Gym Details Popup -->
-    <div id="gym-details-popup" class="popup" style="display: none;">
-        <div class="popup-content">
-            <h3>Gym Details</h3>
-            <p>Name: <span id="gym-name"></span></p>
-            <p>Email: <span id="gym-email"></span></p>
-            <p>Contact No: <span id="gym-contact"></span></p>
-            <p>Address: <span id="gym-address"></span></p>
-            <button onclick="closePopup()">Close</button>
+    <div id="gym-details-popup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center" style="display: none;">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-80">
+            <h3 class="text-xl font-semibold mb-4">Gym Details</h3>
+            <p><strong>Name:</strong> <span id="gym-name"></span></p>
+            <p><strong>Email:</strong> <span id="gym-email"></span></p>
+            <p><strong>Contact No:</strong> <span id="gym-contact"></span></p>
+            <p><strong>Address:</strong> <span id="gym-address"></span></p>
+            <button onclick="closePopup()" class="mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Close</button>
         </div>
     </div>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-white py-4 shadow-inner mt-auto">
+        <div class="container mx-auto flex items-center justify-between px-4">
+            <div class="flex items-center">
+                <img src="{% static 'core/image/logo.png' %}" class="w-10 h-10 rounded-full" alt="Footer Logo"/>
+                <span class="ml-2 text-sm">Developed by MOHD ASJAD</span>
+            </div>
+            <div class="flex space-x-4">
+                <a href="#" class="hover:text-blue-400">Facebook</a>
+                <a href="#" class="hover:text-blue-400">Twitter</a>
+                <a href="#" class="hover:text-blue-400">LinkedIn</a>
+            </div>
+        </div>
+    </footer>
+
 </body>
 </html>

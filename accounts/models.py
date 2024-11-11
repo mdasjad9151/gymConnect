@@ -61,7 +61,7 @@ class Admin(BaseUser):
 class GymOwner(BaseUser):
     gym_name = models.CharField(max_length=255)
     contact_no = models.CharField(max_length=10, null= True)
-    address = models.TextField(blank=True, null=True)
+    address = models.CharField(max_length=255,blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     state = models.CharField(max_length=100, blank=True, null=True)
     
@@ -87,7 +87,7 @@ class Trainer(BaseUser):
     name = models.CharField(max_length=255)
     gym_id = models.ForeignKey(GymOwner, on_delete=models.CASCADE, blank=True, null=True, default=default_gym_owner)  # Using callable for default
     contact_no = models.CharField(max_length=10, null= True)
-    address = models.TextField(blank=True, null=True)
+    address = models.CharField(max_length=255,blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     state = models.CharField(max_length=100, blank=True, null=True)
 
@@ -115,7 +115,7 @@ class GymUser(BaseUser):
     contact_no = models.CharField(max_length=10, null= True)
     trainer_id = models.ForeignKey(Trainer, on_delete=models.CASCADE, blank=True, null=True, default=default_trainer)
     gym_id = models.ForeignKey(GymOwner, on_delete=models.CASCADE, blank=True, null=True, default=default_gym_owner)
-    address = models.TextField(blank=True, null=True)
+    address = models.CharField(max_length=255,blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     state = models.CharField(max_length=100, blank=True, null=True)
 
