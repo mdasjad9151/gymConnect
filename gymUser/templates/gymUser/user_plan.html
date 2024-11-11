@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Plan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold text-center mb-8">Your Workout & Diet Plan</h1>
+
+        {% if user_plan %}
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Workout Section -->
+                <div class="bg-white shadow-md rounded-lg p-6">
+                    <h2 class="text-2xl font-semibold text-center mb-4">Workout Plan</h2>
+                    <ul class="space-y-4">
+                        <li><strong>Monday:</strong> {{ user_plan.monday_workout|default:"No plan set" }}</li>
+                        <li><strong>Tuesday:</strong> {{ user_plan.tuesday_workout|default:"No plan set" }}</li>
+                        <li><strong>Wednesday:</strong> {{ user_plan.wednesday_workout|default:"No plan set" }}</li>
+                        <li><strong>Thursday:</strong> {{ user_plan.thursday_workout|default:"No plan set" }}</li>
+                        <li><strong>Friday:</strong> {{ user_plan.friday_workout|default:"No plan set" }}</li>
+                        <li><strong>Saturday:</strong> {{ user_plan.saturday_workout|default:"No plan set" }}</li>
+                    </ul>
+                </div>
+
+                <!-- Diet Section -->
+                <div class="bg-white shadow-md rounded-lg p-6">
+                    <h2 class="text-2xl font-semibold text-center mb-4">Diet Plan</h2>
+                    <ul class="space-y-4">
+                        <li><strong>Breakfast:</strong> {{ user_plan.breakfast|default:"No plan set" }}</li>
+                        <li><strong>Lunch:</strong> {{ user_plan.lunch|default:"No plan set" }}</li>
+                        <li><strong>Dinner:</strong> {{ user_plan.dinner|default:"No plan set" }}</li>
+                        <li><strong>Pre-workout Diet:</strong> {{ user_plan.preworkout_diet|default:"No plan set" }}</li>
+                    </ul>
+                </div>
+            </div>
+            <p class="text-center text-gray-600 mt-4">Last updated: {{ user_plan.update_date }}</p>
+        {% else %}
+            <p class="text-center text-red-500 text-xl">No workout or diet plan found for you. Please contact your trainer to create a plan.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

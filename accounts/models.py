@@ -24,7 +24,7 @@ class BaseUser(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=128)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    contact = models.CharField(max_length=15, blank=True, null=True)
+    # contact = models.CharField(max_length=15, blank=True, null=True)
 
     objects = BaseUserManager()
 
@@ -79,8 +79,8 @@ class Trainer(BaseUser):
         # GymOwner = apps.get_model('gymowner', 'GymOwner')  # Get the GymOwner model dynamically
         try:
             # Return the id of the default GymOwner
-            return GymOwner.objects.get(email="defult@gymconnect.com").id
-        except GymOwner.DoesNotExist:
+            return Trainer.objects.get(email="default@gymconnect.com").id
+        except Trainer.DoesNotExist:
             # If the default GymOwner doesn't exist, return None or a valid default ID
             return None  # or a default valid ID if you prefer
 
@@ -99,10 +99,22 @@ class Trainer(BaseUser):
 
 # GymUser class
 class GymUser(BaseUser):
+    def default_trainer():
+        try:
+            return GymOwner.objects.get(email="defaulttrainer@gymconnect.com").id
+        except GymOwner.DoesNotExist:
+            return None  # or a default valid ID if you prefer
+
+    def default_gym_owner():
+
+        try:
+            return Trainer.objects.get(email="default@gymconnect.com").id
+        except Trainer.DoesNotExist:
+            return None 
     name = models.CharField(max_length=255)
     contact_no = models.CharField(max_length=10, null= True)
-    trainer_id = models.ForeignKey(Trainer, on_delete=models.CASCADE, blank=True, null=True)
-    gym_id = models.ForeignKey(GymOwner, on_delete=models.CASCADE, blank=True, null=True)
+    trainer_id = models.ForeignKey(Trainer, on_delete=models.CASCADE, blank=True, null=True, default=default_trainer)
+    gym_id = models.ForeignKey(GymOwner, on_delete=models.CASCADE, blank=True, null=True, default=default_gym_owner)
     address = models.TextField(blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     state = models.CharField(max_length=100, blank=True, null=True)

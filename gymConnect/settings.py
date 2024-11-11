@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'accounts',
     'gymOwner',
     'trainer',
+    'gymUser'
 ]
 
 MIDDLEWARE = [
@@ -134,3 +135,10 @@ AUTH_USER_MODEL = 'accounts.BaseUser'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+STATIC_URL = "static/"
+
+# Include additional directories for static files
+STATICFILES_DIRS = [
+    BASE_DIR / "static",  # Ensure this path points to your static folder
+]

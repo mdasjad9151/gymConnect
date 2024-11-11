@@ -4,17 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GymConnect Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Welcome to GymConnect</h1>
-    <nav>
-        <ul>
-            <li><a href="{% url 'register_gym_owner' %}">Register Gym Owner</a></li>
-            <li><a href="{% url 'register_trainer' %}">Register Trainer</a></li>
-            <li><a href="{% url 'register_gym_user' %}">Register Gym User</a></li>
-            <li><a href="{% url 'login' %}">Login</a></li>
+<body class="bg-gray-100 font-sans">
 
+    <!-- Header Section -->
+    <header class="bg-blue-500 text-white py-6">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="logo flex items-center space-x-4">
+                <img src="{% static 'core/image/logo.png' %}" class="w-16 h-16 rounded-full" alt="GymConnect Logo"/>
+                <div class="logoname text-xl font-semibold">GymConnect</div>
+            </div>
+            <div class="login">
+                <a href="{% url 'login' %}" class="text-lg font-medium hover:text-gray-300 transition duration-300">Login</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Motivation Section -->
+    <div class="thought bg-blue-200 text-center py-4 text-xl font-semibold text-gray-800">
+        "Stay strong, stay focused, and never give up!"
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto mt-8 px-4">
+        <ul class="space-y-6">
+            <li>
+                <div class="owner bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
+                    <a href="{% url 'register_gym_owner' %}" class="text-lg font-medium text-blue-600 hover:text-blue-800">Register Gym Owner</a>
+                </div>
+            </li>
+            <li>
+                <div class="trainer bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
+                    <a href="{% url 'register_trainer' %}" class="text-lg font-medium text-green-600 hover:text-green-800">Register Trainer</a>
+                </div>
+            </li>
+            <li>
+                <div class="user bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
+                    <a href="{% url 'register_gym_user' %}" class="text-lg font-medium text-purple-600 hover:text-purple-800">Register Gym User</a>
+                </div>
+            </li>
         </ul>
-    </nav>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-white py-6 mt-12">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="footer-logo">
+                <img src="{% static 'core/image/footer-logo.png' %}" class="w-16 h-16 rounded-full" alt="Footer Logo" />
+            </div>
+            <div class="dev-name text-sm font-medium">
+                Developed By - MOHD ASJAD
+            </div>
+        </div>
+    </footer>
+
 </body>
 </html>

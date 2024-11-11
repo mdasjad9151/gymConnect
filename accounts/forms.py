@@ -45,7 +45,7 @@ class GymUserRegistrationForm(forms.ModelForm):
     class Meta:
         model = GymUser
         fields = [
-            'email', 'password', 'name', 'trainer_id', 'gym_id', 'contact_no', 
+            'email', 'password', 'name', 'contact_no', 
             'address', 'city', 'state', 'profile_picture'
         ]
         widgets = {

@@ -1,5 +1,5 @@
 import json
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404,redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -13,11 +13,6 @@ from .forms import TrainerSelectForm
 def gym_owner_deshboard(request):
     
     return render(request, 'gymOwner/deshboard.html')
-
-@login_required
-def add_user(request):
-    # Logic to add a user
-    return HttpResponse("add user")
 
 @login_required
 def add_trainer(request):
@@ -110,6 +105,35 @@ def create_trainer_request(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+
+
+def assign_user(request):
+    # Get the logged-in user and ensure they are a gym owner
+    gym_owner = GymOwner.objects.get(id=request.user.id)
+
+        # Fetch users in the same gym who have trainers from other gyms
+    unassigned_users = GymUser.objects.filter(
+        gym_id=gym_owner,                       # Same gym as logged-in owner
+        # trainer_id__isnull=False,               # Users who have a trainer assigned
+    ).exclude(trainer_id__gym_id=gym_owner)     # Exclude users whose trainer belongs to this gym
+    # Get all trainers working under this gym owner
+    trainers = Trainer.objects.filter(gym_id=gym_owner)
+
+    if request.method == "POST":
+        # Get selected user and trainer from POST data
+        user_id = request.POST.get("user_id")
+        trainer_id = request.POST.get("trainer_id")
+
+        # Assign the trainer to the selected user
+        GymUser.objects.filter(id=user_id, gym_id=gym_owner).update(trainer_id=trainer_id)
+
+        # Redirect to the same page to refresh the list
+        return redirect("assign_trainer")
+
+    return render(request, "gymowner/assign_trainer.html", {
+        "unassigned_users": unassigned_users,
+        "trainers": trainers,
+    })
 
 @login_required
 def list_users(request):
