@@ -7,12 +7,15 @@ from trainer.models import Plan
 
 @login_required
 def user_dashboard(request):
-    return render(request, 'gymUser/deshboard.html')  
+    user =  request.user
+    profile =  GymUser.objects.get(id =  user.id)
+    return render(request, 'gymUser/deshboard.html',{'profile': profile})  
 
 @login_required
 def join_gym(request):
     # Get the current user and check if they are a GymUser
     user = request.user
+    profile =  GymUser.objects.get(id =  user.id)
     gym_user = GymUser.objects.filter(id=user.id).first()
     
     # Fetch gyms in the same city as the GymUser
@@ -21,6 +24,7 @@ def join_gym(request):
     return render(request, 'gymUser/join_gym.html', {
         'gyms': gyms_in_city,
         'gym_user': gym_user,
+        'profile': profile,
     })
 
 @login_required
@@ -37,6 +41,8 @@ def join_selected_gym(request, gym_id):
     return JsonResponse({"success": True})
 
 def view_plan(request):
+    user = request.user
+    profile =  GymUser.objects.get(id =  user.id)
     gym_user = request.user.gymuser
     try:
         user_plan = Plan.objects.get(user=gym_user)
@@ -45,4 +51,5 @@ def view_plan(request):
 
     return render(request, 'gymUser/user_plan.html', {
         'user_plan': user_plan,
+        'profile': profile,
     })

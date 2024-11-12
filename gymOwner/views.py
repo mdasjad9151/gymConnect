@@ -11,12 +11,16 @@ from .forms import TrainerSelectForm
 # Create your views here.
 @login_required
 def gym_owner_deshboard(request):
+    owner=  request.user
+    profile =  GymOwner.objects.get(id = owner.id)
     
-    return render(request, 'gymOwner/deshboard.html')
+    return render(request, 'gymOwner/deshboard.html',{'profile':profile})
 
 @login_required
 def add_trainer(request):
     # Get the logged-in gym owner
+    owner=  request.user
+    profile =  GymOwner.objects.get(id = owner.id)
     gym_owner = request.user.gymowner
 
     # Get all trainers who are not associated with the logged-in gym owner
@@ -36,7 +40,8 @@ def add_trainer(request):
         request,
         'gymOwner/add_trainer.html',
         {
-            'trainers': trainers_to_display,  # Only trainers that haven't been requested
+            'trainers': trainers_to_display,# Only trainers that haven't been requested
+            'profile':profile,  
         }
     )
 
@@ -111,6 +116,8 @@ def create_trainer_request(request):
 
 def assign_user(request):
     # Get the logged-in user and ensure they are a gym owner
+    owner=  request.user
+    profile =  GymOwner.objects.get(id = owner.id)
     gym_owner = GymOwner.objects.get(id=request.user.id)
 
         # Fetch users in the same gym who have trainers from other gyms
@@ -135,17 +142,36 @@ def assign_user(request):
     return render(request, "gymowner/assign_trainer.html", {
         "unassigned_users": unassigned_users,
         "trainers": trainers,
+        'profile':profile
     })
 
 @login_required
 def list_users(request):
-    # Fetch and display all users
-    users = GymUser.objects.all()  # Assuming User model is defined
-    return HttpResponse(users)
+    # Get the gym ID from the logged-in user (assuming the gym owner is logged in)
+    gym_id =  request.user
+    gym_owner = GymOwner.objects.get(id=request.user.id)
+    # Fetch users under the logged-in user's gym, with related trainer details
+    users = GymUser.objects.filter(gym_id=gym_id).select_related('trainer_id')
+
+    # Prepare the user and trainer data for display
+    print(gym_owner.profile_picture)
+    user_data = []
+    for user in users:
+        user_data.append({
+            'profile': user.profile_picture,
+            "username": user.name,
+            'phone': user.contact_no,
+            'email':user.email,
+            "trainer_name": user.trainer_id.name if user.trainer_id else "No trainer assigned",
+        })
+
+    # Render the user data as a response (or you could render it in a template)
+    return render(request, 'gymOwner/list_users.html', {"users": user_data,'owner_profile':gym_owner,})
 
 @login_required
 def list_trainers(request):
-    # Fetch and display all trainers
-    trainers = Trainer.objects.all()  # Assuming Trainer model is defined
-    return HttpResponse(trainers)
+    # Fetch and display all trainers associated with the logged-in user's gym
+    gym_id = request.user
+    trainers = Trainer.objects.filter(gym_id=gym_id.id)  # Assuming Trainer model is defined
+    return render(request, 'gymOwner/trainers_list.html', {'trainers': trainers})
 

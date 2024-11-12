@@ -19,30 +19,40 @@
   <body class="bg-gray-100 font-sans min-h-screen flex flex-col">
     {% load static %}
     <!-- Header Section -->
-    <header class="bg-blue-500 text-white py-6 shadow-lg">
-      <div class="container mx-auto flex items-center justify-between px-10">
-        <div class="logo flex items-center space-x-4">
-          <img
-            src="{% static 'trainer/image/logo.png' %}"
-            class="w-16 h-16 rounded-full hover:scale-105 transition-transform duration-300"
+    <header class="bg-blue-500 text-white py-4 shadow-lg">
+      <div class="container mx-auto flex items-center justify-between">
+        <!-- Logo Section -->
+        <div class="flex items-center space-x-4 px-10">
+          <a href="{% url 'trainer_dashboard' %}"><img
+            src="{% static 'core/image/logo.png' %}"
+            class="w-16 h-16 rounded-full"
             alt="GymConnect Logo"
-          />
-          <div class="logoname text-xl font-semibold">GymConnect</div>
+          /></a>
+          <div class="text-xl font-semibold">GymConnect</div>
         </div>
-        <div class="login">
-          <a
-            href="{% url 'home' %}"
-            class="text-lg font-medium hover:text-gray-300 transition duration-200"
-            >Home</a
-          >
-        </div>
+
+        <!-- Profile Picture with Dropdown -->
+        <nav class="relative px-10">
+          <!-- Profile Picture Button -->
+          
+            <a href="{% url 'logout' %}">
+              <img
+              src="{{ profile.profile_picture.url }}"
+              class="w-10 h-10 rounded-full object-cover"
+              alt="Profile Picture"
+            />
+            </a>
+          
+            
+          </div>
+        </nav>
       </div>
     </header>
 
     <!-- Main Content -->
-    <main class="flex-grow container mx-auto py-8 flex space-x-8">
+    <main class="flex-grow container mx-2 py-8 flex space-x-8">
       <!-- Gym Users List -->
-      <ul class="w-1/4 space-y-6">
+      <ul class="w-1/3 space-y-6">
         {% for gym_user in gym_users %}
         <li
           class="p-4 bg-white shadow-md rounded-lg flex items-center justify-between space-x-4"
@@ -55,9 +65,6 @@
             />
             <div>
               <strong class="text-lg">{{ gym_user.name }}</strong>
-              <p class="text-sm text-gray-600">
-                Last Update: {{ gym_user.plan.update_date|default:"NA" }}
-              </p>
             </div>
           </div>
           <button
@@ -73,7 +80,7 @@
       <!-- Plan Update Popup -->
       <div
         id="plan-popup"
-        class="w-3/4 bg-white shadow-lg rounded-lg p-6 fixed inset-y-0 right-0 flex flex-col space-y-6 hidden overflow-y-auto max-h-full"
+        class="w-4/6 h-5/6 justify-center item-center bg-white shadow-lg rounded-lg p-6 fixed mx-10 inset-y-0 right-0 flex flex-col space-y-6 hidden overflow-y-auto max-h-full"
       >
         <h3 class="text-2xl font-bold mb-4 text-center">Update Plan</h3>
         <div class="text-center mb-4">
@@ -86,7 +93,7 @@
         <!-- Monday Workout -->
         <div>
             <label class="block font-semibold">Monday Workout:</label>
-            <div id="monday_div" class="mb-2 p-2 border border-gray-200 rounded flex flex-wrap gap-2"></div>
+            <div id="monday_div" class="mb-2 p-2  rounded flex flex-wrap gap-2"></div>
             <div class="flex items-center space-x-2">
                 <input type="text" id="monday" class="border border-gray-300 rounded px-3 py-2 w-full">
                 <button type="button" onclick="addItemToContainer('monday', document.getElementById('monday').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
@@ -96,7 +103,7 @@
         <!-- Tuesday Workout -->
         <div>
             <label class="block font-semibold">Tuesday Workout:</label>
-            <div id="tuesday_div" class="mb-2 p-2 border border-gray-200 rounded flex flex-wrap gap-2"></div>
+            <div id="tuesday_div" class="mb-2 p-2  rounded flex flex-wrap gap-2"></div>
             <div class="flex items-center space-x-2">
                 <input type="text" id="tuesday" class="border border-gray-300 rounded px-3 py-2 w-full">
                 <button type="button" onclick="addItemToContainer('tuesday', document.getElementById('tuesday').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
@@ -106,7 +113,7 @@
         <!-- Wednesday Workout -->
         <div>
             <label class="block font-semibold">Wednesday Workout:</label>
-            <div id="wednesday_div" class="mb-2 p-2 border border-gray-200 rounded flex flex-wrap gap-2"></div>
+            <div id="wednesday_div" class="mb-2 p-2  rounded flex flex-wrap gap-2"></div>
             <div class="flex items-center space-x-2">
                 <input type="text" id="wednesday" class="border border-gray-300 rounded px-3 py-2 w-full">
                 <button type="button" onclick="addItemToContainer('wednesday', document.getElementById('wednesday').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
@@ -116,7 +123,7 @@
         <!-- Thursday Workout -->
         <div>
             <label class="block font-semibold">Thursday Workout:</label>
-            <div id="thursday_div" class="mb-2 p-2 border border-gray-200 rounded flex flex-wrap gap-2"></div>
+            <div id="thursday_div" class="mb-2 p-2  rounded flex flex-wrap gap-2"></div>
             <div class="flex items-center space-x-2">
                 <input type="text" id="thursday" class="border border-gray-300 rounded px-3 py-2 w-full">
                 <button type="button" onclick="addItemToContainer('thursday', document.getElementById('thursday').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
@@ -126,7 +133,7 @@
         <!-- Friday Workout -->
         <div>
             <label class="block font-semibold">Friday Workout:</label>
-            <div id="friday_div" class="mb-2 p-2 border border-gray-200 rounded flex flex-wrap gap-2"></div>
+            <div id="friday_div" class="mb-2 p-2  rounded flex flex-wrap gap-2"></div>
             <div class="flex items-center space-x-2">
                 <input type="text" id="friday" class="border border-gray-300 rounded px-3 py-2 w-full">
                 <button type="button" onclick="addItemToContainer('friday', document.getElementById('friday').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
@@ -136,17 +143,16 @@
         <!-- Saturday Workout -->
         <div>
             <label class="block font-semibold">Saturday Workout:</label>
-            <div id="saturday_div" class="mb-2 p-2 border border-gray-200 rounded flex flex-wrap gap-2"></div>
+            <div id="saturday_div" class="mb-2 p-2  rounded flex flex-wrap gap-2"></div>
             <div class="flex items-center space-x-2">
                 <input type="text" id="saturday" class="border border-gray-300 rounded px-3 py-2 w-full">
                 <button type="button" onclick="addItemToContainer('saturday', document.getElementById('saturday').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
             </div>
         </div>
-
         <!-- Breakfast -->
         <div>
             <label class="block font-semibold">Breakfast:</label>
-            <div id="breakfast_div" class="mb-2 p-2 border border-gray-200 rounded flex flex-wrap gap-2"></div>
+            <div id="breakfast_div" class="mb-2 p-2  rounded flex flex-wrap gap-2"></div>
             <div class="flex items-center space-x-2">
                 <input type="text" id="breakfast" class="border border-gray-300 rounded px-3 py-2 w-full">
                 <button type="button" onclick="addItemToContainer('breakfast', document.getElementById('breakfast').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
@@ -156,7 +162,7 @@
         <!-- Lunch -->
         <div>
             <label class="block font-semibold">Lunch:</label>
-            <div id="lunch_div" class="mb-2 p-2 border border-gray-200 rounded flex flex-wrap gap-2"></div>
+            <div id="lunch_div" class="mb-2 p-2  rounded flex flex-wrap gap-2"></div>
             <div class="flex items-center space-x-2">
                 <input type="text" id="lunch" class="border border-gray-300 rounded px-3 py-2 w-full">
                 <button type="button" onclick="addItemToContainer('lunch', document.getElementById('lunch').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
@@ -166,7 +172,7 @@
         <!-- Dinner -->
         <div>
             <label class="block font-semibold">Dinner:</label>
-            <div id="dinner_div" class="mb-2 p-2 border border-gray-200 rounded flex flex-wrap gap-2"></div>
+            <div id="dinner_div" class="mb-2 p-2  rounded flex flex-wrap gap-2"></div>
             <div class="flex items-center space-x-2">
                 <input type="text" id="dinner" class="border border-gray-300 rounded px-3 py-2 w-full">
                 <button type="button" onclick="addItemToContainer('dinner', document.getElementById('dinner').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
@@ -176,7 +182,7 @@
         <!-- Pre-workout Diet -->
         <div>
             <label class="block font-semibold">Pre-workout Diet:</label>
-            <div id="preworkout_diet_div" class="mb-2 p-2 border border-gray-200 rounded flex flex-wrap gap-2"></div>
+            <div id="preworkout_diet_div" class="mb-2 p-2  rounded flex flex-wrap gap-2"></div>
             <div class="flex items-center space-x-2">
                 <input type="text" id="preworkout_diet" class="border border-gray-300 rounded px-3 py-2 w-full">
                 <button type="button" onclick="addItemToContainer('preworkout_diet', document.getElementById('preworkout_diet').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>

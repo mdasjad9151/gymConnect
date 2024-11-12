@@ -1,46 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Join Gym</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        function joinGym(gymId) {
-            fetch(`/gym-user/join-gym/${gymId}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
-                    'Content-Type': 'application/json'
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Successfully joined the gym!');
-                    location.reload();  // Reload to reflect changes
-                }
-            });
-        }
-    </script>
-</head>
-<body class="bg-gray-100">
-    <div class="container mx-auto p-10">
-        <h1 class="text-2xl font-bold mb-4">Gyms in {{ gym_user.city }}</h1>
+      function joinGym(gymId) {
+        const joinButton = document.getElementById(`join-btn-${gymId}`);
+        joinButton.disabled = true;
+        joinButton.innerHTML = `<svg class="animate-spin h-5 w-5 mr-2 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v3.5a4.5 4.5 0 100 9V20a8 8 0 01-8-8z"></path>
+      </svg> Joining...`;
 
-        <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {% for gym in gyms %}
-                <li class="p-6 bg-white rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold">{{ gym.gym_name }}</h2>
-                    <p>{{ gym.address }}, {{ gym.city }}, {{ gym.state }}</p>
-                    <button onclick="joinGym({{ gym.id }})" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
-                        Join
-                    </button>
-                </li>
-            {% empty %}
-                <p>No gyms available in your city.</p>
-            {% endfor %}
-        </ul>
+        fetch(`/gym-user/join-gym/${gymId}/`, {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              document
+                .getElementById("success-message")
+                .classList.remove("hidden");
+              joinButton.innerHTML = "Joined";
+              joinButton.classList.add("bg-green-500");
+              joinButton.classList.remove("bg-blue-500", "hover:bg-blue-700");
+            }
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+
+      function closeMessage() {
+        document.getElementById("success-message").classList.add("hidden");
+      }
+    </script>
+  </head>
+  <body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+    {% load static %}
+
+    <!-- Header Section -->
+    <header class="bg-blue-500 text-white py-4 shadow-lg">
+      <div class="container mx-auto flex items-center justify-between">
+        <!-- Logo Section -->
+        <div class="flex items-center space-x-4 px-10">
+          <a href="{% url 'user_dashboard' %}">
+            <img
+              src="{% static 'core/image/logo.png' %}"
+              class="w-16 h-16 rounded-full"
+              alt="GymConnect Logo"
+            />
+          </a>
+          <div class="text-xl font-semibold">GymConnect</div>
+        </div>
+
+        <!-- Profile Picture with Logout -->
+        <nav class="relative px-10">
+          <a href="{% url 'logout' %}">
+            <img
+              src="{{ profile.profile_picture.url }}"
+              class="w-10 h-10 rounded-full object-cover transition duration-300 transform hover:scale-110"
+              alt="Profile Picture"
+            />
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container mx-auto p-10">
+      <h1 class="text-2xl font-bold mb-4">Gyms in {{ gym_user.city }}</h1>
+
+      <!-- Success Message Overlay -->
+      <div
+        id="success-message"
+        class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden z-50"
+      >
+        <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+          <h2 class="text-2xl font-semibold text-green-600">Success!</h2>
+          <p>You have successfully joined the gym.</p>
+          <button
+            onclick="closeMessage()"
+            class="mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+
+      <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for gym in gyms %}
+        <li
+          class="p-6 bg-white w-3/5 rounded-lg shadow-md transform hover:scale-105 transition-all duration-300 ease-in-out"
+        >
+          <h2 class="text-xl font-semibold">{{ gym.gym_name }}</h2>
+          <p>{{ gym.address }}, {{ gym.city }}, {{ gym.state }}</p>
+          <button
+            id="join-btn-{{ gym.id }}"
+            onclick="joinGym({{ gym.id }})"
+            class="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition ease-in-out duration-300"
+          >
+            Join
+          </button>
+        </li>
+        {% empty %}
+        <p class="text-center col-span-3">No gyms available in your city.</p>
+        {% endfor %}
+      </ul>
     </div>
-</body>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-white py-4 shadow-inner mt-auto">
+      <div class="container mx-auto flex items-center justify-between px-4">
+        <div class="flex items-center">
+          <img
+            src="{% static 'core/image/footer-logo.png' %}"
+            class="w-10 h-10 rounded-full"
+            alt="Footer Logo"
+          />
+          <span class="ml-2 text-sm">Developed by MOHD ASJAD</span>
+        </div>
+        <div class="flex space-x-4">
+          <a href="#" class="hover:text-blue-400">Facebook</a>
+          <a href="#" class="hover:text-blue-400">Twitter</a>
+          <a href="#" class="hover:text-blue-400">LinkedIn</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      function joinGym(gymId) {
+        const joinButton = document.getElementById(`join-btn-${gymId}`);
+        joinButton.disabled = true;
+
+        fetch(`/gym-user/join-gym/${gymId}/`, {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              document
+                .getElementById("success-message")
+                .classList.remove("hidden");
+              joinButton.innerHTML = "Joined";
+              joinButton.classList.add("bg-green-500");
+              joinButton.classList.remove("bg-blue-500", "hover:bg-blue-700");
+            }
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+
+      function closeMessage() {
+        document.getElementById("success-message").classList.add("hidden");
+      }
+    </script>
+  </body>
 </html>
