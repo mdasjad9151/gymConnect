@@ -4,7 +4,6 @@ from .models import Admin, GymOwner, Trainer, GymUser
 
 class AdminRegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
-
     class Meta:
         model = Admin
         fields = ['name', 'email', 'password']
