@@ -16,7 +16,7 @@ Technologies Used
 <h3>Backend</h3>
 Django
 Authentication: Django's built-in authentication system
-Frontend
+<h3>Frontend</h3>
 CSS Framework: Tailwind CSS
 JavaScript: For interactive UI components
 Setup Instructions
