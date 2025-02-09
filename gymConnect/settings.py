@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'accounts',
     'gymOwner',
     'trainer',
-    'gymUser'
+    'gymUser',
+    'blog',
 ]
 
 MIDDLEWARE = [

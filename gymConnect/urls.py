@@ -12,5 +12,6 @@ urlpatterns = [
     path('gym-owner/', include("gymOwner.urls")), #gym owner urls 
     path('gym-trainer/', include("trainer.urls")), #trainer urls 
     path('gym-user/', include("gymUser.urls")), #trainer urls 
+    path('blogs/', include("blog.urls")), #Blog urls 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

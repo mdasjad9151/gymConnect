@@ -10,6 +10,7 @@ class BaseUserManager(BaseUserManager):
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
+        
         user.save(using=self._db)
         return user
 
@@ -123,3 +124,4 @@ class GymUser(BaseUser):
 
     def __str__(self):
         return f"GymUser: {self.name} - {self.email}"
+
