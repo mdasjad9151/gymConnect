@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GymConnect Blog</title>
+    <title>GymConnect Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <nav>
-        <a href="{% url 'blog:post_list' %}">Home</a> |
-        <a href="{% url 'blog:create_post' %}">Create Post</a>
-    </nav>
+<body class="bg-gray-100 font-sans min-h-screen flex flex-col pt-[80px]">
+
     {% block content %}{% endblock %}
 </body>
 </html>
