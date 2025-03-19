@@ -1,57 +1,136 @@
-{% extends "core/base.html" %}
-{% load static %}
+{% extends 'blog/base.html' %}
 
 {% block content %}
-    {% include "core/header.html" %}
+{% include "core/header.html" %}
+<div class="flex justify-center mt-25">
+    <div class="w-3/5 bg-white p-6 shadow-lg rounded-lg">
+        
+<a class="" href="{% url 'blog:create_post' %}">
+    <div class="my-4 shadow-lg text-lg mx-10 px-10 rounded-lg"> Start Psot</div>
+</a>
+        
 
-    <main class="container mx-auto my-8 px-4 w-1/2">
-        <h2 class="text-2xl font-bold text-center mb-6">All Posts</h2>
+        
 
+{% comment %} rendring posts {% endcomment %}
         {% for post in posts %}
-        <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
-            <div class="flex items-center space-x-4">
-                <p class="font-semibold text-lg">{{ post.user.username }}</p>
-                <a href="{% url 'blog:follow_user' post.user.id %}" 
-                   class="text-blue-500 hover:text-blue-700 text-sm">Follow</a>
-            </div>
-
-            <p class="mt-2 text-gray-700">{{ post.content }}</p>
-
+        <div id="post-{{ post.id }}" class="bg-gray-100 p-4 rounded-lg shadow mb-6">
+            <p class="font-semibold text-lg">{{ post.user.username }}</p>
+            <p class="text-gray-700">{{ post.content }}</p>
+            
             {% if post.image %}
-                <div class="mt-4 mx-auto">
-                    <img src="{{ post.image.url }}" alt="Post Image" class=" h-96 mx-auto object-cover rounded-lg">
-                </div>
+            <img src="{{ post.image.url }}" alt="Post Image" class="w-3/5 justify-center rounded-lg mt-2">
             {% endif %}
 
-            <div class="flex items-center justify-between mt-4">
-                <p class="text-gray-600">Likes: {{ post.likes.count }}</p>
-                <a href="{% url 'blog:like_post' post.id %}" 
-                   class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">Like</a>
+            <!-- Like Section -->
+            <div class="flex items-center mt-4">
+                <p class="text-gray-600 mr-2">Likes: <span id="like-count-{{ post.id }}">{{ post.likes.count }}</span></p>
+                <button class="like-button px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                    data-post-id="{{ post.id }}">
+                    {% if request.user in post.likes.all %}
+                    Unlike
+                    {% else %}
+                    Like
+                    {% endif %}
+                </button>
             </div>
 
             <!-- Comment Section -->
-            <div class="mt-6">
-                <form method="post" action="{% url 'blog:comment_post' post.id %}" class="flex space-x-2">
-                    {% csrf_token %}
-                    <input type="text" name="text" placeholder="Write a comment..." required
-                           class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-200">
-                    <button type="submit"
-                            class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">Comment</button>
-                </form>
-                
-                <ul class="mt-4 space-y-2">
-                    {% for comment in post.comments.all %}
-                        <li class="bg-gray-100 p-2 rounded-lg">
-                            <strong class="text-blue-600">{{ comment.user2.username }}</strong>: {{ comment.text }}
-                        </li>
-                    {% endfor %}
-                </ul>
+            <div class="mt-4">
+                <button class="comment-button px-4 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 transition"
+                    data-post-id="{{ post.id }}">
+                    Show Comments
+                </button>
+
+                <div class="comment-section hidden mt-4" id="comments-{{ post.id }}">
+                    <div class="comments-list space-y-2" id="comments-list-{{ post.id }}"></div>
+
+                    <!-- Comment Input -->
+                    <div class="mt-4 flex items-center space-x-2">
+                        <textarea id="comment-text-{{ post.id }}" class="w-full p-2 border rounded" placeholder="Write a comment..."></textarea>
+                        <button class="add-comment-button px-4 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition"
+                            data-post-id="{{ post.id }}">
+                            Add Comment
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
-        {% empty %}
-        <p class="text-center text-gray-500">No posts available.</p>
         {% endfor %}
-    </main>
+    </div>
+</div>
 
-    {% include "core/footer.html" %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".like-button").forEach(button => {
+        button.addEventListener("click", function() {
+            let postId = this.dataset.postId;
+            let likeCount = document.getElementById(`like-count-${postId}`);
+
+            fetch(`/posts/like/${postId}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                this.textContent = data.liked ? "Unlike" : "Like";
+                likeCount.textContent = data.like_count;
+            });
+        });
+    });
+
+    document.querySelectorAll(".comment-button").forEach(button => {
+        button.addEventListener("click", function() {
+            let postId = this.dataset.postId;
+            let commentSection = document.getElementById(`comments-${postId}`);
+            let commentList = document.getElementById(`comments-list-${postId}`);
+
+            if (commentSection.classList.contains("hidden")) {
+                commentSection.classList.remove("hidden");
+                fetch(`/posts/comment/load/${postId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    commentList.innerHTML = "";
+                    data.comments.forEach(comment => {
+                        let commentHTML = `<p><strong>${comment.user}</strong>: ${comment.text} <small>(${comment.created_at})</small></p>`;
+                        commentList.innerHTML += commentHTML;
+                    });
+                });
+            } else {
+                commentSection.classList.add("hidden");
+            }
+        });
+    });
+
+    document.querySelectorAll(".add-comment-button").forEach(button => {
+        button.addEventListener("click", function() {
+            let postId = this.dataset.postId;
+            let commentText = document.getElementById(`comment-text-${postId}`).value;
+            let commentList = document.getElementById(`comments-list-${postId}`);
+
+            fetch(`/posts/comment/add/${postId}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `text=${encodeURIComponent(commentText)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    let newComment = `<p><strong>${data.comment.user}</strong>: ${data.comment.text} <small>(${data.comment.created_at})</small></p>`;
+                    commentList.innerHTML += newComment;
+                    document.getElementById(`comment-text-${postId}`).value = "";
+                } else {
+                    alert("Failed to add comment.");
+                }
+            });
+        });
+    });
+});
+</script>
 {% endblock %}
