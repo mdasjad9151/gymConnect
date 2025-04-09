@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'trainer',
     'gymUser',
     'blog',
+    'membership',
 ]
 
 MIDDLEWARE = [
