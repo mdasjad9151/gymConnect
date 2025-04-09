@@ -1,0 +1,29 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="max-w-4xl mx-auto p-6">
+    <h2 class="text-2xl font-bold mb-4">{{ course.title }}</h2>
+    <img src="{{ course.thumbnail.url }}" class="w-full h-64 object-cover rounded-xl mb-4" />
+    <p class="mb-4">{{ course.description }}</p>
+    <p class="mb-2 font-semibold">Price: ₹{{ course.price }}</p>
+
+    {% if not is_purchased %}
+    <a href="{% url 'purchase_course' course.id %}" class="bg-green-600 text-white px-4 py-2 rounded-xl">Purchase Course</a>
+    {% endif %}
+
+    <h3 class="text-xl font-bold mt-6 mb-2">Course Videos</h3>
+    <ul class="space-y-2">
+        {% for video in videos %}
+        <li class="p-4 bg-gray-100 rounded-xl">
+            <strong>{{ video.sequence }}. {{ video.title }}</strong>
+            {% if is_purchased %}
+                <video class="w-full mt-2 rounded-lg" controls>
+                    <source src="{{ video.video_file.url }}" type="video/mp4">
+                </video>
+            {% else %}
+                <p class="text-sm text-gray-500">Locked. Purchase course to view.</p>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

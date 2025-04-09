@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="max-w-5xl mx-auto p-6">
+    <h2 class="text-2xl font-bold mb-6">My Courses & Videos</h2>
+
+    {% for course in courses %}
+    <div class="mb-8 p-4 bg-white rounded-xl shadow">
+        <div class="flex items-center space-x-4">
+            {% if course.thumbnail %}
+                <img src="{{ course.thumbnail.url }}" class="w-28 h-20 object-cover rounded-lg">
+            {% endif %}
+            <div>
+                <h3 class="text-xl font-bold">{{ course.title }}</h3>
+                <p class="text-sm text-gray-500">{{ course.description|truncatewords:15 }}</p>
+            </div>
+        </div>
+
+        <div class="mt-4 space-y-3">
+            <h4 class="text-lg font-semibold mb-2">Videos:</h4>
+            {% for video in course.videos.all %}
+                <div class="bg-gray-100 p-3 rounded-lg shadow-sm">
+                    <p class="font-semibold">{{ video.sequence }}. {{ video.title }}</p>
+                    {% comment %} <video controls class="w-full mt-2 rounded-lg">
+                        <source src="{{ video.video_file.url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video> {% endcomment %}
+                </div>
+            {% empty %}
+                <p class="text-sm text-gray-400">No videos added yet.</p>
+
+            {% endfor %}
+            <a href="{% url 'add_course_video' course.id %}" class="text-blue-500 mt-2 inline-block">+ Add Video</a>
+        </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>No courses found.</p>
+    {% endfor %}
+</div>
+{% endblock %}
