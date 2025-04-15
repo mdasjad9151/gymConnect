@@ -14,6 +14,6 @@ urlpatterns = [
     path('my-courses/', views.my_courses, name='my_courses'),
   
     path('watch-video/<int:video_id>/', views.watch_video, name='watch_video'),
-# path('stream-video/<int:video_id>/<str:quality>/', views.stream_video, name='stream_video'),
+path('stream-video/<int:video_id>/', views.stream_test, name='stream_video'),
 
 ]

@@ -82,3 +82,10 @@ def watch_video(request, video_id):
     video = get_object_or_404(CourseVideo, id=video_id)
     return render(request, 'course/watch_video.html', {'video': video})
 
+from django.http import StreamingHttpResponse
+import subprocess
+
+def stream_test(request, video_id):
+  
+    video = CourseVideo.objects.get(id=video_id)
+    return render(request, 'course/watch_video.html', {'video': video})

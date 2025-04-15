@@ -27,6 +27,7 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -145,3 +147,5 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 STATICFILES_DIRS = [
     BASE_DIR / "static",  # Ensure this path points to your static folder
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True  # Or specify specific allowed origins

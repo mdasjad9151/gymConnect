@@ -1,91 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Video Stream</title>
-  </head>
-  <body>
-    <video id="videoPlayer" controls autoplay width="640" height="360"></video>
+<head>
+  <meta charset="UTF-8">
+  <title>WebSocket Video Player</title>
+  <style>
+    body { background: #000; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    video { width: 90%; border: 3px solid #fff; border-radius: 10px; }
+  </style>
+</head>
+<body>
 
-    <script>
-      const video = document.getElementById("videoPlayer");
-      const socket = new WebSocket(
-        "ws://localhost:8000/ws/video/?id={{ video.id }}&quality=360"
-      );
-      socket.binaryType = "arraybuffer";
+<video id="video" controls autoplay muted></video>
 
-      const mediaSource = new MediaSource();
-      video.src = URL.createObjectURL(mediaSource);
-    
-      console.log(video.src)
-      console.log(mediaSource)
+<script>
+  const video = document.getElementById('video');
+const mediaSource = new MediaSource();
+video.src = URL.createObjectURL(mediaSource);
 
-      let sourceBuffer;
-      let bufferQueue = [];
+let sourceBuffer;
+let ws;
+let queue = [];
 
-      mediaSource.addEventListener("sourceopen", () => {
-        const mime = 'video/mp4; codecs="avc1.42E01E"';
+mediaSource.addEventListener('sourceopen', () => {
+  console.log('MediaSource opened');
 
-        console.log(
-          "MIME Supported:",
-          MediaSource.isTypeSupported(
-            'video/mp4; codecs="avc1.64001E, mp4a.40.2"'
-          )
-        );
+  if (mediaSource.readyState !== 'open') {
+    console.warn('MediaSource not open, skipping...');
+    return;
+  }
 
-        if (!MediaSource.isTypeSupported(mime)) {
-          console.error("MIME type not supported");
-          return;
-        }
+  try {
+    sourceBuffer = mediaSource.addSourceBuffer('video/mp4; codecs="avc1.42E01E , mp4a.40.2"');
+  } catch (e) {
+    console.error("addSourceBuffer error:", e);
+    return;
+  }
 
-        sourceBuffer = mediaSource.addSourceBuffer(mime);
-        sourceBuffer.mode = "sequence";
-        console.log(sourceBuffer)
+  sourceBuffer.mode = 'segments';
 
-        sourceBuffer.addEventListener("updateend", () => {
-          if (bufferQueue.length && !sourceBuffer.updating) {
-            sourceBuffer.appendBuffer(bufferQueue.shift());
-          }
-        });
+  ws = new WebSocket("ws://localhost:8000/ws/video/?id=4&quality=360");
+  ws.binaryType = "arraybuffer";
 
-       socket.onmessage = (event) => {
-  if (event.data instanceof ArrayBuffer) {
+  ws.onmessage = (event) => {
+    if (!sourceBuffer || mediaSource.readyState !== 'open') {
+      console.warn('Skipping chunk because sourceBuffer is not ready');
+      return;
+    }
+
     const chunk = new Uint8Array(event.data);
-    console.log("Received chunk size:", chunk.byteLength);
-    try {
-      if (!sourceBuffer.updating) {
-        console.log("Appending chunk to sourceBuffer");
+    if (sourceBuffer.updating || queue.length > 0) {
+      queue.push(chunk);
+    } else {
+      try {
         sourceBuffer.appendBuffer(chunk);
-      } else {
-        console.log("Buffer is updating, queuing chunk");
-        bufferQueue.push(chunk);
-      }
-    } catch (err) {
-      console.error("Buffer append error:", err);
-      if (err.name === "InvalidStateError" && mediaSource.readyState === "open") {
-        try {
-          console.log("Aborting sourceBuffer");
-          sourceBuffer.abort();
-          bufferQueue = [];
-        } catch (abortErr) {
-          console.error("Abort error:", abortErr);
-        }
+      } catch (e) {
+        console.error("Append error:", e);
       }
     }
-  } else {
-    console.log("Text message:", event.data);
-  }
-};
+  };
 
-        socket.onopen = () => console.log("WebSocket connected");
-        socket.onerror = (e) => console.error("WebSocket error", e);
-        socket.onclose = () => console.log("WebSocket closed");
-      });
+  sourceBuffer.addEventListener('updateend', () => {
+    if (queue.length > 0 && !sourceBuffer.updating) {
+      sourceBuffer.appendBuffer(queue.shift());
+    }
+  });
 
-      video.addEventListener("error", (e) => {
-        console.error("Video error:", video.error, e);
-      });
-    </script>
-  </body>
+  ws.onclose = () => console.log('WebSocket closed');
+  ws.onerror = err => console.error('WebSocket error:', err);
+});
+
+mediaSource.addEventListener('error', e => {
+  console.error('MediaSource error:', e);
+});
+
+mediaSource.addEventListener('sourceended', () => {
+  console.log('MediaSource ended');
+});
+
+</script>
+
+</body>
 </html>
