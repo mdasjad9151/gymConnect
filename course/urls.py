@@ -12,4 +12,8 @@ urlpatterns = [
     path('courses/<int:course_id>/', views.course_detail, name='course_detail'),
     path('courses/<int:course_id>/purchase/', views.purchase_course, name='purchase_course'),
     path('my-courses/', views.my_courses, name='my_courses'),
+  
+    path('watch-video/<int:video_id>/', views.watch_video, name='watch_video'),
+# path('stream-video/<int:video_id>/<str:quality>/', views.stream_video, name='stream_video'),
+
 ]

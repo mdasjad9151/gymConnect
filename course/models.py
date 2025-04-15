@@ -1,5 +1,8 @@
 from django.db import models
-from accounts.models import Trainer,GymUser
+from accounts.models import Trainer
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 VIDEO_CATEGORIES = [
@@ -40,7 +43,7 @@ class CourseVideo(models.Model):
 
 # Purchase Model
 class CoursePurchase(models.Model):
-    user = models.ForeignKey(GymUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(VideoCourse, on_delete=models.CASCADE)
     purchased_at = models.DateTimeField(auto_now_add=True)
 

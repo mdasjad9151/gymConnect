@@ -27,12 +27,14 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
     'core',
     'accounts',
     'gymOwner',
@@ -71,7 +73,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'gymConnect.wsgi.application'
+# WSGI_APPLICATION = 'gymConnect.wsgi.application'
+ASGI_APPLICATION = 'gymConnect.asgi.application'
 
 
 # Database

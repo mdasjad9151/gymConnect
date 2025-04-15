@@ -2,7 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import VideoCourse, CourseVideo, CoursePurchase
 from .forms import VideoCourseForm, CourseVideoForm
-
+import subprocess
+from django.http import StreamingHttpResponse
+import os
+from django.conf import settings
 # Trainer: Create a new course
 @login_required
 def create_course(request):
@@ -74,3 +77,8 @@ def purchase_course(request, course_id):
 def my_courses(request):
     purchases = CoursePurchase.objects.filter(user=request.user).select_related('course')
     return render(request, 'course/my_courses.html', {'purchases': purchases})
+
+def watch_video(request, video_id):
+    video = get_object_or_404(CourseVideo, id=video_id)
+    return render(request, 'course/watch_video.html', {'video': video})
+
