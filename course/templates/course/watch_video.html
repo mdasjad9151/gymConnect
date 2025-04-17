@@ -1,83 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>WebSocket Video Player</title>
-  <style>
-    body { background: #000; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
-    video { width: 90%; border: 3px solid #fff; border-radius: 10px; }
-  </style>
-</head>
-<body>
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+  {% include 'core/header.html' %}
+<div class="video-container">
+    <video id="video" controls autoplay></video>
 
-<video id="video" controls autoplay muted></video>
+    <div class="controls-bar">
+        <div class="left-controls">
+            <span id="durationDisplay">00:00 / 00:00</span>
+        </div>
+
+        
+
+        <div class="right-controls">
+            <label for="speedSelect">Speed:</label>
+            <select id="speedSelect">
+                <option value="0.5">0.5x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+
+            <label for="qualitySelect">Quality:</label>
+            <select id="qualitySelect">
+                <option value="144">144p</option>
+                <option value="240">240p</option>
+                <option value="360" selected>360p</option>
+                <option value="480">480p</option>
+                <option value="720">720p</option>
+            </select>
+        </div>
+    </div>
+</div>
 
 <script>
-  const video = document.getElementById('video');
-const mediaSource = new MediaSource();
-video.src = URL.createObjectURL(mediaSource);
-
-let sourceBuffer;
-let ws;
-let queue = [];
-
-mediaSource.addEventListener('sourceopen', () => {
-  console.log('MediaSource opened');
-
-  if (mediaSource.readyState !== 'open') {
-    console.warn('MediaSource not open, skipping...');
-    return;
-  }
-
-  try {
-    sourceBuffer = mediaSource.addSourceBuffer('video/mp4; codecs="avc1.42E01E , mp4a.40.2"');
-  } catch (e) {
-    console.error("addSourceBuffer error:", e);
-    return;
-  }
-
-  sourceBuffer.mode = 'segments';
-
-  ws = new WebSocket("ws://localhost:8000/ws/video/?id=4&quality=360");
-  ws.binaryType = "arraybuffer";
-
-  ws.onmessage = (event) => {
-    if (!sourceBuffer || mediaSource.readyState !== 'open') {
-      console.warn('Skipping chunk because sourceBuffer is not ready');
-      return;
-    }
-
-    const chunk = new Uint8Array(event.data);
-    if (sourceBuffer.updating || queue.length > 0) {
-      queue.push(chunk);
-    } else {
-      try {
-        sourceBuffer.appendBuffer(chunk);
-      } catch (e) {
-        console.error("Append error:", e);
-      }
-    }
-  };
-
-  sourceBuffer.addEventListener('updateend', () => {
-    if (queue.length > 0 && !sourceBuffer.updating) {
-      sourceBuffer.appendBuffer(queue.shift());
-    }
-  });
-
-  ws.onclose = () => console.log('WebSocket closed');
-  ws.onerror = err => console.error('WebSocket error:', err);
-});
-
-mediaSource.addEventListener('error', e => {
-  console.error('MediaSource error:', e);
-});
-
-mediaSource.addEventListener('sourceended', () => {
-  console.log('MediaSource ended');
-});
-
+    const videoId = "{{ video_id }}";
 </script>
+<script src="{% static 'courses/js/player.js' %}"></script>
 
-</body>
-</html>
+

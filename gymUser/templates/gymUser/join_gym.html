@@ -1,10 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Join Gym</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+  {% include 'core/header.html' %}
     <script>
       function joinGym(gymId) {
         const joinButton = document.getElementById(`join-btn-${gymId}`);
@@ -43,33 +40,7 @@
   <body class="bg-gray-100 font-sans min-h-screen flex flex-col">
     {% load static %}
 
-    <!-- Header Section -->
-    <header class="bg-blue-500 text-white py-4 shadow-lg">
-      <div class="container mx-auto flex items-center justify-between">
-        <!-- Logo Section -->
-        <div class="flex items-center space-x-4 px-10">
-          <a href="{% url 'user_dashboard' %}">
-            <img
-              src="{% static 'core/image/logo.png' %}"
-              class="w-16 h-16 rounded-full"
-              alt="GymConnect Logo"
-            />
-          </a>
-          <div class="text-xl font-semibold">GymConnect</div>
-        </div>
-
-        <!-- Profile Picture with Logout -->
-        <nav class="relative px-10">
-          <a href="{% url 'logout' %}">
-            <img
-              src="{{ profile.profile_picture.url }}"
-              class="w-10 h-10 rounded-full object-cover transition duration-300 transform hover:scale-110"
-              alt="Profile Picture"
-            />
-          </a>
-        </nav>
-      </div>
-    </header>
+   
 
     <!-- Main Content -->
     <div class="container mx-auto p-10">
@@ -162,5 +133,4 @@
         document.getElementById("success-message").classList.add("hidden");
       }
     </script>
-  </body>
-</html>
+

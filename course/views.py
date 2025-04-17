@@ -6,8 +6,9 @@ import subprocess
 from django.http import StreamingHttpResponse
 import os
 from django.conf import settings
+from accounts.decorators import trainer_required
 # Trainer: Create a new course
-@login_required
+@trainer_required
 def create_course(request):
     if request.method == 'POST':
         form = VideoCourseForm(request.POST, request.FILES)
@@ -45,12 +46,28 @@ def trainer_courses(request):
 
 
 # User: List all available courses
+from collections import defaultdict
+
+
+
+
+
 def course_list(request):
-    courses = VideoCourse.objects.all()
-    return render(request, 'course/course_list.html', {'courses': courses})
+    courses_by_category = defaultdict(list)
+    
+    for course in VideoCourse.objects.all():
+        category_name = course.get_category_display()  # Get the display label from choices
+        courses_by_category[category_name].append(course)
+
+    return render(request, 'course/course_list.html', {
+        'courses_by_category': dict(courses_by_category)
+    })
+
+
 
 
 # User: View course details
+@login_required
 def course_detail(request, course_id):
     course = get_object_or_404(VideoCourse, id=course_id)
     videos = course.videos.order_by('sequence')
@@ -78,14 +95,19 @@ def my_courses(request):
     purchases = CoursePurchase.objects.filter(user=request.user).select_related('course')
     return render(request, 'course/my_courses.html', {'purchases': purchases})
 
+@login_required
+def course_videos(request, course_id):
+    course = get_object_or_404(VideoCourse, id=course_id)
+    # Ensure user purchased this course
+    if not CoursePurchase.objects.filter(user=request.user, course=course).exists():
+        return redirect('my_courses')
+
+    videos = course.videos.order_by('sequence')
+    return render(request, 'course/course_videos.html', {
+        'course': course,
+        'videos': videos
+    })
+
 def watch_video(request, video_id):
     video = get_object_or_404(CourseVideo, id=video_id)
-    return render(request, 'course/watch_video.html', {'video': video})
-
-from django.http import StreamingHttpResponse
-import subprocess
-
-def stream_test(request, video_id):
-  
-    video = CourseVideo.objects.get(id=video_id)
-    return render(request, 'course/watch_video.html', {'video': video})
+    return render(request, 'course/watch_video.html', {'video_id': video_id})

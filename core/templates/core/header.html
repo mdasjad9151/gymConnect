@@ -1,14 +1,74 @@
 {% load static %}
-<header class="bg-blue-500 text-white py-2 fixed top-0 left-0 w-full z-[150] shadow-lg">
-    <div class="container mx-auto flex items-center justify-between">
-        <div class="logo flex items-center space-x-4 px-10">
-            <img src="{% static 'core/image/logo.png' %}" class="w-16 h-16 rounded-full" alt="GymConnect Logo"/>
-            <div class="logoname text-xl font-semibold">GymConnect</div>
-        </div>
-        <div class="flex space-x-6 px-10">
-            <a href="{% url 'blog:post_list' %}" class="text-lg font-medium hover:text-gray-300">Post</a>
-            <a href="{% url 'login' %}" class="text-lg font-medium hover:text-gray-300">Login</a>
-        </div>
+<header
+  class="bg-[#4399c5]/70 text-white py-2 fixed top-0 left-0 w-full z-[200] shadow-lg backdrop-blur-lg backdrop-saturate-150 border-b border-white/30"
+>
+  <div class="container mx-auto flex items-center justify-between">
+    <div class="logo flex items-center space-x-4 px-10">
+      <img
+        src="{% static 'core/image/logo.png' %}"
+        class="w-16 h-16 rounded-full shadow-md"
+        alt="GymConnect Logo"
+      />
+      <div class="logoname text-xl font-semibold text-[#000]">GymConnect</div>
     </div>
-</header>
 
+    <div class="flex space-x-6 px-10 items-center">
+      <a
+        href="{% url 'blog:post_list' %}"
+        class="text-lg font-medium text-[#ebcd77] hover:text-[#e8ddaf] transition"
+        >Post</a
+      >
+
+      <a
+        href="{% url 'course_list' %}"
+        class="text-lg font-medium text-[#ebcd77] hover:text-[#e8ddaf] transition"
+        >class</a
+      >
+      {% if not request.user.is_authenticated %}
+      <div class="relative group">
+        <button
+          class="text-lg font-medium text-white hover:text-[#cbccc6] focus:outline-none transition"
+        >
+          Register
+        </button>
+        <div
+          class="absolute right-0 mt-2 w-56 bg-white/70 rounded-md shadow-lg backdrop-blur-sm border border-white/30 opacity-0 group-hover:opacity-100 transform scale-95 group-hover:scale-100 transition-all duration-200 z-50"
+        >
+          <div class="owner p-4 hover:bg-[#cbccc6]/30 rounded-md transition">
+            <a
+              href="{% url 'register_gym_owner' %}"
+              class="text-[#4399c5] hover:text-[#51b6ab] font-medium block"
+              >Register Gym Owner</a
+            >
+          </div>
+          <div class="trainer p-4 hover:bg-[#cbccc6]/30 rounded-md transition">
+            <a
+              href="{% url 'register_trainer' %}"
+              class="text-[#51b6ab] hover:text-[#4399c5] font-medium block"
+              >Register Trainer</a
+            >
+          </div>
+          <div class="user p-4 hover:bg-[#cbccc6]/30 rounded-md transition">
+            <a
+              href="{% url 'register_gym_user' %}"
+              class="text-[#ebcd77] hover:text-[#e8ddaf] font-medium block"
+              >Register Gym User</a
+            >
+          </div>
+        </div>
+      </div>
+      <a
+        href="{% url 'login' %}"
+        class="text-lg font-medium text-white hover:text-[#cbccc6] transition"
+        >Login</a
+      >
+      {% else %}
+      <a
+        href="{% url 'logout' %}"
+        class="text-lg font-medium text-white hover:text-[#cbccc6] transition"
+        >Logout</a
+      >
+      {% endif %}
+    </div>
+  </div>
+</header>

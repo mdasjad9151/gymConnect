@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <title>Gym Owner Dashboard</title>
-</head>
-<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+  {% include 'core/header.html' %}
 {% load static %}
     <!-- Header Section -->
     <header class="bg-blue-500 text-white py-4 shadow-lg">
@@ -67,20 +62,3 @@
             </div>
         </div>
     </main>
-
-    <!-- Footer Section -->
-    <footer class="bg-gray-800 text-white py-6 shadow-inner">
-        <div class="container mx-auto flex items-center justify-between px-4">
-            <div class="footer-logo flex items-center">
-                <img src="{% static 'core/image/footer-logo.png' %}" class="w-10 h-10 rounded-full hover:scale-105 transition-transform duration-300" alt="Footer Logo" />
-                <span class="ml-2 text-sm font-medium">Developed By - MOHD ASJAD</span>
-            </div>
-            <div class="social-links flex space-x-4">
-                <a href="#" class="hover:text-blue-400 transition duration-200">Facebook</a>
-                <a href="#" class="hover:text-blue-400 transition duration-200">Twitter</a>
-                <a href="#" class="hover:text-blue-400 transition duration-200">LinkedIn</a>
-            </div>
-        </div>
-    </footer>
-</body>
-</html>

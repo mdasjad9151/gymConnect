@@ -1,35 +1,45 @@
-{% extends 'core/base.html' %} {% block content %}
-{% load static  %}
-<div class="max-w-5xl mx-auto p-6">
-  <h2 class="text-2xl font-bold mb-6">Available Courses</h2>
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    {% for course in courses %}
-    <div class="bg-white p-4 rounded-xl shadow">
-      {% if course.thumbnail %}
-      <img
-        src="{{ course.thumbnail.url }}"
-        class="w-full h-48 object-cover rounded-xl mb-2"
-      />
-      {% else %}
-      <img
-        src="{% static 'courses/image/default-course-thumbnail.jpg' %}"
-        class="w-full h-48 object-cover rounded-xl mb-2"
-      />
-      {% endif %}
-      <h3 class="font-bold text-lg">{{ course.title }}</h3>
-      <p class="text-sm text-gray-600">
-        {{ course.description|truncatewords:15 }}
-      </p>
-      <p class="font-semibold mt-2">₹{{ course.price }}</p>
-      <a
-        href="{% url 'course_detail' course.id %}"
-        class="text-blue-600 mt-2 inline-block"
-        >View Course</a
-      >
-    </div>
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+  {% include 'core/header.html' %}
+
+  <div class="max-w-6xl mx-auto p-6">
+    <h2 class="text-3xl font-bold mb-8 text-black text-center">Available Courses</h2>
+
+    {% for category, courses in courses_by_category.items %}
+      <div class="mb-10">
+        <h3 class="text-2xl font-semibold text-black mb-4">{{ category }}</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {% for course in courses %}
+            <div class="bg-white/20 backdrop-blur-md shadow-lg border border-white/30 rounded-xl p-4 transition hover:shadow-2xl hover:-translate-y-1 duration-300">
+              {% if course.thumbnail %}
+                <img
+                  src="{{ course.thumbnail.url }}"
+                  class="w-full h-48 object-cover rounded-lg mb-4"
+                  alt="{{ course.title }}"
+                />
+              {% else %}
+                <img
+                  src="{% static 'courses/image/default-course-thumbnail.jpg' %}"
+                  class="w-full h-48 object-cover rounded-lg mb-4"
+                  alt="Default thumbnail"
+                />
+              {% endif %}
+
+              <a
+                href="{% url 'course_detail' course.id %}"
+                class="text-lg font-semibold text-blue-600 hover:underline block mb-1"
+              >
+                {{ course.title }}
+              </a>
+              <p class="text-sm text-gray-200 mb-2">{{ course.description|truncatewords:15 }}</p>
+              <p class="font-bold text-black">₹{{ course.price }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
     {% empty %}
-    <p>No courses found.</p>
+      <p class="text-gray-700">No courses available.</p>
     {% endfor %}
   </div>
-</div>
 {% endblock %}

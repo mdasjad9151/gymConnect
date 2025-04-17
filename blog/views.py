@@ -16,7 +16,7 @@ def create_post(request):
     else:
         form = PostForm()
     return render(request, 'blog/create_post.html', {'form': form})
-@login_required
+
 def post_list(request):
     posts = Post.objects.all().order_by('-created_at')
     if request.method == 'POST':
@@ -28,7 +28,7 @@ def post_list(request):
             return redirect('blog:post_list')
     else:
         form = PostForm()
-    return render(request, 'blog/post_list.html', {'posts': posts,'form':form})
+    return render(request, 'core/home.html', {'posts': posts,'form':form})
 
 @login_required
 def like_post(request, post_id):

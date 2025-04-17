@@ -1,11 +1,12 @@
-{% extends 'core/base.html' %}
-{% block content %}
+{% extends 'core/base.html' %} {% block content %} {% include 'core/header.html'
+%}
 <div class="max-w-2xl mx-auto p-6 bg-white rounded-2xl shadow">
-    <h2 class="text-xl font-bold mb-4">Add Video to {{ course.title }}</h2>
-    <form method="POST" enctype="multipart/form-data" class="space-y-4">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-xl">Add Video</button>
-    </form>
+  <h2 class="text-xl font-bold mb-4">Add Video to {{ course.title }}</h2>
+  <form method="POST" enctype="multipart/form-data" class="space-y-4">
+    {% csrf_token %} {{ form.as_p }}
+    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-xl">
+      Add Video
+    </button>
+  </form>
 </div>
 {% endblock %}

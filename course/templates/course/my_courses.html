@@ -1,17 +1,31 @@
-{% for purchase in purchases %}
-  <div class="course border p-4 my-4 rounded shadow">
-    <h2 class="text-2xl font-bold mb-4">{{ purchase.course.title }}</h2>
-    <div class="video-list grid grid-cols-2 gap-4">
-      {% for video in purchase.course.videos.all %}
-        <div class="video-item flex items-center gap-4 border p-2 rounded">
-          <img src="{{ video.thumbnail.url }}" width="120" class="rounded">
-          <div>
-            <a href="{% url 'watch_video' video.id %}" class="text-blue-600 font-medium hover:underline">
-              {{ video.title }}
-            </a>
-          </div>
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+  {% include 'core/header.html' %}
+<div class="max-w-4xl mx-auto p-6">
+  <h1 class="text-3xl font-bold mb-6">My Purchased Courses</h1>
+
+  {% if purchases %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      {% for purchase in purchases %}
+        <div class="border rounded-lg overflow-hidden shadow hover:shadow-lg transition">
+          <a href="{% url 'course_videos' purchase.course.id %}">
+            {% if purchase.course.thumbnail %}
+              <img src="{{ purchase.course.thumbnail.url }}" alt="{{ purchase.course.title }}" class="w-full h-48 object-cover">
+            {% else %}
+              <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500">No Thumbnail</div>
+            {% endif %}
+            <div class="p-4">
+              <h2 class="text-xl font-semibold text-blue-600 hover:underline">
+                {{ purchase.course.title }}
+              </h2>
+            </div>
+          </a>
         </div>
       {% endfor %}
     </div>
-  </div>
-{% endfor %}
+  {% else %}
+    <p>You haven’t purchased any courses yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

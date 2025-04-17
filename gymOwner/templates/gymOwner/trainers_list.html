@@ -1,33 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Gym Trainers</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+{% extends 'core/base.html' %}
 {% load static %}
-
-    <!-- Header Section -->
-    <header class="bg-blue-500 text-white py-4 shadow-lg">
-      <div class="container mx-auto flex items-center justify-between">
-        <!-- Logo Section -->
-        <div class="flex items-center space-x-4 px-10">
-          <a href="{% url 'gym_owner_deshboard' %}">
-            <img src="{% static 'core/image/logo.png' %}" class="w-16 h-16 rounded-full" alt="GymConnect Logo" />
-          </a>
-          <div class="text-xl font-semibold">GymConnect</div>
-        </div>
-
-        <!-- Profile Picture with Logout -->
-        <nav class="relative px-10">
-          <a href="{% url 'logout' %}">
-            <img src="{{ request.user.profile.profile_picture.url }}" class="w-10 h-10 rounded-full object-cover" alt="Profile Picture" />
-          </a>
-        </nav>
-      </div>
-    </header>
-
+{% block content %}
+  {% include 'core/header.html' %}
     <!-- Main Content -->
     <div class="container mx-auto p-6 ">
         <h1 class="text-3xl font-bold text-center mb-8">Trainers in Your Gym</h1>
@@ -55,19 +29,4 @@
         {% endif %}
     </div>
 
-    <!-- Footer Section -->
-    <footer class="bg-gray-800 text-white py-6 shadow-inner mt-auto">
-      <div class="container mx-auto flex items-center justify-between px-4">
-        <div class="footer-logo flex items-center">
-          <img src="{% static 'core/image/footer-logo.png' %}" class="w-10 h-10 rounded-full hover:scale-105 transition-transform duration-300" alt="Footer Logo" />
-          <span class="ml-2 text-sm font-medium">Developed By - MOHD ASJAD</span>
-        </div>
-        <div class="social-links flex space-x-4">
-          <a href="#" class="hover:text-blue-400 transition duration-200">Facebook</a>
-          <a href="#" class="hover:text-blue-400 transition duration-200">Twitter</a>
-          <a href="#" class="hover:text-blue-400 transition duration-200">LinkedIn</a>
-        </div>
-      </div>
-    </footer>
-</body>
-</html>
+  

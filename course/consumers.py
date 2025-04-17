@@ -21,6 +21,11 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
         query_params = parse_qs(query_string)
         video_id = query_params.get('id', [None])[0]
         quality = query_params.get('quality', ['360'])[0]
+        start = query_params.get('start', ['0'])[0]
+        try:
+            start = int(float(start))
+        except ValueError:
+            start = 0
 
         if quality not in QUALITY_MAP:
             await self.send(text_data='Invalid quality')
@@ -45,6 +50,7 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
         # FFmpeg command
         ffmpeg_cmd = [
     'ffmpeg',
+    '-ss', f'{start}',
     '-re',                         # simulate real-time streaming
     '-i', input_path,
     '-vf', f'scale={scale}',        # Adjust video scale (quality)
@@ -76,20 +82,24 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
     async def stream_video(self):
         try:
             # Send header first (initial bytes)
-            init_chunk = await asyncio.to_thread(self.ffmpeg_process.stdout.read, 1024*256)
+            init_chunk = await asyncio.to_thread(self.ffmpeg_process.stdout.read, 1024*32)
             if init_chunk:
                 await self.send(bytes_data=init_chunk)
                 # Small delay to ensure the client processes the init segment
                 await asyncio.sleep(0.01)
             
             while True:
-                print("loop")
-                chunk = await asyncio.to_thread(self.ffmpeg_process.stdout.read,1024*128 )
+                # print("loop")
+                progress =  16
+                chunk = await asyncio.to_thread(self.ffmpeg_process.stdout.read,1024*progress )
+                progress =  progress+16
+                if progress == 1024:
+                    progress = 64
                 if not chunk:
-                    print("inside")
+                    # print("inside")
                     break
                 await self.send(bytes_data=chunk)
-                await asyncio.sleep(0.2)  # Small delay to prevent overwhelming client
+                await asyncio.sleep(0.02)  # Small delay to prevent overwhelming client
         except Exception as e:
             print(f"Error streaming video: {e}")
         finally:
