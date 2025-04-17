@@ -24,7 +24,6 @@ media/
 
 # Static files
 staticfiles/
-static/
 
 # Logs and debugging
 logs/
