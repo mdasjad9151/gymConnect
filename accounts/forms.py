@@ -25,7 +25,7 @@ class GymOwnerRegistrationForm(forms.ModelForm):
         ]
         widgets = {
             'password': forms.PasswordInput(attrs={
-                'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200',
+                'class': 'w-full px-4 py-2 border border-gray-300  text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200',
                 'placeholder': 'Enter your password'
             }),
         }
@@ -84,7 +84,7 @@ class GymUserRegistrationForm(forms.ModelForm):
         ]
         widgets = {
             'password': forms.PasswordInput(attrs={
-                'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200',
+                'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200',
                 'placeholder': 'Enter your password'
             }),
         }
@@ -106,14 +106,14 @@ class CustomLoginForm(AuthenticationForm):
     username = forms.EmailField(
         label="Email",
         widget=forms.EmailInput(attrs={
-            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200',
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg text-black  focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200',
             'placeholder': 'Enter your email',
         })
     )
     password = forms.CharField(
         label="Password",
         widget=forms.PasswordInput(attrs={
-            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200',
+            'class': 'w-full px-4 py-2 border border-gray-300 text-black  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200',
             'placeholder': 'Enter your password',
         })
     )

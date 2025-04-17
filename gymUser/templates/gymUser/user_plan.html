@@ -17,10 +17,10 @@
         <div class="text-white text-xl">Loading your updates...</div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-[7rem]">
         <!-- Workout Section -->
         <div
-          class="bg-white shadow-md rounded-lg p-6 transition duration-300 transform hover:scale-105"
+          class="backdrop-blur-md bg-white/40 text-black shadow-md rounded-2xl p-6 transition duration-300 transform hover:scale-105 border border-gray-300"
         >
           <h2
             onclick="toggleSection('workout-plan')"
@@ -61,7 +61,7 @@
 
         <!-- Diet Section -->
         <div
-          class="bg-white shadow-md rounded-lg p-6 transition duration-300 transform hover:scale-105"
+          class="backdrop-blur-md bg-white/40 text-black shadow-md rounded-2xl p-6 transition duration-300 transform hover:scale-105 border border-gray-300"
         >
           <h2
             onclick="toggleSection('diet-plan')"
@@ -103,29 +103,5 @@
       </p>
       {% endif %}
     </div>
-
-
-
-    <script>
-      function toggleSection(sectionId) {
-        const section = document.getElementById(sectionId);
-        const maxHeight = section.style.maxHeight;
-        section.style.maxHeight = maxHeight
-          ? null
-          : section.scrollHeight + "px";
-      }
-
-      // Function to show loading overlay
-      function showLoading() {
-        document.getElementById("loading-overlay").classList.remove("hidden");
-        setTimeout(
-          () =>
-            document.getElementById("loading-overlay").classList.add("hidden"),
-          1000
-        ); // Simulating load time
-      }
-
-      // Show loading when the page is loaded
-      window.onload = showLoading;
-    </script>
-
+<script src="{% static 'gymUser/js/plan.js' %}"></script>
+{% endblock content %}

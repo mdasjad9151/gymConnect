@@ -1,86 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Trainer Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
-    {% load static %}
-    <!-- Header Section -->
-    <!-- Header Section -->
-    <header class="bg-blue-500 text-white py-4 shadow-lg">
-      <div class="container mx-auto flex items-center justify-between">
-        <!-- Logo Section -->
-        <div class="flex items-center space-x-4 px-10">
-          <a href="{% url 'trainer_dashboard' %}"><img
-            src="{% static 'core/image/logo.png' %}"
-            class="w-16 h-16 rounded-full"
-            alt="GymConnect Logo"
-          /></a>
-          <div class="text-xl font-semibold">GymConnect</div>
-        </div>
+{% extends 'core/base.html' %}
 
-        <!-- Profile Picture with Dropdown -->
-        <nav class="relative px-10">
-          <!-- Profile Picture Button -->
-          
-            <a href="{% url 'logout' %}">
-              <img
-              src="{{ profile.profile_picture.url }}"
-              class="w-10 h-10 rounded-full object-cover"
-              alt="Profile Picture"
-            />
-            </a>
-          
-            
-          </div>
-        </nav>
-      </div>
-    </header>
+{% block content %}
+{% include "core/header.html" %}
 
-    <!-- Main Content -->
 <!-- Main Content -->
-<main class="flex-grow flex items-center justify-center py-10">
+<main class="flex-grow flex items-center justify-center py-10 mt-[7rem] ">
     <div class="container mx-auto p-10 flex flex-col items-center justify-center">
-        <h1 class="text-3xl font-bold text-center mb-8">Trainer Dashboard</h1>
+        <h1 class="text-3xl font-bold text-center mb-8 text-[#4399c5]">Trainer Dashboard</h1>
         
         <!-- Main Button Container -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 w-1/2 max-w-4xl">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 w-1/2 max-w-4xl backdrop-blur-lg bg-white/30 border border-white/30 rounded-2xl p-6 shadow-xl">
+            
             <!-- Requests Button -->
-            <a href="{% url 'trainer_requests' %}" class="block text-center p-6 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition duration-300 ease-in-out transform hover:scale-105">
+            <a href="{% url 'trainer_requests' %}"
+               class="block text-center p-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+               style="background-color: #4399c5; color: white;">
                 <h2 class="text-xl font-semibold">Requests</h2>
             </a>
 
             <!-- Add Plans Button -->
-            <a href="{% url 'trainer_add_plans' %}" class="block text-center p-6 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300 ease-in-out transform hover:scale-105">
+            <a href="{% url 'trainer_add_plans' %}"
+               class="block text-center p-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+               style="background-color: #51b6ab; color: white;">
                 <h2 class="text-xl font-semibold">Add Plans</h2>
             </a>
-            {% comment %} <a href="{% url 'create_blog' %}" class="block text-center p-6 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300 ease-in-out transform hover:scale-105">
-                <h2 class="text-xl font-semibold">Create Blog</h2>
-            </a> {% endcomment %}
 
-            <a href="{% url 'trainer_courses' %}" class="block text-center p-6 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300 ease-in-out transform hover:scale-105">
-                <h2 class="text-xl font-semibold">create course</h2>
+            <!-- Create Course Button -->
+            <a href="{% url 'trainer_courses' %}"
+               class="block text-center p-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+               style="background-color: #ebcd77; color: black;">
+                <h2 class="text-xl font-semibold">Create Course</h2>
+            </a>
+            <a href="{% url 'blog:create_post' %}"
+               class="block text-center p-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+               style="background-color: #cbccc6; color: black;">
+                <h2 class="text-xl font-semibold">Create Post</h2>
             </a>
         </div>
     </div>
 </main>
-
-
-    <!-- Footer Section -->
-    <footer class="bg-gray-800 text-white py-4 shadow-inner mt-auto">
-      <div class="container mx-auto flex items-center justify-between px-4">
-        <div class="flex items-center">
-          <img src="{% static 'core/image/logo.png' %}" class="w-10 h-10 rounded-full" alt="Footer Logo" />
-          <span class="ml-2 text-sm">Developed by MOHD ASJAD</span>
-        </div>
-        <div class="flex space-x-4">
-          <a href="#" class="hover:text-blue-400">Facebook</a>
-          <a href="#" class="hover:text-blue-400">Twitter</a>
-          <a href="#" class="hover:text-blue-400">LinkedIn</a>
-        </div>
-      </div>
-    </footer>
-</body>
-</html>
+{% endblock content %}

@@ -19,6 +19,7 @@ function openPlanPopup(userId) {
       loadPreviousItems("preworkout_diet", data.preworkout_diet);
 
       document.getElementById("plan-popup").style.display = "block";
+      document.getElementById("plan-popup").style.display = "mt-[7rem]";
     });
 }
 
@@ -43,7 +44,41 @@ function addItem(field) {
   }
 }
 
+function addItemToContainer(field, item) {
+  const container = document.getElementById(`${field}_div`);
+  const itemDiv = document.createElement("div");
+  itemDiv.classList.add("item"); // Optional: Add a class for styling
 
+  // Add the item text
+  const itemText = document.createElement("span");
+  itemText.innerText = item;
+  itemDiv.appendChild(itemText);
+
+  // Create the remove button with an image (cross.png)
+  const removeBtn = document.createElement("button");
+  removeBtn.classList.add("remove-btn"); // Optional: Add a class for styling
+
+  const removeImg = document.createElement("img");
+  removeImg.src = crossImgUrl; // Replace with actual path
+  removeImg.alt = "Remove"; // Alt text for accessibility
+  removeImg.classList.add("remove-img"); // Add a class for styling the image size
+
+  // Style the image to match the font size
+  removeImg.style.width = "1em"; // Set width to font-size
+  removeImg.style.height = "1em"; // Set height to font-size
+
+  // Append the image to the button
+  removeBtn.appendChild(removeImg);
+
+  // Set up the remove button functionality
+  removeBtn.onclick = () => itemDiv.remove();
+
+  // Append the remove button to the item div
+  itemDiv.appendChild(removeBtn);
+
+  // Append the item div to the container
+  container.appendChild(itemDiv);
+}
 
 function submitPlan() {
   const fields = [

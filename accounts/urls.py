@@ -6,6 +6,7 @@ from .views import (
     user_login, user_logout, dashboard
 )
 
+app_name = 'accounts'
 urlpatterns = [
     path('register/admin/', register_admin, name='register_admin'),
     path('register/gym-owner/', register_gym_owner, name='register_gym_owner'),

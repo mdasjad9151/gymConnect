@@ -1,355 +1,301 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GymConnect</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-    <style>
-        .remove-img {
-    width: 1em;      /* Match font size */
-    height: 1em;     /* Match font size */
-    vertical-align: middle; /* Aligns image with text */
-}
-    </style>
-  </head>
-  <body class="bg-gray-100 font-sans min-h-screen flex flex-col">
-    {% load static %}
-    <!-- Header Section -->
-    <header class="bg-blue-500 text-white py-4 shadow-lg">
-      <div class="container mx-auto flex items-center justify-between">
-        <!-- Logo Section -->
-        <div class="flex items-center space-x-4 px-10">
-          <a href="{% url 'trainer_dashboard' %}"><img
-            src="{% static 'core/image/logo.png' %}"
-            class="w-16 h-16 rounded-full"
-            alt="GymConnect Logo"
-          /></a>
-          <div class="text-xl font-semibold">GymConnect</div>
-        </div>
+{% extends 'core/base.html' %} {% load static %} {% block content %}
+ {% include "core/header.html" %}
 
-        <!-- Profile Picture with Dropdown -->
-        <nav class="relative px-10">
-          <!-- Profile Picture Button -->
-          
-            <a href="{% url 'logout' %}">
-              <img
-              src="{{ profile.profile_picture.url }}"
-              class="w-10 h-10 rounded-full object-cover"
-              alt="Profile Picture"
-            />
-            </a>
-          
-            
-          </div>
-        </nav>
+<script src="{% static 'trainer/js/script.js' %}"></script>
+<script>
+  const crossImgUrl = "{% static 'trainer/image/cross.png' %}";
+  console.log(crossImgUrl)
+</script>
+
+<!-- Main Content -->
+<main class="flex-grow container mx-2 py-8 flex space-x-8 mt-[7rem]">
+  <!-- Gym Users List -->
+  <ul class="w-1/3 space-y-6 ">
+    {% for gym_user in gym_users %}
+    <li
+      class="p-4 bg-white shadow-md rounded-lg flex items-center justify-between backd-blur-xl rounded bg-white/30  space-x-4"
+    >
+      <div class="flex items-center space-x-4 ">
+        <img
+          src="{{ gym_user.profile_picture.url }}"
+          alt="Profile Picture"
+          class="w-12 h-12 rounded-full"
+        />
+        <div>
+          <strong class="text-lg text-black">{{ gym_user.name }}</strong>
+        </div>
       </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="flex-grow container mx-2 py-8 flex space-x-8">
-      <!-- Gym Users List -->
-      <ul class="w-1/3 space-y-6">
-        {% for gym_user in gym_users %}
-        <li
-          class="p-4 bg-white shadow-md rounded-lg flex items-center justify-between space-x-4"
-        >
-          <div class="flex items-center space-x-4">
-            <img
-              src="{{ gym_user.profile_picture.url }}"
-              alt="Profile Picture"
-              class="w-12 h-12 rounded-full"
-            />
-            <div>
-              <strong class="text-lg">{{ gym_user.name }}</strong>
-            </div>
-          </div>
-          <button
-            class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-            onclick="openPlanPopup({{ gym_user.id }})"
-          >
-            Plan Update
-          </button>
-        </li>
-        {% endfor %}
-      </ul>
-
-      <!-- Plan Update Popup -->
-      <div
-        id="plan-popup"
-        class="w-4/6 h-5/6 justify-center item-center bg-white shadow-lg rounded-lg p-6 fixed mx-10 inset-y-0 right-0 flex flex-col space-y-6 hidden overflow-y-auto max-h-full"
+      <button
+        class="px-4 py-2 bg-[#4399c5] text-white rounded-lg hover:bg-[#cbccc6]/10 hover:text-black transition"
+        onclick="openPlanPopup({{ gym_user.id }})"
       >
-        <h3 class="text-2xl font-bold mb-4 text-center">Update Plan</h3>
-        <div class="text-center mb-4">
-          Last Update: <span id="update-date" class="text-gray-600">NA</span>
-        </div>
-        <form action="" method="post" class="space-y-4">
-    {% csrf_token %}
-    <div class="grid grid-cols-2 gap-4">
+        Plan Update
+      </button>
+    </li>
+    {% endfor %}
+  </ul>
 
+  <!-- Plan Update Popup -->
+  <div
+    id="plan-popup"
+    class="w-3/6 h-5/6 justify-center item-center bg-white shadow-lg rounded-lg p-6 mx-[3rem] inset-y-0 right-0 flex flex-col space-y-6 hidden overflow-y-auto max-h-full  mt-[0.2rem]  backdrop-blur-lg bg-white/30"
+  >
+    <h3 class="text-2xl text-black font-bold mb-4 text-center">Update Plan</h3>
+    <div class="text-center mb-4 text-black">
+      Last Update: <span id="update-date" class="text-gray-600 text-black">NA</span>
+    </div>
+    <form action="" method="post" class="space-y-4">
+      {% csrf_token %}
+      <div class="grid grid-cols-2 gap-4">
         <!-- Monday Workout -->
         <div>
-            <label class="block font-semibold">Monday Workout:</label>
-            <div id="monday_div" class="mb-2 p-2  rounded flex flex-wrap gap-2"></div>
-            <div class="flex items-center space-x-2">
-                <input type="text" id="monday" class="border border-gray-300 rounded px-3 py-2 w-full">
-                <button type="button" onclick="addItemToContainer('monday', document.getElementById('monday').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
-            </div>
+          <label class="block font-semibold text-black">Monday Workout:</label>
+          <div
+            id="monday_div"
+            class="mb-2 p-2 rounded flex flex-wrap gap-2 text-[#384959]"
+          ></div>
+          <div class="flex items-center space-x-2">
+            <input
+              type="text"
+              id="monday"
+              class="border border-gray-300 rounded px-3 py-2 w-full text-black"
+            />
+            <button
+              type="button"
+              onclick="addItemToContainer('monday', document.getElementById('monday').value)"
+              class="px-4 py-1 bg-[#4399c5] text-white rounded-lg hover:bg-[#cbccc6]/10 hover:text-black transition"
+            >
+              Add
+            </button>
+          </div>
         </div>
 
         <!-- Tuesday Workout -->
         <div>
-            <label class="block font-semibold">Tuesday Workout:</label>
-            <div id="tuesday_div" class="mb-2 p-2  rounded flex flex-wrap gap-2"></div>
-            <div class="flex items-center space-x-2">
-                <input type="text" id="tuesday" class="border border-gray-300 rounded px-3 py-2 w-full">
-                <button type="button" onclick="addItemToContainer('tuesday', document.getElementById('tuesday').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
-            </div>
+          <label class="block font-semibold text-black">Tuesday Workout:</label>
+          <div
+            id="tuesday_div"
+            class="mb-2 p-2 rounded flex flex-wrap gap-2 text-[#384959]"
+          ></div>
+          <div class="flex items-center space-x-2">
+            <input
+              type="text"
+              id="tuesday"
+              class="border border-gray-300 rounded px-3 py-2 w-full text-black"
+            />
+            <button
+              type="button"
+              onclick="addItemToContainer('tuesday', document.getElementById('tuesday').value)"
+              class="px-4 py-1 bg-[#4399c5] text-white rounded-lg hover:bg-[#cbccc6]/10 hover:text-black transition"
+            >
+              Add
+            </button>
+          </div>
         </div>
 
         <!-- Wednesday Workout -->
         <div>
-            <label class="block font-semibold">Wednesday Workout:</label>
-            <div id="wednesday_div" class="mb-2 p-2  rounded flex flex-wrap gap-2"></div>
-            <div class="flex items-center space-x-2">
-                <input type="text" id="wednesday" class="border border-gray-300 rounded px-3 py-2 w-full">
-                <button type="button" onclick="addItemToContainer('wednesday', document.getElementById('wednesday').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
-            </div>
+          <label class="block font-semibold text-black">Wednesday Workout:</label>
+          <div
+            id="wednesday_div"
+            class="mb-2 p-2 rounded flex flex-wrap gap-2 text-[#384959]"
+          ></div>
+          <div class="flex items-center space-x-2">
+            <input
+              type="text"
+              id="wednesday"
+              class="border border-gray-300 rounded px-3 py-2 w-full text-black"
+            />
+            <button
+              type="button"
+              onclick="addItemToContainer('wednesday', document.getElementById('wednesday').value)"
+              class="px-4 py-1 bg-[#4399c5] text-white rounded-lg hover:bg-[#cbccc6]/10 hover:text-black transition"
+            >
+              Add
+            </button>
+          </div>
         </div>
 
         <!-- Thursday Workout -->
         <div>
-            <label class="block font-semibold">Thursday Workout:</label>
-            <div id="thursday_div" class="mb-2 p-2  rounded flex flex-wrap gap-2"></div>
-            <div class="flex items-center space-x-2">
-                <input type="text" id="thursday" class="border border-gray-300 rounded px-3 py-2 w-full">
-                <button type="button" onclick="addItemToContainer('thursday', document.getElementById('thursday').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
-            </div>
+          <label class="block font-semibold text-black">Thursday Workout:</label>
+          <div
+            id="thursday_div"
+            class="mb-2 p-2 rounded flex flex-wrap gap-2 text-[#384959]"
+          ></div>
+          <div class="flex items-center space-x-2">
+            <input
+              type="text"
+              id="thursday"
+              class="border border-gray-300 rounded px-3 py-2 w-full text-black"
+            />
+            <button
+              type="button"
+              onclick="addItemToContainer('thursday', document.getElementById('thursday').value)"
+              class="px-4 py-1 bg-[#4399c5] text-white rounded-lg hover:bg-[#cbccc6]/10 hover:text-black transition"
+            >
+              Add
+            </button>
+          </div>
         </div>
 
         <!-- Friday Workout -->
         <div>
-            <label class="block font-semibold">Friday Workout:</label>
-            <div id="friday_div" class="mb-2 p-2  rounded flex flex-wrap gap-2"></div>
-            <div class="flex items-center space-x-2">
-                <input type="text" id="friday" class="border border-gray-300 rounded px-3 py-2 w-full">
-                <button type="button" onclick="addItemToContainer('friday', document.getElementById('friday').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
-            </div>
+          <label class="block font-semibold text-black">Friday Workout:</label>
+          <div
+            id="friday_div"
+            class="mb-2 p-2 rounded flex flex-wrap gap-2 text-[#384959]"
+          ></div>
+          <div class="flex items-center space-x-2">
+            <input
+              type="text"
+              id="friday"
+              class="border border-gray-300 rounded px-3 py-2 w-full text-black"
+            />
+            <button
+              type="button"
+              onclick="addItemToContainer('friday', document.getElementById('friday').value)"
+              class="px-4 py-1 bg-[#4399c5] text-white rounded-lg hover:bg-[#cbccc6]/10 hover:text-black transition"
+            >
+              Add
+            </button>
+          </div>
         </div>
 
         <!-- Saturday Workout -->
         <div>
-            <label class="block font-semibold">Saturday Workout:</label>
-            <div id="saturday_div" class="mb-2 p-2  rounded flex flex-wrap gap-2"></div>
-            <div class="flex items-center space-x-2">
-                <input type="text" id="saturday" class="border border-gray-300 rounded px-3 py-2 w-full">
-                <button type="button" onclick="addItemToContainer('saturday', document.getElementById('saturday').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
-            </div>
+          <label class="block font-semibold text-black">Saturday Workout:</label>
+          <div
+            id="saturday_div"
+            class="mb-2 p-2 rounded flex flex-wrap gap-2 text-[#384959]"
+          ></div>
+          <div class="flex items-center space-x-2">
+            <input
+              type="text"
+              id="saturday"
+              class="border border-gray-300 rounded px-3 py-2 w-full text-black"
+            />
+            <button
+              type="button"
+              onclick="addItemToContainer('saturday', document.getElementById('saturday').value)"
+              class="px-4 py-1 bg-[#4399c5] text-white rounded-lg hover:bg-[#cbccc6]/10 hover:text-black transition"
+            >
+              Add
+            </button>
+          </div>
         </div>
         <!-- Breakfast -->
         <div>
-            <label class="block font-semibold">Breakfast:</label>
-            <div id="breakfast_div" class="mb-2 p-2  rounded flex flex-wrap gap-2"></div>
-            <div class="flex items-center space-x-2">
-                <input type="text" id="breakfast" class="border border-gray-300 rounded px-3 py-2 w-full">
-                <button type="button" onclick="addItemToContainer('breakfast', document.getElementById('breakfast').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
-            </div>
+          <label class="block font-semibold text-black">Breakfast:</label>
+          <div
+            id="breakfast_div"
+            class="mb-2 p-2 rounded flex flex-wrap gap-2 text-[#384959]"
+          ></div>
+          <div class="flex items-center space-x-2">
+            <input
+              type="text"
+              id="breakfast"
+              class="border border-gray-300 rounded px-3 py-2 w-full text-black"
+            />
+            <button
+              type="button"
+              onclick="addItemToContainer('breakfast', document.getElementById('breakfast').value)"
+              class="px-4 py-1 bg-[#4399c5] text-white rounded-lg hover:bg-[#cbccc6]/10 hover:text-black transition"
+            >
+              Add
+            </button>
+          </div>
         </div>
 
         <!-- Lunch -->
         <div>
-            <label class="block font-semibold">Lunch:</label>
-            <div id="lunch_div" class="mb-2 p-2  rounded flex flex-wrap gap-2"></div>
-            <div class="flex items-center space-x-2">
-                <input type="text" id="lunch" class="border border-gray-300 rounded px-3 py-2 w-full">
-                <button type="button" onclick="addItemToContainer('lunch', document.getElementById('lunch').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
-            </div>
+          <label class="block font-semibold text-black">Lunch:</label>
+          <div
+            id="lunch_div"
+            class="mb-2 p-2 rounded flex flex-wrap gap-2 text-[#384959]"
+          ></div>
+          <div class="flex items-center space-x-2">
+            <input
+              type="text"
+              id="lunch"
+              class="border border-gray-300 rounded px-3 py-2 w-full text-black"
+            />
+            <button
+              type="button"
+              onclick="addItemToContainer('lunch', document.getElementById('lunch').value)"
+              class="px-4 py-1 bg-[#4399c5] text-white rounded-lg hover:bg-[#cbccc6]/10 hover:text-black transition"
+            >
+              Add
+            </button>
+          </div>
         </div>
 
         <!-- Dinner -->
         <div>
-            <label class="block font-semibold">Dinner:</label>
-            <div id="dinner_div" class="mb-2 p-2  rounded flex flex-wrap gap-2"></div>
-            <div class="flex items-center space-x-2">
-                <input type="text" id="dinner" class="border border-gray-300 rounded px-3 py-2 w-full">
-                <button type="button" onclick="addItemToContainer('dinner', document.getElementById('dinner').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
-            </div>
+          <label class="block font-semibold text-black">Dinner:</label>
+          <div
+            id="dinner_div"
+            class="mb-2 p-2 rounded flex flex-wrap gap-2 text-[#384959]"
+          ></div>
+          <div class="flex items-center space-x-2">
+            <input
+              type="text"
+              id="dinner"
+              class="border border-gray-300 rounded px-3 py-2 w-full text-black"
+            />
+            <button
+              type="button"
+              onclick="addItemToContainer('dinner', document.getElementById('dinner').value)"
+              class="px-4 py-1 bg-[#4399c5] text-white rounded-lg hover:bg-[#cbccc6]/10 hover:text-black transition"
+            >
+              Add
+            </button>
+          </div>
         </div>
 
         <!-- Pre-workout Diet -->
         <div>
-            <label class="block font-semibold">Pre-workout Diet:</label>
-            <div id="preworkout_diet_div" class="mb-2 p-2  rounded flex flex-wrap gap-2"></div>
-            <div class="flex items-center space-x-2">
-                <input type="text" id="preworkout_diet" class="border border-gray-300 rounded px-3 py-2 w-full">
-                <button type="button" onclick="addItemToContainer('preworkout_diet', document.getElementById('preworkout_diet').value)" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Action buttons -->
-    <div class="flex justify-end space-x-4 mt-4">
-        <button type="button" onclick="closePopup()" class="px-6 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">Close</button>
-        <button type="button" onclick="submitPlan()" class="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Submit</button>
-    </div>
-</form>
-
-      </div>
-    </main>
-
-    <!-- Footer Section -->
-    <footer class="bg-gray-800 text-white py-6 shadow-inner">
-      <div class="container mx-auto flex items-center justify-between px-10">
-        <div class="footer-logo flex items-center space-x-2">
-          <img
-            src="{% static 'gymOwner/image/footer-logo.png' %}"
-            class="w-10 h-10 rounded-full hover:scale-105 transition-transform duration-300"
-            alt="Footer Logo"
-          />
-          <span class="text-sm font-medium">Developed By - MOHD ASJAD</span>
-        </div>
-        <div class="social-links flex space-x-4">
-          <a href="#" class="hover:text-blue-400 transition duration-200"
-            >Facebook</a
-          >
-          <a href="#" class="hover:text-blue-400 transition duration-200"
-            >Twitter</a
-          >
-          <a href="#" class="hover:text-blue-400 transition duration-200"
-            >LinkedIn</a
-          >
+          <label class="block font-semibold text-black">Pre-workout Diet:</label>
+          <div
+            id="preworkout_diet_div"
+            class="mb-2 p-2 rounded flex flex-wrap gap-2 text-[#384959]"
+          ></div>
+          <div class="flex items-center space-x-2">
+            <input
+              type="text"
+              id="preworkout_diet"
+              class="border border-gray-300 rounded px-3 py-2 w-full text-black"
+            />
+            <button
+              type="button"
+              onclick="addItemToContainer('preworkout_diet', document.getElementById('preworkout_diet').value)"
+              class="px-4 py-1 bg-[#4399c5] text-white rounded-lg hover:bg-[#cbccc6]/10 hover:text-black transition"
+            >
+              Add
+            </button>
+          </div>
         </div>
       </div>
-    </footer>
 
-    <!-- JavaScript -->
-    <script>
-      let gymUserId;
+      <!-- Action buttons -->
+      <div class="flex justify-end space-x-4 mt-4">
+        <button
+          type="button"
+          onclick="closePopup()"
+          class="px-6 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+        >
+          Close
+        </button>
+        <button
+          type="button"
+          onclick="submitPlan()"
+          class="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Submit
+        </button>
+      </div>
+    </form>
+  </div>
+</main>
 
-      function openPlanPopup(userId) {
-        gymUserId = userId;
-        fetch(`/gym-trainer/get-user-plan/${userId}`)
-          .then((response) => response.json())
-          .then((data) => {
-            document.getElementById("update-date").innerText =
-              data.update_date || "NA";
-            loadPreviousItems("monday", data.monday_workout);
-            loadPreviousItems("tuesday", data.tuesday_workout);
-            loadPreviousItems("wednesday", data.wednesday_workout);
-            loadPreviousItems("thursday", data.thursday_workout);
-            loadPreviousItems("friday", data.friday_workout);
-            loadPreviousItems("saturday", data.saturday_workout);
-            loadPreviousItems("breakfast", data.breakfast);
-            loadPreviousItems("lunch", data.lunch);
-            loadPreviousItems("dinner", data.dinner);
-            loadPreviousItems("preworkout_diet", data.preworkout_diet);
-
-            document.getElementById("plan-popup").style.display = "block";
-          });
-      }
-
-      function loadPreviousItems(field, items) {
-        const container = document.getElementById(`${field}_div`);
-
-        if (items === "") {
-          console.log("shjhujanfe");
-        } else {
-          items.split(",").forEach((item) => addItemToContainer(field, item));
-        }
-      }
-
-      function addItem(field) {
-        const input = document.getElementById(`${field}`);
-        console.log(input);
-        const item = input.value;
-        console.log(item);
-        if (item) {
-          addItemToContainer(field, item);
-          input.value = ""; // Clear input field
-        }
-      }
-
-function addItemToContainer(field, item) {
-    const container = document.getElementById(`${field}_div`);
-    const itemDiv = document.createElement("div");
-    itemDiv.classList.add("item"); // Optional: Add a class for styling
-
-    // Add the item text
-    const itemText = document.createElement("span");
-    itemText.innerText = item;
-    itemDiv.appendChild(itemText);
-
-    // Create the remove button with an image (cross.png)
-    const removeBtn = document.createElement("button");
-    removeBtn.classList.add("remove-btn"); // Optional: Add a class for styling
-
-    const removeImg = document.createElement("img");
-    removeImg.src = "{% static 'trainer/image/cross.png' %}";  // Replace with actual path
-    removeImg.alt = "Remove";  // Alt text for accessibility
-    removeImg.classList.add("remove-img"); // Add a class for styling the image size
-
-    // Style the image to match the font size
-    removeImg.style.width = "1em";  // Set width to font-size
-    removeImg.style.height = "1em";  // Set height to font-size
-
-    // Append the image to the button
-    removeBtn.appendChild(removeImg);
-
-    // Set up the remove button functionality
-    removeBtn.onclick = () => itemDiv.remove();
-
-    // Append the remove button to the item div
-    itemDiv.appendChild(removeBtn);
-
-    // Append the item div to the container
-    container.appendChild(itemDiv);
-}
-
-
-      function submitPlan() {
-        const fields = [
-          "monday",
-          "tuesday",
-          "wednesday",
-          "thursday",
-          "friday",
-          "saturday",
-          "breakfast",
-          "lunch",
-          "dinner",
-          "preworkout_diet",
-        ];
-        const formData = new FormData();
-
-        fields.forEach((field) => {
-          const items = Array.from(
-            document.getElementById(`${field}_div`).children
-          )
-            .map((div) => div.firstChild.textContent)
-            .join(",");
-          formData.append(`${field}_div`, items);
-        });
-
-        formData.append("gym_user_id", gymUserId);
-
-        fetch("/gym-trainer/update-plan/", {
-          method: "POST",
-          body: formData,
-          headers: { "X-CSRFToken": "{{ csrf_token }}" },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.success) closePopup();
-          });
-      }
-
-      function closePopup() {
-        document.getElementById("plan-popup").style.display = "none";
-      }
-    </script>
-  </body>
-</html>
+{% endblock content %}

@@ -2,49 +2,17 @@
 {% load static %}
 {% block content %}
   {% include 'core/header.html' %}
-    <script>
-      function joinGym(gymId) {
-        const joinButton = document.getElementById(`join-btn-${gymId}`);
-        joinButton.disabled = true;
-        joinButton.innerHTML = `<svg class="animate-spin h-5 w-5 mr-2 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v3.5a4.5 4.5 0 100 9V20a8 8 0 01-8-8z"></path>
-      </svg> Joining...`;
+<script>
+  let csrfId = "{{ csrf_token }}"
 
-        fetch(`/gym-user/join-gym/${gymId}/`, {
-          method: "POST",
-          headers: {
-            "X-CSRFToken": "{{ csrf_token }}",
-            "Content-Type": "application/json",
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.success) {
-              document
-                .getElementById("success-message")
-                .classList.remove("hidden");
-              joinButton.innerHTML = "Joined";
-              joinButton.classList.add("bg-green-500");
-              joinButton.classList.remove("bg-blue-500", "hover:bg-blue-700");
-            }
-          })
-          .catch((error) => console.error("Error:", error));
-      }
+</script>
 
-      function closeMessage() {
-        document.getElementById("success-message").classList.add("hidden");
-      }
-    </script>
-  </head>
-  <body class="bg-gray-100 font-sans min-h-screen flex flex-col">
-    {% load static %}
 
-   
+<script src="{% static 'gymUser/js/join_gym.js' %}"></script>
 
     <!-- Main Content -->
-    <div class="container mx-auto p-10">
-      <h1 class="text-2xl font-bold mb-4">Gyms in {{ gym_user.city }}</h1>
+    <div class="container mx-auto p-10 mt-[7rem]">
+      <h1 class="text-2xl font-bold mb-4 text-black">Gyms in {{ gym_user.city }}</h1>
 
       <!-- Success Message Overlay -->
       <div
@@ -63,74 +31,28 @@
         </div>
       </div>
 
-      <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <ul class="grid grid-cols-4 sm:grid-cols-2 lg:grid-cols-4 gap-2">
         {% for gym in gyms %}
         <li
-          class="p-6 bg-white w-3/5 rounded-lg shadow-md transform hover:scale-105 transition-all duration-300 ease-in-out"
+          class="p-6 w-3/5 rounded-2xl shadow-xl transform hover:scale-105 transition duration-300 ease-in-out text-black backdrop-blur-md bg-white/30 border border-white/30"
         >
           <h2 class="text-xl font-semibold">{{ gym.gym_name }}</h2>
           <p>{{ gym.address }}, {{ gym.city }}, {{ gym.state }}</p>
           <button
             id="join-btn-{{ gym.id }}"
             onclick="joinGym({{ gym.id }})"
-            class="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition ease-in-out duration-300"
+            class="mt-4 py-2 px-4 text-white rounded-lg transition ease-in-out duration-300 bg-[#4399c5] hover:bg-[#cbccc6]/10 hover:text-black"
           >
             Join
           </button>
         </li>
         {% empty %}
-        <p class="text-center col-span-3">No gyms available in your city.</p>
+        <p class="text-center col-span-3 text-black">No gyms available in your city.</p>
         {% endfor %}
       </ul>
     </div>
 
-    <!-- Footer Section -->
-    <footer class="bg-gray-800 text-white py-4 shadow-inner mt-auto">
-      <div class="container mx-auto flex items-center justify-between px-4">
-        <div class="flex items-center">
-          <img
-            src="{% static 'core/image/footer-logo.png' %}"
-            class="w-10 h-10 rounded-full"
-            alt="Footer Logo"
-          />
-          <span class="ml-2 text-sm">Developed by MOHD ASJAD</span>
-        </div>
-        <div class="flex space-x-4">
-          <a href="#" class="hover:text-blue-400">Facebook</a>
-          <a href="#" class="hover:text-blue-400">Twitter</a>
-          <a href="#" class="hover:text-blue-400">LinkedIn</a>
-        </div>
-      </div>
-    </footer>
 
-    <script>
-      function joinGym(gymId) {
-        const joinButton = document.getElementById(`join-btn-${gymId}`);
-        joinButton.disabled = true;
+    
 
-        fetch(`/gym-user/join-gym/${gymId}/`, {
-          method: "POST",
-          headers: {
-            "X-CSRFToken": "{{ csrf_token }}",
-            "Content-Type": "application/json",
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.success) {
-              document
-                .getElementById("success-message")
-                .classList.remove("hidden");
-              joinButton.innerHTML = "Joined";
-              joinButton.classList.add("bg-green-500");
-              joinButton.classList.remove("bg-blue-500", "hover:bg-blue-700");
-            }
-          })
-          .catch((error) => console.error("Error:", error));
-      }
-
-      function closeMessage() {
-        document.getElementById("success-message").classList.add("hidden");
-      }
-    </script>
-
+{% endblock content %}

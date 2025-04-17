@@ -36,6 +36,7 @@ class CourseVideo(models.Model):
     course = models.ForeignKey(VideoCourse, on_delete=models.CASCADE, related_name='videos')
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
+    thumbnail = models.ImageField(upload_to='video_thumbnails/', blank=True, null=True)
     video_file = models.FileField(upload_to='course_videos/')
     duration = models.DurationField()
     sequence = models.PositiveIntegerField()  # Determines order

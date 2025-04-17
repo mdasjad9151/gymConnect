@@ -2,8 +2,8 @@
 {% load static %}
 {% block content %}
   {% include 'core/header.html' %}
-<div class="max-w-4xl mx-auto p-6">
-  <h1 class="text-3xl font-bold mb-6">My Purchased Courses</h1>
+<div class="max-w-4xl mx-auto p-6 mt-[7rem]">
+  <h1 class="text-3xl font-bold mb-6 text-black">Your Purchased Courses</h1>
 
   {% if purchases %}
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -15,8 +15,9 @@
             {% else %}
               <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500">No Thumbnail</div>
             {% endif %}
-            <div class="p-4">
-              <h2 class="text-xl font-semibold text-blue-600 hover:underline">
+             <p class="text-gray-800 my-2 mx-4">{{ purchase.course.description }}</p>
+            <div class="pb-4 pl-4">
+              <h2 class="text-xl font-semibold text-black hover:underline">
                 {{ purchase.course.title }}
               </h2>
             </div>

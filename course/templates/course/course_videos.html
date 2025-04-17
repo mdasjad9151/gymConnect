@@ -2,17 +2,33 @@
 {% load static %}
 {% block content %}
   {% include 'core/header.html' %}
-<div class="max-w-3xl mx-auto p-6">
+<div class="max-w-3xl mx-auto p-6 mt-[7rem]">
   <h1 class="text-2xl font-bold mb-4">{{ course.title }}</h1>
 
   <div class="space-y-4">
     {% for video in videos %}
-      <div class="border p-4 rounded shadow">
-        <h2 class="text-lg font-semibold">{{ video.title }}</h2>
+      <div class="border p-4 rounded shadow bg-white/30 backdrop-blur-lg flex">
+       <div>
+         {% if  video.thumbnail %}
+        <img src="{{'video.thumbnail.url'}}"  class="w-full h-20 object-cover rounded-lg mb-4" alt="">
+        {% else %}
+                        <img
+                  src="{% static 'courses/image/default-course-thumbnail.jpg' %}"
+                  class="w-full h-20 object-cover rounded-lg mb-4"
+                  alt="Default thumbnail"
+                />
+        {% endif %}
+       </div>
+        
+        <div class ="pl-5">
+          <a href="{% url 'watch_video' video.id %}" class="text-black hover:underline  mt-2 inline-block"><h2 class="text-lg font-semibold">sp{{ video.title }}</h2> <span><p class="text-sm text-black">{{ video.duration }}</p></span></a>
         <p class="text-sm text-gray-600">{{ video.description }}</p>
-        <p class="text-sm text-gray-400">Duration: {{ video.duration }}</p>
-        <a href="{% url 'watch_video' video.id %}" class="text-blue-600 hover:underline mt-2 inline-block">Watch Video</a>
+        </div>
+
       </div>
+        
+        
+ 
     {% endfor %}
   </div>
 </div>

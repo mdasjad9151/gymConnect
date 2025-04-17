@@ -103,6 +103,7 @@ def course_videos(request, course_id):
         return redirect('my_courses')
 
     videos = course.videos.order_by('sequence')
+    print(videos)
     return render(request, 'course/course_videos.html', {
         'course': course,
         'videos': videos
@@ -110,4 +111,4 @@ def course_videos(request, course_id):
 
 def watch_video(request, video_id):
     video = get_object_or_404(CourseVideo, id=video_id)
-    return render(request, 'course/watch_video.html', {'video_id': video_id})
+    return render(request, 'course/watch_video.html', {'video_id': video_id, 'duration': video.duration })

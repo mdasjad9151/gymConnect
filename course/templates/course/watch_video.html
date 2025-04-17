@@ -1,41 +1,72 @@
 {% extends 'core/base.html' %}
 {% load static %}
+
+
 {% block content %}
   {% include 'core/header.html' %}
-<div class="video-container">
-    <video id="video" controls autoplay></video>
 
-    <div class="controls-bar">
-        <div class="left-controls">
-            <span id="durationDisplay">00:00 / 00:00</span>
+
+  <div class="relative w-full max-w-4xl mx-auto mt-10 aspect-video bg-black rounded-lg overflow-hidden shadow-lg mt-[7rem]">
+    <video id="video" class="w-full h-full object-cover" autoplay></video>
+
+    <!-- Overlay Controls -->
+    <div
+      id="controlsBar"
+      class="absolute inset-0 flex flex-col justify-between opacity-100 transition-opacity duration-300"
+    >
+      <!-- Top Gradient Overlay -->
+      <div class="w-full h-20 bg-gradient-to-b from-black to-transparent pointer-events-none"></div>
+
+      <!-- Bottom Controls -->
+      <div class="bg-black/50 text-white px-4 py-3 flex items-center justify-between gap-4">
+        <!-- Left: Play/Pause, Duration -->
+        <div class="flex items-center gap-4">
+          <button id="playPauseBtn" class="text-white text-xl focus:outline-none">
+            ⏸
+          </button>
+          <span id="durationDisplay" class="text-sm">00:00 / 00:00</span>
+          <button id="muteBtn">🔊</button>
         </div>
 
-        
-
-        <div class="right-controls">
-            <label for="speedSelect">Speed:</label>
-            <select id="speedSelect">
-                <option value="0.5">0.5x</option>
-                <option value="1" selected>1x</option>
-                <option value="1.5">1.5x</option>
-                <option value="2">2x</option>
-            </select>
-
-            <label for="qualitySelect">Quality:</label>
-            <select id="qualitySelect">
-                <option value="144">144p</option>
-                <option value="240">240p</option>
-                <option value="360" selected>360p</option>
-                <option value="480">480p</option>
-                <option value="720">720p</option>
-            </select>
+        <!-- Center: Progress Bar -->
+        <div class="flex-1 mx-4">
+          <input
+            id="progressBar"
+            type="range"
+            value="0"
+            min="0"
+            max="100"
+            class="w-full accent-[#4399c5]"
+          />
         </div>
+
+        <!-- Right: Speed, Quality, Fullscreen -->
+        <div class="flex items-center gap-4">
+          <select id="speedSelect" class="bg-transparent text-white text-sm outline-none">
+            <option class="text-black" value="0.5">0.5x</option>
+            <option class="text-black" value="1" selected>1x</option>
+            <option class="text-black" value="1.5">1.5x</option>
+            <option class="text-black" value="2">2x</option>
+          </select>
+          <select id="qualitySelect" class="bg-transparent text-white text-sm outline-none">
+            <option class="text-black"  value="144">144p</option>
+            <option class="text-black"  value="240">240p</option>
+            <option class="text-black" value="360" selected>360p</option>
+            <option class="text-black" value="480">480p</option>
+            <option class="text-black" value="720">720p</option>
+          </select>
+          <button id="fullscreenBtn" class="text-white text-lg focus:outline-none">⛶</button>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<script>
+  <script>
     const videoId = "{{ video_id }}";
-</script>
-<script src="{% static 'courses/js/player.js' %}"></script>
+    const duration =  "{{duration }}"; 
+    console.log(duration)
+  </script>
+  <script src="{% static 'courses/js/player.js' %}"></script>
 
 
+{% endblock content %}

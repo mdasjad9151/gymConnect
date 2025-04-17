@@ -1,27 +1,38 @@
 {% extends 'core/base.html' %}
-{% load static %}
+
 {% block content %}
-  {% include 'core/header.html' %}
+{% include "core/header.html" %}
 
-    <!-- Main Content -->
-    <main class="flex-grow flex items-center justify-center py-10">
-        <div class="container mx-auto p-10">
-            <h1 class="text-3xl font-bold text-center mb-8">User Dashboard</h1>
+<!-- Main Content -->
+<main class="flex-grow flex items-center justify-center py-10 mt-[7rem] ">
+    <div class="container mx-auto p-10 flex flex-col items-center justify-center">
+        <h1 class="text-3xl font-bold text-center mb-8 text-[#4399c5]">User Dashboard</h1>
+        
+        <!-- Main Button Container -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 w-1/2 max-w-4xl backdrop-blur-lg bg-white/30 border border-white/30 rounded-2xl p-6 shadow-xl">
             
-            <!-- Centered Button Container -->
-            <div class="flex justify-center">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-md">
-                    <!-- Join Button -->
-                    <a href="{% url 'join_gym' %}" class="block text-center p-6 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105">
-                        <h2 class="text-xl font-semibold">Join</h2>
-                    </a>
+            <!-- Requests Button -->
+            <a href="{% url 'join_gym' %}"
+               class="block text-center p-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+               style="background-color: #4399c5; color: white;">
+                <h2 class="text-xl font-semibold">Join</h2>
+            </a>
 
-                    <!-- Plan Button -->
-                    <a href="{% url 'view_plan' %}" class="block text-center p-6 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-700 transition duration-300 ease-in-out transform hover:scale-105">
-                        <h2 class="text-xl font-semibold">Plan</h2>
-                    </a>
-                </div>
-            </div>
+            <!-- Add Plans Button -->
+            <a href="{% url 'view_plan' %}"
+               class="block text-center p-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+               style="background-color: #51b6ab; color: white;">
+                <h2 class="text-xl font-semibold">Plan</h2>
+            </a>
+
+            <!-- Create Course Button -->
+            <a href="{% url 'my_courses' %}"
+               class="block text-center p-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+               style="background-color: #ebcd77; color: black;">
+                <h2 class="text-xl font-semibold">My Course</h2>
+            </a>
+    
         </div>
-    </main>
-
+    </div>
+</main>
+{% endblock content %}

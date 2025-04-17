@@ -59,7 +59,7 @@ def user_login(request):
             user = authenticate(request, username=email, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('dashboard')
+                return redirect('accounts:dashboard')
     else:
         form = CustomLoginForm()
     return render(request, 'accounts/login.html', {'form': form})
@@ -67,7 +67,7 @@ def user_login(request):
 @login_required
 def user_logout(request):
     logout(request)
-    return redirect('login')
+    return redirect('accounts:login')
 
 
 @login_required
