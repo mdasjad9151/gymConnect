@@ -15,4 +15,13 @@ urlpatterns = [
     
     path('list-users/', views.list_users, name='list_users'),
     path('list-trainers/', views.list_trainers, name='list_trainers'),
+
+    # ?\
+
+    path('gyms/', views.gym_list, name='gym_list'),
+    path('gyms/add/', views.add_gym, name='add_gym'),
+    path('gyms/edit/<int:gym_id>/', views.edit_gym, name='edit_gym'),
+    path('gyms/delete/<int:gym_id>/', views.delete_gym, name='delete_gym'),
+    path('gyms/gallery/<int:gym_id>/', views.gym_gallery, name='gym_gallery'),
+
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

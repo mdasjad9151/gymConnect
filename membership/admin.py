@@ -1,8 +1,8 @@
 from django.contrib import admin
 
-from .models import Gym, Membership
+from .models import  Membership
 
-admin.site.register(Gym)
+
 admin.site.register(Membership)
 
 

@@ -2,7 +2,7 @@
 from django import forms
 from accounts.models import Trainer
 
-from membership.models import Gym  # Your Gym model is here
+from .models import Gym, GymImage  # Your Gym model is here
 
 class TrainerSelectForm(forms.Form):
     trainer = forms.ModelChoiceField(
@@ -18,4 +18,45 @@ class TrainerSelectForm(forms.Form):
 class GymForm(forms.ModelForm):
     class Meta:
         model = Gym
-        fields = ['name', 'address', 'city', 'latitude', 'longitude', 'price_per_day']
+        fields = ['name', 'address', 'city', 'state', 'pincode', 'gym_logo', 'price_per_day']
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'w-full p-2 rounded-md border border-gray-300 backbrop-blur-sm bg-white/30',
+                'placeholder': 'Enter gym name'
+            }),
+            'address': forms.Textarea(attrs={
+                'class': 'w-full p-2 rounded-md border border-gray-300 backbrop-blur-sm bg-white/30',
+                'placeholder': 'Enter full address',
+                'rows': 2
+            }),
+            'city': forms.TextInput(attrs={
+                'class': 'w-full p-2 rounded-md border border-gray-300 backbrop-blur-sm bg-white/30',
+                'placeholder': 'Enter city name'
+            }),
+            'state': forms.TextInput(attrs={
+                'class': 'w-full p-2 rounded-md border border-gray-300 backbrop-blur-sm bg-white/30',
+                'placeholder': 'Enter state name'
+            }),
+            'pincode': forms.TextInput(attrs={
+                'class': 'w-full p-2 rounded-md border border-gray-300 backbrop-blur-sm bg-white/30',
+                'placeholder': 'Enter pincode'
+            }),
+            'price_per_day': forms.NumberInput(attrs={
+                'class': 'w-full p-2 rounded-md border border-gray-300 backbrop-blur-sm bg-white/30',
+                'placeholder': 'Price per day (in ₹)'
+            }),
+            'gym_logo': forms.ClearableFileInput(attrs={
+                'class': 'w-full p-2 border border-gray-300 file:bg-[#51b6ab] file:text-black file:rounded-md backbrop-blur-sm bg-white/30',
+            }),
+        }
+
+class GymImageForm(forms.ModelForm):
+    class Meta:
+        model = GymImage
+        fields = ['image']
+        widgets = {
+            'image': forms.ClearableFileInput(attrs={
+                'class': 'w-full file:bg-[#51b6ab] file:text-black file:px-4 file:py-2 file:rounded-lg file:border-0 backbrop-blur-sm bg-white/30' ,
+                'placeholder': 'Upload gym gallery image'
+            })
+        }

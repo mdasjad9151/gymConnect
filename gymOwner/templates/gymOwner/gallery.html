@@ -1,0 +1,24 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+{% include 'core/header.html' %}
+    
+<div class=" bg-opacity-50 backdrop-blur-xl bg-white/20 p-8 rounded-lg max-w-6xl mx-auto mt-[7rem]">
+    <h2 class="text-3xl text-black font-semibold mb-6 text-center">{{ gym.name }} - Gallery</h2>
+
+    <div class="flex flex-wrap gap-6 justify-center">
+        {% for img in images %}
+            <div class="relative group">
+                <img src="{{ img.image.url }}" alt="Gym Image" class="rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:opacity-90 cursor-pointer" style="width: 250px; height: auto;">
+                <div class="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex justify-center items-center">
+                    <span class="text-white text-lg font-semibold">View Image</span>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-center text-black w-full mt-4">No images available for this gym.</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}

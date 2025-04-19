@@ -1,14 +1,23 @@
 import json
+import requests
 from django.shortcuts import render, get_object_or_404,redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from accounts.models import GymUser, Trainer,GymOwner
-from .models import TrainerRequest
-from .forms import TrainerSelectForm
 
-# Create your views here.
+from django.contrib import messages
+
+from django.views.decorators.http import require_POST
+
+
+from accounts.models import GymUser, Trainer,GymOwner
+from .models import TrainerRequest, Gym, GymImage
+from .forms import TrainerSelectForm,GymForm,GymImageForm
+from accounts.decorators import gym_owner_required
+from gymConnect.settings import GOOGLE_MAPS_API_KEY
+
+API_KEY  = GOOGLE_MAPS_API_KEY
 @login_required
 def gym_owner_deshboard(request):
     owner=  request.user
@@ -63,11 +72,8 @@ def get_trainer_details(request, trainer_id):
     
     return JsonResponse(trainer_data)
 
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-from django.contrib.auth.decorators import login_required
-import json
-from .models import Trainer, TrainerRequest
+
+
 
 @login_required
 @require_POST
@@ -113,7 +119,7 @@ def create_trainer_request(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 
-
+@gym_owner_required
 def assign_user(request):
     # Get the logged-in user and ensure they are a gym owner
     owner=  request.user
@@ -174,4 +180,103 @@ def list_trainers(request):
     gym_id = request.user
     trainers = Trainer.objects.filter(gym_id=gym_id.id)  # Assuming Trainer model is defined
     return render(request, 'gymOwner/trainers_list.html', {'trainers': trainers})
+
+
+
+# gym management
+
+def get_lat_lon_from_address(address):
+    url = f'https://maps.googleapis.com/maps/api/geocode/json'
+    params = {'address': address, 'key': API_KEY}
+    response = requests.get(url, params=params)
+    data = response.json()
+   
+    if data['status'] == 'OK':
+        location = data['results'][0]['geometry']['location']
+        return location['lat'], location['lng']
+    return None, None
+
+
+@gym_owner_required
+def add_gym(request):
+    if request.method == 'POST':
+        form = GymForm(request.POST, request.FILES)
+        images = request.FILES.getlist('images')  # multiple file input with name='images'
+        print(images)
+
+        if form.is_valid():
+            gym = form.save(commit=False)
+            gym.owner = request.user
+            full_address = f"{gym.address}, {gym.city}"
+            lat, lon = get_lat_lon_from_address(full_address)
+            if lat and lon:
+                gym.latitude = lat
+                gym.longitude = lon
+                gym.save()
+                
+                for img in images:
+                    GymImage.objects.create(gym=gym, image=img)
+                
+                messages.success(request, 'Gym added with coordinates.')
+                return redirect('gym_list')
+            else:
+                messages.error(request, 'Unable to get coordinates from address.')
+            # Save gallery images
+            
+            return redirect('gym_list')  # or any success URL
+    else:
+        form = GymForm()
+
+    return render(request, 'gymOwner/add_gym.html', {'form': form,})
+
+@gym_owner_required
+def gym_list(request):
+    gyms = Gym.objects.filter(owner=request.user)
+    return render(request, 'gymowner/gym_list.html', {'gyms': gyms})
+
+
+@gym_owner_required
+def edit_gym(request, gym_id):
+    gym = get_object_or_404(Gym, id=gym_id, owner=request.user)
+    gym_image = get_object_or_404(GymImage , gym = gym)
+    
+    if request.method == 'POST':
+        form = GymForm(request.POST, request.FILES, instance=gym)
+        image_form = GymImageForm(request.POST, request.FILES)
+        
+        if form.is_valid():
+            form.save()  # Save gym details
+            return redirect('gym_list')
+            
+            # Handling gallery images (if new images are uploaded)
+        if image_form.is_valid():
+            images = request.FILES.getlist('images')
+            for img in images:
+                GymImage.objects.create(gym=gym, image=img)
+            
+            messages.success(request, 'Gym updated successfully.')
+            return redirect('gym_list')
+    else:
+        form = GymForm(instance=gym)
+        image_form = GymImageForm(instance = gym_imaeg)
+
+    return render(request, 'gymOwner/edit_gym.html', {
+        'form': form,
+        'gym': gym,
+        'image_form': image_form,
+    })
+
+
+@gym_owner_required
+def delete_gym(request, gym_id):
+    gym = get_object_or_404(Gym, id=gym_id, owner=request.user)
+    gym.delete()
+    messages.success(request, 'Gym deleted successfully.')
+    return redirect('gym_list')
+
+    return render(request, 'gymowner/delete_gym.html', {'gym': gym})
+def gym_gallery(request, gym_id):
+    gym = get_object_or_404(Gym, id=gym_id)
+    images = GymImage.objects.filter(gym=gym)
+    return render(request, 'gymOwner/gallery.html', {'images': images, 'gym':gym})
 

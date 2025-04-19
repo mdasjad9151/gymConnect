@@ -1,40 +1,11 @@
 {% extends 'core/base.html' %}
 {% load static %}
 {% block content %}
-  {% include 'core/header.html' %}
+{% include 'core/header.html' %}
 {% load static %}
-    <!-- Header Section -->
-    <header class="bg-blue-500 text-white py-4 shadow-lg">
-      <div class="container mx-auto flex items-center justify-between">
-        <!-- Logo Section -->
-        <div class="flex items-center space-x-4 px-10">
-          <a href="{% url 'gym_owner_deshboard' %}"><img
-            src="{% static 'core/image/logo.png' %}"
-            class="w-16 h-16 rounded-full"
-            alt="GymConnect Logo"
-          /></a>
-          <div class="text-xl font-semibold">GymConnect</div>
-        </div>
-
-        <!-- Profile Picture with Dropdown -->
-        <nav class="relative px-10">
-          <!-- Profile Picture Button -->
-          
-            <a href="{% url 'logout' %}">
-              <img
-              src="{{ profile.profile_picture.url }}"
-              class="w-10 h-10 rounded-full object-cover"
-              alt="Profile Picture"
-            />
-            </a>
-          
-            
-          </div>
-        </nav>
-      </div>
-    </header>
+   
     <!-- Main Content -->
-    <main class="flex-grow flex items-center justify-center py-10">
+    <main class="flex-grow flex items-center justify-center py-10 mt-[7rem]">
         <div class="container mx-auto p-10 flex flex-col items-center  justify-center">
             <h1 class="text-3xl font-bold text-center mb-8">Owner Dashboard</h1>
             
@@ -62,3 +33,6 @@
             </div>
         </div>
     </main>
+
+
+{% endblock content %}
