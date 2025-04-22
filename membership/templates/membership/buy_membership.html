@@ -1,0 +1,109 @@
+{% extends 'core/base.html' %}
+
+{% block content %} 
+{% include 'core/header.html' %}
+
+<main class="mt-[1rem] flex justify-center items-center min-h-screen px-4">
+  <div class="bg-white/30 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg p-8 w-full max-w-lg text-black">
+    
+    <h2 class="text-2xl font-semibold mb-6 text-center">Buy Membership for {{ gym.name }}</h2>
+
+    <form method="post" id="membership-form" class="space-y-6">
+      {% csrf_token %}
+
+      <!-- Duration Type -->
+      <div class="flex flex-col md:flex-row md:items-center md:gap-4">
+        <label for="duration" class="w-40 font-medium">Duration Type:</label>
+        <select name="duration" id="duration" required
+                class="w-full md:w-auto bg-[#e8ddaf] text-black px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#51b6ab]">
+          <option value="">Select</option>
+          <option value="day">Day</option>
+          <option value="month">Month</option>
+          <option value="year">Year</option>
+        </select>
+      </div>
+
+      <!-- Count -->
+      <div class="flex flex-col md:flex-row md:items-center md:gap-4">
+        <label for="count" class="w-40 font-medium">Number:</label>
+        <select name="count" id="count" required
+                class="w-full md:w-auto bg-[#cbccc6] text-black px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#51b6ab]">
+          <option value="">Select count</option>
+        </select>
+      </div>
+
+      <!-- Total Price -->
+      <p class="text-lg font-semibold">Total Price: ₹<span id="price">0</span></p>
+
+      <!-- Submit Button -->
+      <div class="text-center">
+        <button type="submit"
+                class="bg-[#51b6ab] hover:bg-[#4399c5] text-black font-semibold px-6 py-2 rounded-md transition">
+          Confirm Purchase
+        </button>
+      </div>
+    </form>
+
+  </div>
+</main>
+
+<script>
+    const durationEl = document.getElementById('duration');
+    const countEl = document.getElementById('count');
+    const priceEl = document.getElementById('price');
+    const pricePerDay = {{ gym.price_per_day }};
+
+    function populateCountOptions(max) {
+        countEl.innerHTML = '<option value="">Select count</option>';
+        for (let i = 1; i <= max; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            countEl.appendChild(option);
+        }
+    }
+
+    function updateCountOptions() {
+        const duration = durationEl.value;
+        if (duration === 'day') {
+            populateCountOptions(29);
+        } else if (duration === 'month') {
+            populateCountOptions(11);
+        } else if (duration === 'year') {
+            populateCountOptions(1);
+        } else {
+            countEl.innerHTML = '<option value="">Select count</option>';
+        }
+        priceEl.innerText = '0';
+    }
+
+    function updatePrice() {
+        const duration = durationEl.value;
+        const count = parseInt(countEl.value);
+        let multiplier = 1;
+
+        if (!duration || isNaN(count)) {
+            priceEl.innerText = '0';
+            return;
+        }
+
+        if (duration === 'day') {
+            multiplier = 1;
+        } else if (duration === 'month') {
+            multiplier = 30;
+        } else if (duration === 'year') {
+            multiplier = 365;
+        }
+
+        const total = count * multiplier * pricePerDay;
+        priceEl.innerText = total.toFixed(1);
+    }
+
+    durationEl.addEventListener('change', () => {
+        updateCountOptions();
+    });
+
+    countEl.addEventListener('change', updatePrice);
+</script>
+
+{% endblock content %}

@@ -15,9 +15,8 @@ from accounts.models import GymUser, Trainer,GymOwner
 from .models import TrainerRequest, Gym, GymImage
 from .forms import TrainerSelectForm,GymForm,GymImageForm
 from accounts.decorators import gym_owner_required
-from gymConnect.settings import GOOGLE_MAPS_API_KEY
+from .utils import get_lat_lon_from_address
 
-API_KEY  = GOOGLE_MAPS_API_KEY
 @login_required
 def gym_owner_deshboard(request):
     owner=  request.user
@@ -185,16 +184,7 @@ def list_trainers(request):
 
 # gym management
 
-def get_lat_lon_from_address(address):
-    url = f'https://maps.googleapis.com/maps/api/geocode/json'
-    params = {'address': address, 'key': API_KEY}
-    response = requests.get(url, params=params)
-    data = response.json()
-   
-    if data['status'] == 'OK':
-        location = data['results'][0]['geometry']['location']
-        return location['lat'], location['lng']
-    return None, None
+
 
 
 @gym_owner_required
@@ -238,8 +228,7 @@ def gym_list(request):
 @gym_owner_required
 def edit_gym(request, gym_id):
     gym = get_object_or_404(Gym, id=gym_id, owner=request.user)
-    gym_image = get_object_or_404(GymImage , gym = gym)
-    
+
     if request.method == 'POST':
         form = GymForm(request.POST, request.FILES, instance=gym)
         image_form = GymImageForm(request.POST, request.FILES)
@@ -258,7 +247,7 @@ def edit_gym(request, gym_id):
             return redirect('gym_list')
     else:
         form = GymForm(instance=gym)
-        image_form = GymImageForm(instance = gym_imaeg)
+        image_form = GymImageForm()
 
     return render(request, 'gymOwner/edit_gym.html', {
         'form': form,

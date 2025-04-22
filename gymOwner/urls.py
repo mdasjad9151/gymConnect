@@ -7,7 +7,6 @@ urlpatterns = [
     path('dashboard-gym/', views.gym_owner_deshboard, name='gym_owner_deshboard'),
 
     path('assign-user/', views.assign_user, name='assign_trainer'),
-
     path('add-trainer/', views.add_trainer, name='add_trainer'),
     path('get-trainer-details/<int:trainer_id>/', views.get_trainer_details, name='get_trainer_details'),
     path('create-trainer-request/', views.create_trainer_request, name='create-trainer-request'),
@@ -16,7 +15,7 @@ urlpatterns = [
     path('list-users/', views.list_users, name='list_users'),
     path('list-trainers/', views.list_trainers, name='list_trainers'),
 
-    # ?\
+    #
 
     path('gyms/', views.gym_list, name='gym_list'),
     path('gyms/add/', views.add_gym, name='add_gym'),

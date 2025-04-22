@@ -1,0 +1,101 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+{% include 'core/header.html' %}
+
+<div class="bg-[#4399c5]/40 backdrop-blur-xl rounded-xl p-8 max-w-5xl mx-auto my-10 shadow-xl mt-[7rem]">
+    <h2 class="text-3xl font-semibold text-black mb-6 text-center">Search Gyms</h2>
+
+<form id="searchForm" method="get" class="flex flex-wrap items-center gap-4 justify-center text-black mb-6">
+
+    <!-- Address Input -->
+    <input type="text" name="address" placeholder="Enter address"
+        class="p-2 rounded-md bg-[#e8ddaf] placeholder-black focus:outline-none focus:ring-2 focus:ring-[#51b6ab] w-64">
+
+    <!-- Use My Location Button -->
+    <button type="button" onclick="getCurrentLocation()"
+        class="bg-[#ebcd77] text-black px-4 py-2 rounded-md hover:bg-[#e8ddaf] transition-all">
+        Use My Location
+    </button>
+
+    <!-- Hidden Coordinates -->
+    <input type="hidden" id="lat" name="lat">
+    <input type="hidden" id="lon" name="lon">
+
+    <!-- Radius Dropdown -->
+    <select name="radius" required
+        class="p-2 rounded-md bg-[#cbccc6] text-black focus:outline-none focus:ring-2 focus:ring-[#51b6ab] w-40">
+        <option value="" disabled selected>Select Radius</option>
+        <option value="1">1 km</option>
+        <option value="2" selected>2 km</option>
+        <option value="5">5 km</option>
+        <option value="10">10 km</option>
+    </select>
+
+    <!-- Submit Button -->
+    <button type="submit"
+        class="bg-[#51b6ab] px-6 py-2 text-black font-semibold rounded-md hover:bg-[#4399c5] transition-all">
+        Search
+    </button>
+</form>
+
+    {% if error %}
+    <p class="text-red-600 mt-4">{{ error }}</p>
+    {% endif %}
+</div>
+
+{% if gyms %}
+<div class="max-w-6xl mx-auto mt-8">
+    <h3 class="text-2xl font-semibold text-black mb-6 text-center">Gyms Found:</h3>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for gym, distance in gyms %}
+        <div class="bg-white/40 backdrop-blur-lg p-4 rounded-xl shadow-md hover:shadow-lg transition-all text-black">
+            {% if gym.gym_logo %}
+            <img src="{{ gym.gym_logo.url }}" alt="{{ gym.name }}"
+                class="w-full h-40 object-cover rounded-lg mb-3">
+            {% endif %}
+
+            <h4 class="text-xl font-bold">
+                <a href="{% url 'membership:gym_detail' gym.id %}" class="hover:underline">
+                    {{ gym.name }} - {{ distance }} km
+                </a>
+            </h4>
+
+            <p><strong>City:</strong> {{ gym.city }}</p>
+            <p><strong>Rating:</strong> {{ gym.average_rating }} ({{ gym.rating_count }} reviews)</p>
+            <p><strong>Price/Day:</strong> ₹{{ gym.price_per_day }}</p>
+            <p><strong>Description:</strong> {{ gym.description|truncatechars:40 }}</p>
+
+            <a href="{% url 'membership:buy_membership' gym_id=gym.id %}"
+                class="inline-block mt-3 px-4 py-2 bg-[#ebcd77] text-black font-medium rounded-md hover:bg-[#e8ddaf] transition">
+                Buy Membership
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% elif gyms is not none %}
+<p class="text-center mt-10 text-black font-medium">No gyms found in the given area.</p>
+{% endif %}
+
+<script>
+function getCurrentLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function (position) {
+                document.getElementById("lat").value = position.coords.latitude;
+                document.getElementById("lon").value = position.coords.longitude;
+                document.getElementById("searchForm").submit();
+            },
+            function (error) {
+                alert("Location permission denied or unavailable.");
+            }
+        );
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+}
+</script>
+
+{% endblock content %}

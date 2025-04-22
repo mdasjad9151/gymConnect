@@ -33,12 +33,14 @@ class Gym(models.Model):
     pincode = models.PositiveIntegerField(blank=True)
     latitude = models.FloatField()
     longitude = models.FloatField()
+    opening_time = models.TimeField(blank=True, null=True)
+    closing_time = models.TimeField(blank=True, null= True)
     price_per_day = models.DecimalField(max_digits=6, decimal_places=2)
-
+    description = models.TextField(blank=True)
     gym_logo = models.ImageField(upload_to= 'gym_logo/', blank = True)
+
     average_rating = models.FloatField(default=0.0, blank=True)
     rating_count = models.PositiveIntegerField(default=0, blank= True)
-
     def __str__(self):
         return self.name
 
@@ -46,8 +48,6 @@ class Gym(models.Model):
 class GymImage(models.Model):
     gym = models.ForeignKey(Gym, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='gym_images/')
-
-
     def __str__(self):
         return  self.gym.name
 
@@ -62,4 +62,4 @@ class GymRating(models.Model):
         unique_together = ('gym', 'user')  # Prevent duplicate ratings
 
     def __str__(self):
-        return f"{self.user.username} rated {self.gym.name}: {self.rating}"
+        return f"{self.user.email} rated {self.gym.name}: {self.rating}"

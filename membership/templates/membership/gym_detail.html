@@ -1,0 +1,61 @@
+{% extends 'core/base.html' %}
+{% block content %}
+{% include 'core/header.html' %}
+{% load static %}
+
+<main class="mt-[7rem] px-4 max-w-6xl mx-auto text-black">
+
+  <div class="bg-white/30 backdrop-blur-lg border border-white/20 shadow-lg rounded-2xl p-6 space-y-6">
+
+    <h2 class="text-4xl font-bold text-gray-600 ">{{ gym.name }}</h2>
+
+    {% if gym.gym_logo %}
+    <img src="{{ gym.gym_logo.url }}" alt="Gym Logo" class="w-48 h-auto rounded-lg border border-[#cbccc6]">
+    {% endif %}
+
+    <div class="space-y-2">
+      <p><strong>Address:</strong> {{ gym.address }}, {{ gym.city }}, {{ gym.state }} - {{ gym.pincode }}</p>
+      <p><strong>Opening:</strong> {{ gym.opening_time }} | <strong>Closing:</strong> {{ gym.closing_time }}</p>
+      <p><strong>Price per day:</strong> ₹{{ gym.price_per_day }}</p>
+      <p><strong>Description:</strong> {{ gym.description }}</p>
+      <p><strong>Rating:</strong> {{ average_rating }} / 5 ({{ review_count }} reviews)</p>
+    </div>
+<div class="mt-6 ">
+      <a href="{% url 'membership:buy_membership' gym.id %}"
+         class="inline-block bg-[#51b6ab] text-black font-semibold px-6 py-2 rounded-lg hover:bg-[#4399c5] transition">
+        Buy Membership
+      </a>
+    </div>
+    <h3 class="text-xl font-semibold text-black mt-6">Gallery</h3>
+    <div class="flex flex-wrap gap-4 justify-content-center">
+      {% for img in images %}
+      <img src="{{ img.image.url }}" alt="Gym Image" class="w-48 h-36 object-cover rounded-lg shadow-md border border-[#ebcd77]">
+      {% endfor %}
+    </div>
+
+    <h3 class="text-xl font-semibold text-black mt-6">Reviews</h3>
+    {% if ratings %}
+    <ul class="space-y-4">
+      {% for rating in ratings %}
+       {% if rating.user.user_model_name == 'gymuser' or rating.user.user_model_name == 'trainer' or rating.user.user_model_name == 'gymowner' %}
+      <li class="flex gap-4 items-start bg-white/40 rounded-lg p-3 shadow">
+        <img src="{% if rating.user.profile_picture %}{{ rating.user.profile_picture.url }}{% else %}{% static 'membership/image/default_profile.png' %}{% endif %}"
+             alt="Profile Picture"
+             class="w-10 h-10 rounded-full border border-[#cbccc6]">
+        <div>
+          <strong>{{ rating.user.name }}</strong> – {{ rating.rating }} ⭐<br>
+          <p>{{ rating.review }}</p>
+        </div>
+      </li>
+      {% endif %}
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="text-gray-700">No reviews yet.</p>
+    {% endif %}
+
+    
+  </div>
+</main>
+
+{% endblock %}

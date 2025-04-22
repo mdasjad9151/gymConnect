@@ -18,4 +18,4 @@ class Membership(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.gym.name} ({self.start_date} to {self.expire_date})"
+        return f"{self.user.email} - {self.gym.name} ({self.start_date} to {self.expire_date})"

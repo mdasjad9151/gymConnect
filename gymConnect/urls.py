@@ -15,5 +15,6 @@ urlpatterns = [
     path('posts/', include("blog.urls")), #Blog urls 
 
     path('class/',include("course.urls")), #Coures urls
+    path('membership/', include('membership.urls')),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

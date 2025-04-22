@@ -8,17 +8,14 @@ class TrainerSelectForm(forms.Form):
     trainer = forms.ModelChoiceField(
         queryset=Trainer.objects.all(),
         empty_label="Select Trainer",
-        widget=forms.Select(attrs={"class": "form-select w-full p-2 border border-gray-300 rounded"}),
+        widget=forms.Select(attrs={"class": "w-full p-2 rounded-md border border-gray-300 backbrop-blur-sm bg-white/30"}),
     )
-
-
-
 
 
 class GymForm(forms.ModelForm):
     class Meta:
         model = Gym
-        fields = ['name', 'address', 'city', 'state', 'pincode', 'gym_logo', 'price_per_day']
+        fields = ['name', 'address', 'city', 'state', 'pincode','opening_time', 'closing_time' ,'gym_logo','description', 'price_per_day']
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'w-full p-2 rounded-md border border-gray-300 backbrop-blur-sm bg-white/30',
@@ -48,6 +45,20 @@ class GymForm(forms.ModelForm):
             'gym_logo': forms.ClearableFileInput(attrs={
                 'class': 'w-full p-2 border border-gray-300 file:bg-[#51b6ab] file:text-black file:rounded-md backbrop-blur-sm bg-white/30',
             }),
+            'description': forms.TextInput(attrs = {
+                'class': 'w-full p-2 border border-gray-300 file:bg-[#51b6ab] file:text-black file:rounded-md backbrop-blur-sm bg-white/30',
+            }),
+            'opening_time' : forms.TimeInput(attrs={
+                'class': 'w-full p-2 border border-gray-300 file:bg-[#51b6ab] file:text-black file:rounded-md backdrop-blur-sm bg-white/30',
+                   'type': 'time'  # Ensures browser shows time picker
+                    }),
+
+
+            'closing_time' : forms.TimeInput(attrs={
+                    'class': 'w-full p-2 border border-gray-300 file:bg-[#51b6ab] file:text-black file:rounded-md backdrop-blur-sm bg-white/30',
+                    'type': 'time'
+                    })
+
         }
 
 class GymImageForm(forms.ModelForm):
