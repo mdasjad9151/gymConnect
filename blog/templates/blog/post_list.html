@@ -1,5 +1,5 @@
 {% load static %}
-<div class="flex justify-center mt-28">
+<div class="flex justify-center mt-28 pb-10">
   <div class="w-3/5 bg-[#cbccc6]/40 p-6 shadow-xl rounded-2xl backdrop-blur-md border border-white/20">
 
     <!-- Create Post Button -->
@@ -14,8 +14,17 @@
     <div id="post-{{ post.id }}"
       class="bg-white/80 text-black p-4 rounded-2xl shadow-xl mb-10 backdrop-blur-sm border border-white/30 animate-fadeIn relative">
 
-      <!-- Username + Content -->
-      <p class="font-semibold text-lg text-[#4399c5]">{{ post.user.username }}</p>
+      <!-- User Info Section -->
+      <div class="flex items-center space-x-4 mb-4">
+          <img src="{{ post.user.profile_picture.url }}" alt="Profile Picture" class="w-12 h-12 rounded-full object-cover border-2 border-[#4399c5]">
+
+        <div>
+          <p class="font-semibold text-lg text-black">{{ post.user.name }}</p>
+          <p class="text-sm text-gray-500 capitalize">{{ post.user.user_model_name }}</p>
+        </div>
+      </div>
+
+      <!-- Post Content -->
       <p class="text-black mt-2">{{ post.content }}</p>
 
       {% if post.image %}
@@ -25,10 +34,10 @@
       {% endif %}
 
       <!-- Post Action Footer -->
-      <div class="grid grid-flow-col grid-col-3 items-center mt-6 border-t border-gray-300 pt-4">
+      <div class="grid grid-flow-col grid-cols-3 items-center mt-6 border-t border-gray-300 pt-4">
 
         <!-- Like Button -->
-        <button class="like-button flex items-center space-x-2 px-4 py-1 bg-[#51b6ab] text-white hover:bg-[#4399c5] transition"
+        <button class="like-button flex items-center justify-center space-x-2 px-4 py-1 bg-[#51b6ab] text-white hover:bg-[#4399c5] transition"
           data-post-id="{{ post.id }}">
           <span>👍</span>
           <span class="font-medium">Like (<span id="like-count-{{ post.id }}">{{ post.likes.count }}</span>)</span>
@@ -36,13 +45,13 @@
 
         <!-- Comment Button -->
         <button onclick="toggleCommentSection('{{ post.id }}')"
-          class="comment-button flex items-center space-x-2 px-4 py-1 bg-[#ebcd77] text-black  hover:bg-[#e8ddaf] transition">
+          class="comment-button flex items-center justify-center space-x-2 px-4 py-1 bg-[#ebcd77] text-black hover:bg-[#e8ddaf] transition">
           <span>💬</span>
           <span class="font-medium">Comments</span>
         </button>
 
         <!-- Send All Button -->
-        <button class="send-all-button flex items-center space-x-2 px-4 py-1 bg-[#4399c5] text-white hover:bg-[#51b6ab] transition">
+        <button class="send-all-button flex items-center justify-center space-x-2 px-4 py-1 bg-[#4399c5] text-white hover:bg-[#51b6ab] transition">
           <span>📤</span>
           <span class="font-medium">Send</span>
         </button>

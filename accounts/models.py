@@ -60,7 +60,7 @@ class Admin(BaseUser):
 
 # GymOwner class
 class GymOwner(BaseUser):
-    gym_name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
     contact_no = models.CharField(max_length=10, null= True)
     address = models.CharField(max_length=255,blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)

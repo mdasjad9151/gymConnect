@@ -3,7 +3,7 @@
 {% block content %}
   {% include 'core/header.html' %}
 
-  <div class="max-w-6xl mx-auto p-6">
+  <div class="max-w-6xl mx-auto p-6 mt-[7rem]">
     
     <h2 class="text-3xl font-bold mb-8 text-black text-center">Available Courses</h2>
 
@@ -16,13 +16,13 @@
               {% if course.thumbnail %}
                 <img
                   src="{{ course.thumbnail.url }}"
-                  class="w-full h-48 object-cover rounded-lg mb-4"
+                  class="w-full h-36 object-cover rounded-lg mb-4"
                   alt="{{ course.title }}"
                 />
               {% else %}
                 <img
                   src="{% static 'courses/image/default-course-thumbnail.jpg' %}"
-                  class="w-full h-48 object-cover rounded-lg mb-4"
+                  class="w-full h-36 object-cover rounded-lg mb-4"
                   alt="Default thumbnail"
                 />
               {% endif %}

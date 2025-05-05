@@ -19,6 +19,35 @@ def create_post(request):
 
 def post_list(request):
     posts = Post.objects.all().order_by('-created_at')
+
+    # Enrich each post with user details
+    for post in posts:
+        user = post.user
+        name = None
+        profile_picture = None
+        user_model_name = None
+
+        if hasattr(user, 'gymuser'):
+            name = user.gymuser.name
+            print('user',name)
+            profile_picture = user.gymuser.profile_picture
+            user_model_name = 'gymuser'
+        elif hasattr(user, 'trainer'):
+            name = user.trainer.name
+            print("trainer", name)
+            profile_picture = user.trainer.profile_picture
+            user_model_name = 'trainer'
+        elif hasattr(user, 'gymowner'):
+            name = user.gymowner.name
+            print("owner", name)
+            profile_picture = user.gymowner.profile_picture
+            user_model_name = 'gymowner'
+
+        # Attach them dynamically
+        user.name = name
+        user.profile_picture = profile_picture
+        user.user_model_name = user_model_name
+
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
@@ -28,7 +57,9 @@ def post_list(request):
             return redirect('blog:post_list')
     else:
         form = PostForm()
-    return render(request, 'core/home.html', {'posts': posts,'form':form})
+
+    return render(request, 'core/home.html', {'posts': posts, 'form': form})
+
 
 @login_required
 def like_post(request, post_id):
