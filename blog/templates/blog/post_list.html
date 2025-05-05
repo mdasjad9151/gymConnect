@@ -1,26 +1,54 @@
+{% extends 'core/base.html' %}
+{% block head_block %}
+<meta name="csrf-token" content="{{ csrf_token }}">
+  
+{% endblock head_block %}
+{% block content %}
+
+{% include 'core/header.html' %}
+
 {% load static %}
 <div class="flex justify-center mt-28 pb-10">
-  <div class="w-3/5 bg-[#cbccc6]/40 p-6 shadow-xl rounded-2xl backdrop-blur-md border border-white/20">
-
+  <div
+    class="w-3/5 bg-[#cbccc6]/40 p-6 shadow-xl rounded-2xl backdrop-blur-md border border-white/20"
+  >
     <!-- Create Post Button -->
-    <a href="{% url 'blog:create_post' %}">
-      <div class="my-4 text-lg mx-10 px-10 py-2 text-center bg-[#ebcd77]/70 text-black rounded-lg shadow hover:bg-[#ebcd77]/90 transition-all duration-300 ease-in-out">
-        Start Post
-      </div>
-    </a>
+    <div class="grid grid-cols-2 gap-4 max-w-2xl mx-auto justify-center">
+      <a href="{% url 'blog:create_post' %}">
+        <div
+          class="my-4 text-lg px-10 py-2 text-center border-white w-full text-black rounded-lg shadow hover:bg-red-500 hover:text-white transition-all duration-300 ease-in-out"
+        >
+          Write something interesting
+        </div>
+      </a>
+      <a href="">
+        <div
+          class="my-4 text-lg px-10 py-2 text-center w-full text-black rounded-lg shadow hover:bg-red-500 hover:text-white transition-all duration-300 ease-in-out"
+        >
+          Your Posts
+        </div>
+      </a>
+    </div>
 
     {% for post in posts %}
     <!-- Post Card -->
-    <div id="post-{{ post.id }}"
-      class="bg-white/80 text-black p-4 rounded-2xl shadow-xl mb-10 backdrop-blur-sm border border-white/30 animate-fadeIn relative">
-
+    <div
+      id="post-{{ post.id }}"
+      class="bg-white/1 text-black p-4 rounded-2xl shadow-xl mb-10 backdrop-blur-sm border border-white/30 animate-fadeIn relative backdrop-blur-lg"
+    >
       <!-- User Info Section -->
       <div class="flex items-center space-x-4 mb-4">
-          <img src="{{ post.user.profile_picture.url }}" alt="Profile Picture" class="w-12 h-12 rounded-full object-cover border-2 border-[#4399c5]">
+        <img
+          src="{{ post.user.profile_picture.url }}"
+          alt="Profile Picture"
+          class="w-12 h-12 rounded-full object-cover border-2 border-[#4399c5]"
+        />
 
         <div>
           <p class="font-semibold text-lg text-black">{{ post.user.name }}</p>
-          <p class="text-sm text-gray-500 capitalize">{{ post.user.user_model_name }}</p>
+          <p class="text-sm text-gray-500 capitalize">
+            {{ post.user.user_model_name }}
+          </p>
         </div>
       </div>
 
@@ -29,77 +57,127 @@
 
       {% if post.image %}
       <div class="flex justify-center mt-4">
-        <img src="{{ post.image.url }}" alt="Post Image" class="w-3/5 rounded-xl shadow hover:scale-105 transition">
+        <img
+          src="{{ post.image.url }}"
+          alt="Post Image"
+          class="w-3/5 rounded-xl shadow hover:scale-105 transition"
+        />
       </div>
       {% endif %}
 
       <!-- Post Action Footer -->
-      <div class="grid grid-flow-col grid-cols-3 items-center mt-6 border-t border-gray-300 pt-4">
-
+      <div
+        class="grid grid-flow-col grid-cols-3 items-center mt-6 border-t border-black pt-4"
+      >
         <!-- Like Button -->
-        <button class="like-button flex items-center justify-center space-x-2 px-4 py-1 bg-[#51b6ab] text-white hover:bg-[#4399c5] transition"
-          data-post-id="{{ post.id }}">
+        <button
+          class="like-button flex items-center justify-center space-x-2 px-4 py-1 border-2 border-black text-black hover:bg-red-500 hover:text-white transition"
+          data-post-id="{{ post.id }}"
+        >
           <span>👍</span>
-          <span class="font-medium">Like (<span id="like-count-{{ post.id }}">{{ post.likes.count }}</span>)</span>
+          <span class="font-medium"
+            >Like (<span id="like-count-{{ post.id }}"
+              >{{ post.likes.count }}</span
+            >)</span
+          >
         </button>
 
         <!-- Comment Button -->
-        <button onclick="toggleCommentSection('{{ post.id }}')"
-          class="comment-button flex items-center justify-center space-x-2 px-4 py-1 bg-[#ebcd77] text-black hover:bg-[#e8ddaf] transition">
+        <button
+           data-post-id="{{ post.id }}"
+          class="comment-button flex items-center justify-center space-x-2 px-4 py-1 border-2 border-black text-black hover:bg-red-500 hover:text-white transition"
+        >
           <span>💬</span>
           <span class="font-medium">Comments</span>
         </button>
 
         <!-- Send All Button -->
-        <button class="send-all-button flex items-center justify-center space-x-2 px-4 py-1 bg-[#4399c5] text-white hover:bg-[#51b6ab] transition">
+        <button
+          class="send-all-button flex items-center justify-center space-x-2 px-4 py-1 border-2 border-black text-black hover:bg-red-500 hover:text-white transition"
+        >
           <span>📤</span>
           <span class="font-medium">Send</span>
         </button>
-
       </div>
 
       <!-- Comment Section -->
-      <div id="comments-{{ post.id }}"
-        class="comment-section hidden mt-4 p-4 rounded-xl bg-[#cbccc6]/40 backdrop-blur-sm border border-white/20 space-y-4 md:space-y-0 md:space-x-4 transition-all duration-300 ease-in-out">
-
+      <div
+        id="comments-{{ post.id }}"
+        class="comment-section hidden mt-4 p-4 rounded-xl bg-[#cbccc6]/40 backdrop-blur-sm border border-white/20 space-y-4 md:space-y-0 md:space-x-4 transition-all duration-300 ease-in-out"
+      >
         <!-- Comment Input -->
         <div class="flex items-center space-x-2">
-          <input type="text" id="comment-text-{{ post.id }}"
+          <input
+            type="text"
+            id="comment-text-{{ post.id }}"
             class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-[#4399c5] transition"
-            placeholder="Write a comment...">
-          <button class="add-comment-button px-4 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition"
-            data-post-id="{{ post.id }}">
+            placeholder="Write a comment..."
+          />
+          <button
+            class="add-comment-button px-4 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition"
+            data-post-id="{{ post.id }}"
+          >
             ➤
           </button>
         </div>
 
         <!-- Comments List -->
         <div class="mt-4">
-          <div class="comments-list space-y-2 text-black" id="comments-list-{{ post.id }}">
+          <div
+            class="comments-list space-y-2 text-black"
+            id="comments-list-{{ post.id }}"
+          >
             <!-- Comments will appear here -->
           </div>
         </div>
       </div>
     </div>
     {% endfor %}
+
+<div class="pagination flex items-center justify-center space-x-4 mt-8 text-black">
+    {% if posts.has_previous %}
+        <a href="?page=1"
+           class="px-3 py-1 rounded-md bg-red-100 hover:bg-red-200 text-sm font-medium transition">First</a>
+        <a href="?page={{ posts.previous_page_number }}"
+           class="px-3 py-1 rounded-md bg-red-100 hover:bg-red-200 text-sm font-medium transition">Previous</a>
+    {% endif %}
+
+    <span class="px-4 py-1 text-md font-semibold bg-white/10 border-2 border-white/90 backdrop-blur-lg rounded-md shadow-inner">
+        Page {{ posts.number }} of {{ posts.paginator.num_pages }}
+    </span>
+
+    {% if posts.has_next %}
+        <a href="?page={{ posts.next_page_number }}"
+           class="px-3 py-1 rounded-md bg-white/10 shadow-inner hover:bg-red-500  border-2 border-white/60 text-md font-medium transition">Next</a>
+        <a href="?page={{ posts.paginator.num_pages }}"
+           class="px-3 py-1 rounded-md bg-white/10 hover:bg-red-500 shadow-inner border-2 border-white/30 text-md font-medium transition">Last</a>
+    {% endif %}
+</div>
   </div>
 </div>
 
 <!-- Animations -->
 <style>
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.animate-fadeIn {
-  animation: fadeIn 0.6s ease-in-out;
-}
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-fadeIn {
+    animation: fadeIn 0.6s ease-in-out;
+  }
 </style>
 
 <!-- JS Logic -->
 <script>
   const isAuthenticated = {{ request.user.is_authenticated|yesno:"true,false" }};
   const loginUrl = "{% url 'accounts:login' %}";
+   window.csrfToken = "{{ csrf_token }}";
 
   function toggleCommentSection(postId) {
     const section = document.getElementById(`comments-${postId}`);
@@ -108,3 +186,5 @@
 </script>
 
 <script src="{% static 'blog/js/script.js' %}"></script>
+{% endblock content %}
+  
