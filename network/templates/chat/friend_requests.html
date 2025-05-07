@@ -1,0 +1,42 @@
+<h2>Friend Requests</h2>
+
+{% for request in friend_requests %}
+  <div style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
+    <img src="{{ request.profile_picture.url }}" alt="Profile Picture" style="width: 50px; height: 50px; border-radius: 50%;">
+    <strong>{{ request.name }}</strong> ({{ request.user_model_name }})
+
+                           <button class="bg-green-500 px-4 py-2 rounded accept-btn" data-id="{{ request.id }}">Accept</button>
+                        <button class="bg-red-500 px-4 py-2 rounded reject-btn" data-id="{{ request.id }}">Reject</button>
+  </div>
+{% empty %}
+  <p>No pending friend requests.</p>
+{% endfor %}
+
+
+ <script>
+        document.querySelectorAll(".accept-btn").forEach(button => {
+            button.addEventListener("click", function() {
+                const requestId = this.getAttribute("data-id");
+                fetch(`/network/accept_friend_request/${requestId}/`, { method: "POST", headers: { "X-CSRFToken": "{{ csrf_token }}" } })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        this.parentElement.parentElement.remove();
+                    }
+                });
+            });
+        });
+
+        document.querySelectorAll(".reject-btn").forEach(button => {
+            button.addEventListener("click", function() {
+                const requestId = this.getAttribute("data-id");
+                fetch(`/network/reject_friend_request/${requestId}/`, { method: "POST", headers: { "X-CSRFToken": "{{ csrf_token }}" } })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        this.parentElement.parentElement.remove();
+                    }
+                });
+            });
+        });
+    </script>

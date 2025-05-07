@@ -1,0 +1,29 @@
+{% for user in users %}
+  <div class="user-card">
+    <img src="{{ user.profile_picture.url }}" alt="Profile" width="50" height="50">
+    <strong>{{ user.name }}</strong> - {{ user.user_type }}
+    <button class="bg-blue-500 px-4 py-2 rounded add-friend-btn" data-id="{{ user.id }}">
+                        Connect
+                    </button>
+  </div>
+{% endfor %}
+
+ <script>
+        document.querySelectorAll(".add-friend-btn").forEach(button => {
+            button.addEventListener("click", function() {
+                const userId = this.getAttribute("data-id");
+
+                fetch(`/network/add_friend/${userId}/`, {
+                    method: "POST",
+                    headers: { "X-CSRFToken": "{{ csrf_token }}"},
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        this.innerText = "Requested";
+                        this.classList.replace("bg-blue-500", "bg-gray-500");
+                    }
+                });
+            });
+        });
+    </script>

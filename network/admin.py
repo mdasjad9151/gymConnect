@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import ConnectionRequest, PrivateMessage
+
+admin.site.register(ConnectionRequest)
+admin.site.register(PrivateMessage)
