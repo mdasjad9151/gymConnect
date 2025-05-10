@@ -1,27 +1,28 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from .models import PrivateMessage
+
+User =  get_user_model()
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.friend_username = self.scope['url_route']['kwargs']['username']
+        self.friend_id = self.scope['url_route']['kwargs']['user_id']
         self.user = self.scope.get("user")
 
         if self.user.is_authenticated:
-            self.room_name = f"chat_{min(self.user.username, self.friend_username)}_{max(self.user.username, self.friend_username)}"
-            self.room_group_name = f"chat_{self.room_name.replace('@', '_')}"
+            self.room_name = f"chat_{min(str(self.user.id), str(self.friend_id))}_{max(str(self.user.id), str(self.friend_id))}"
+            self.room_group_name = f"chat_{self.room_name}"
 
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.accept()
 
-            # Send undelivered messages
             await self.send_undelivered_messages()
-
         else:
             await self.close()
 
+    
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
@@ -30,37 +31,38 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = data['message']
 
         #  Save message in database asynchronously
-        await self.save_message(self.user.username, self.friend_username, message)
+        await self.save_message(self.user.id, self.friend_id, message)
+
 
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 'type': 'chat_message',
                 'message': message,
-                'sender': self.user.username
+                'sender': self.user.id
             }
         )
 
     async def chat_message(self, event):
         # Don't send the message back to the sender
-        if event['sender'] != self.user.username:
+        if event['sender'] != self.user.id:
             await self.send(text_data=json.dumps({
                 'message': event['message'],
                 'sender': event['sender']
             }))
 
     @database_sync_to_async
-    def save_message(self, sender_username, receiver_username, message):
-        sender = User.objects.get(username=sender_username)
-        receiver = User.objects.get(username=receiver_username)
+    def save_message(self, sender_id, receiver_id, message):
+        sender = User.objects.get(id=sender_id)
+        receiver = User.objects.get(id=receiver_id)
         PrivateMessage.objects.create(sender=sender, receiver=receiver, message=message)
 
     @database_sync_to_async
     def get_undelivered_messages(self):
         """ Get undelivered messages as a list of dictionaries (not model objects) """
-        messages = PrivateMessage.objects.filter(receiver__username=self.user.username, is_delivered=False)
+        messages = PrivateMessage.objects.filter(receiver__id=self.user.id, is_delivered=False)
         return [
-            {"message": msg.message, "sender": msg.sender.username}
+            {"message": msg.message, "sender": msg.sender.id}
             for msg in messages
         ]
 
@@ -74,4 +76,4 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def mark_messages_as_delivered(self):
-        PrivateMessage.objects.filter(receiver__username=self.user.username, is_delivered=False).update(is_delivered=True)
+        PrivateMessage.objects.filter(receiver__id=self.user.id, is_delivered=False).update(is_delivered=True)

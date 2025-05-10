@@ -1,0 +1,50 @@
+<h2>{{ name }} ({{ user_model_name }})</h2>
+<img
+  src="{{ profile_picture.url }}"
+  alt="Profile Picture"
+  width="60"
+  height="60"
+/>
+
+<div id="chat-box"></div>
+<input type="text" id="chat-message-input" placeholder="Type your message..." />
+<button id="chat-message-submit">Send</button>
+
+<script>
+  const userId = "{{ other_user.id }}";
+  const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+
+  const chatSocket = new WebSocket(
+    protocol + "://" + window.location.host + "/ws/chat/" + userId + "/"
+  );
+
+  chatSocket.onmessage = function (e) {
+    const data = JSON.parse(e.data);
+
+    document.getElementById(
+      "chat-box"
+    ).innerHTML += `<div>${data.message}</div>`;
+  };
+
+  document.getElementById("chat-message-submit").onclick = function () {
+    const messageInputDom = document.getElementById("chat-message-input");
+    const message = messageInputDom.value;
+    chatSocket.send(JSON.stringify({ message: message }));
+    document.getElementById(
+      "chat-box"
+    ).innerHTML += `<div> ${message}</div>`;
+    messageInputDom.value = "";
+  };
+
+  window.addEventListener("DOMContentLoaded", () => {
+    fetch(`/network/fetch_messages/${userId}/`)
+      .then((response) => response.json())
+      .then((data) => {
+        data.messages.forEach((msg) => {
+          document.getElementById(
+            "chat-box"
+          ).innerHTML += `<div>${msg.message}</div>`;
+        });
+      });
+  });
+</script>

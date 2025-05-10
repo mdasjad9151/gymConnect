@@ -106,14 +106,14 @@ class CustomLoginForm(AuthenticationForm):
     username = forms.EmailField(
         label="Email",
         widget=forms.EmailInput(attrs={
-            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg text-black  focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200',
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg text-black bg-while/40 backdrop-blur-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-200',
             'placeholder': 'Enter your email',
         })
     )
     password = forms.CharField(
         label="Password",
         widget=forms.PasswordInput(attrs={
-            'class': 'w-full px-4 py-2 border border-gray-300 text-black  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200',
+            'class': 'w-full px-4 py-2 border border-gray-300 text-black  rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-200',
             'placeholder': 'Enter your password',
         })
     )

@@ -1,13 +1,13 @@
 from django.urls import path
 from . import views
 
+app_name =  'network'
 urlpatterns = [
-  path('chat/<str:username>/', views.chat_view, name='chat'),
+  path('chat/<int:id>/', views.chat_with_user, name='chat_with_user'),
 
-  path('', views.redirect_to_home, name='redirect_to_home'),
 
-  path('connections/', views.connections, name='home'),
-  path('fetch_messages/<str:username>/', views.fetch_messages, name='fetch_messages'),
+  path('connections/', views.connections, name='connections'),
+  path('fetch_messages/<int:id>/', views.fetch_messages, name='fetch_messages'),
   path('add_friends/', views.add_friends, name='add_friends'),
     path('add_friend/<int:user_id>/', views.send_friend_request, name='send_friend_request'),
     path('requests/', views.show_requests, name='show_requests'),

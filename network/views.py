@@ -6,16 +6,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from django.contrib.auth import get_user_model
 
-
 from .models import ConnectionRequest,PrivateMessage
 
 
 User = get_user_model()
-
-
-@login_required
-def redirect_to_home(request):
-    return redirect("home")
 
 @login_required
 def connections(request):
@@ -58,12 +52,36 @@ def connections(request):
             'user_model_name': user_model_name,
         })
 
-    return render(request, 'chat/connections.html', {'connections': connections})
+    return render(request, 'network/connections.html', {'connections': connections})
+
 
 @login_required
-def chat_view(request, username):
-    """Render chat page (for API calls, WebSocket handles messages)"""
-    return render(request, "chat/index.html", {"selected_friend": username})
+def chat_with_user(request, id):
+    other_user = get_object_or_404(User, id=id)
+
+    # Enrich user with name and profile_picture
+    name = profile_picture = user_model_name = None
+    if hasattr(other_user, 'gymuser'):
+        name = other_user.gymuser.name
+        profile_picture = other_user.gymuser.profile_picture
+        user_model_name = 'gymuser'
+    elif hasattr(other_user, 'trainer'):
+        name = other_user.trainer.name
+        profile_picture = other_user.trainer.profile_picture
+        user_model_name = 'trainer'
+    elif hasattr(other_user, 'gymowner'):
+        name = other_user.gymowner.name
+        profile_picture = other_user.gymowner.profile_picture
+        user_model_name = 'gymowner'
+
+    context = {
+        "other_user": other_user,
+        "name": name,
+        "profile_picture": profile_picture,
+        "user_model_name": user_model_name
+    }
+    return render(request, "network/chat_room.html", context)
+
 
 @login_required
 def add_friends(request):
@@ -95,17 +113,17 @@ def add_friends(request):
         if hasattr(user, 'gymuser'):
             user.name = user.gymuser.name
             user.profile_picture = user.gymuser.profile_picture
-            user.user_model_name = 'gymuser'
+            user.user_model_name = 'Gymer'
         elif hasattr(user, 'trainer'):
             user.name = user.trainer.name
             user.profile_picture = user.trainer.profile_picture
-            user.user_model_name = 'trainer'
+            user.user_model_name = 'Trainer'
         elif hasattr(user, 'gymowner'):
             user.name = user.gymowner.name
             user.profile_picture = user.gymowner.profile_picture
-            user.user_model_name = 'gymowner'
+            user.user_model_name = 'Gym Owner'
 
-    return render(request, 'chat/add_friends.html', {'users': users})
+    return render(request, 'network/add_friends.html', {'users': users})
 
 @csrf_exempt
 @login_required
@@ -136,15 +154,15 @@ def show_requests(request):
         if hasattr(user, 'gymuser'):
             name = user.gymuser.name
             profile_picture = user.gymuser.profile_picture
-            user_model_name = 'gymuser'
+            user_model_name = 'Gymer'
         elif hasattr(user, 'trainer'):
             name = user.trainer.name
             profile_picture = user.trainer.profile_picture
-            user_model_name = 'trainer'
+            user_model_name = 'Trainer'
         elif hasattr(user, 'gymowner'):
             name = user.gymowner.name
             profile_picture = user.gymowner.profile_picture
-            user_model_name = 'gymowner'
+            user_model_name = 'Gym Owner'
 
         # Attach them to the request for access in template
         friend_request.other_user = user
@@ -152,7 +170,7 @@ def show_requests(request):
         friend_request.profile_picture = profile_picture
         friend_request.user_model_name = user_model_name
 
-    return render(request, "chat/friend_requests.html", {
+    return render(request, "network/friend_requests.html", {
         "friend_requests": friend_requests
     })
 
@@ -182,9 +200,9 @@ def reject_friend_request(request, request_id):
 
 
 @login_required
-def fetch_messages(request, username):
+def fetch_messages(request, id):
     """ Fetch previous messages between logged-in user and selected user. """
-    selected_user = get_object_or_404(User, username=username)
+    selected_user = get_object_or_404(User, id=id)
     logged_user = request.user
 
     # Get messages where sender or receiver is either of the users
@@ -197,8 +215,8 @@ def fetch_messages(request, username):
     message_list = [
         {
             'message': msg.message,
-            'sender': msg.sender.username,
-            'receiver': msg.receiver.username,
+            'sender': msg.sender.id,
+            'receiver': msg.receiver.id,
             'timestamp': msg.timestamp.strftime("%Y-%m-%d %H:%M"),
         } for msg in messages
     ]
