@@ -1,0 +1,52 @@
+{% extends 'core/base.html' %}
+{% load static  %}
+{% comment %} Read csrf_token {% endcomment %}
+{% block head_block %}
+<meta name="csrf-token" content="{{ csrf_token }}">
+  
+{% endblock head_block %}
+{% block content %}
+
+{% include 'core/header.html' %}
+
+<div class="max-w-4xl mx-auto mt-[7rem] px-4">
+    <div class="grid grid-cols-2 gap-4 text-center justify-center mb-8">
+        <a href="{% url 'network:add_friends' %}"
+           class="px-6 py-2 rounded-md transition text-white font-semibold 
+           {% if request.resolver_match.url_name == 'add_friends' %}
+               bg-[#71211C]
+           {% else %}
+               bg-red-600 hover:bg-[#71211C]
+           {% endif %}">
+            Grow
+        </a>
+
+        <a href="{% url 'network:show_requests' %}"
+           class="px-6 py-2 rounded-md transition text-white font-semibold 
+           {% if request.resolver_match.url_name == 'show_requests' %}
+               bg-[#71211C]
+           {% else %}
+               bg-red-600 hover:bg-[#71211C]
+           {% endif %}">
+            Requests
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        {% for user in users %}
+        <div class="flex flex-col items-center p-6 rounded-xl shadow-lg backdrop-blur-md bg-white/10 border border-white/20 text-white transition hover:scale-105">
+            <img src="{{ user.profile_picture.url }}" alt="Profile"
+                 class="w-20 h-20 rounded-full object-cover border-4 border-white/30 mb-4">
+            <h3 class="font-bold text-xl text-center">{{ user.name }}</h3>
+            <p class="text-md text-black/50 mb-4">{{ user.user_model_name }}</p>
+            <button class="add-friend-btn w-full bg-[#9e3532] hover:bg-[#71211C] text-white font-semibold py-2 rounded-lg transition"
+                    data-id="{{ user.id }}">
+                Connect
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="{% static 'network/js/add_friends.js' %}"></script>
+{% endblock %}

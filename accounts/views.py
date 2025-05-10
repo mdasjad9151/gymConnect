@@ -70,6 +70,13 @@ def user_logout(request):
     return redirect('accounts:login')
 
 
+
+# Websocket Auth check.abs
+@login_required
+def check_auth(request):
+    return JsonResponse({"user": request.user.id})
+
+
 @login_required
 def dashboard(request):
     user = request.user  # Get the logged-in user

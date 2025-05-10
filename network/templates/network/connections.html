@@ -1,10 +1,12 @@
 <h2>My Connections</h2>
 
 {% for user in connections %}
-  <div style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
+<a href="{% url 'network:chat_with_user' user.id %}">
+  <div>
     <img src="{{ user.profile_picture.url }}" alt="Profile" style="width: 50px; height: 50px; border-radius: 50%;">
-    <strong>{{ user.name }}</strong> ({{ user.user_model_name }})
+    <strong>{{ user.name }}</strong> {{ user.user_model_name }}
   </div>
+</a>
 {% empty %}
   <p>You have no connections yet.</p>
 {% endfor %}

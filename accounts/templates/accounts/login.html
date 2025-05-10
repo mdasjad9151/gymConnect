@@ -4,16 +4,33 @@
 {% block content %}
 {% include "core/header.html" %}
 <main class="flex-grow flex items-center justify-center min-h-screen">
-    <div class="login-container backdrop-blur-lg bg-white/30 border border-white/20 shadow-lg rounded-lg p-8 w-full max-w-md mx-auto mt-12 transition hover:shadow-2xl transform hover:-translate-y-1">
+    <div class="animate-fadeIn login-container backdrop-blur-lg bg-white/30 border border-white/20 shadow-lg rounded-lg p-8 w-full max-w-md mx-auto mt-12 transition hover:shadow-2xl transform hover:-translate-y-1">
         <h2 class="text-2xl font-semibold text-black mb-6 text-center drop-shadow">Login</h2>
         <form method="POST" class="space-y-4 text-black">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" class="w-full py-2 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition duration-200">Login</button>
+            <button type="submit" class="w-full py-2 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 transition duration-200">Login</button>
         </form>
     </div>
 </main>
 
 <!-- Footer Section -->
 {% include "core/footer.html" %}
+
+<!-- Animations -->
+<style>
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.6s ease-in-out;
+    }
+  </style>
 {% endblock %}

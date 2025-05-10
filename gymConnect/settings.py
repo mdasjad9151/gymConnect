@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'channels',
+    # modules
     'core',
     'accounts',
     'gymOwner',
@@ -75,7 +76,11 @@ TEMPLATES = [
         },
     },
 ]
-
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",  # No Redis, uses memory
+    }
+}
 # WSGI_APPLICATION = 'gymConnect.wsgi.application'
 ASGI_APPLICATION = 'gymConnect.asgi.application'
 

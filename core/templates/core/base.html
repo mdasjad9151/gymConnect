@@ -4,23 +4,76 @@
   <meta charset="UTF-8">
   
   {% block head_block %}
-    
   {% endblock head_block %}
-    
+  
   <script src="https://cdn.tailwindcss.com"></script>
-  <title>{% block title %}My Site{% endblock %}</title>
- <style>
-  body {
-    margin: 0;
-    min-height: 100vh;
-background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'%3E%3Cdefs%3E%3CradialGradient id='grad' cx='50%' cy='50%' r='50%' fx='50%' fy='50%'%3E %3Cstop offset='0%' stop-color='%23c40000'/%3E %3Cstop offset='25%' stop-color='%23e61919'/%3E %3Cstop offset='50%' stop-color='%23f75e5e'/%3E %3Cstop offset='75%' stop-color='%23fca3a3'/%3E %3Cstop offset='100%' stop-color='%23ffe6e6'/%3E %3C/radialGradient%3E%3C/defs%3E %3Crect width='100%' height='100%' fill='url(%23grad)'/%3E %3C/svg%3E") no-repeat center center;
-background-size: cover;
-    color: #000;
-  }
-</style>
+  <title>GymConnect | {% block title %}My Site{% endblock %}</title>
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      background: linear-gradient(to top, #ffe6e6 0%, #f75e5e 100%);
+      overflow: hidden;
+    }
+
+    .bubble {
+      position: absolute;
+      border-radius: 9999px;
+      opacity: 0.8;
+      background: radial-gradient(circle at center, #ffcccc 0%, #e61919 46%, #800000 100%);
+      animation: float 5s linear infinite;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0) scale(1);
+        filter: blur(0.5px);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-100vh) scale(0.5);
+        {% comment %} filter: blur(px); {% endcomment %}
+        opacity: 0;
+      }
+    }
+  </style>
 </head>
-<body>
+<body class="relative">
+
+  <div class="canvas" id="bg-canvas">
+    <!-- Bubbles will be added dynamically -->
+  </div>
+
   {% block content %}
   {% endblock %}
+
+  <script>
+    const canvas = document.getElementById('bg-canvas');
+    const bubbleCount = 20;
+
+    for (let i = 0; i < bubbleCount; i++) {
+      const bubble = document.createElement('div');
+      const size = Math.floor(Math.random() * 80 + 20);
+      bubble.className = 'bubble';
+      bubble.style.width = `${size}px`;
+      bubble.style.height = `${size}px`;
+      bubble.style.left = `${Math.random() * 100}vw`;
+      bubble.style.bottom = `-${Math.random() * 100}px`;
+      bubble.style.animationDuration = `${Math.random() * 10 + 5}s`;
+      bubble.style.animationDelay = `${Math.random() * 5}s`;
+      canvas.appendChild(bubble);
+    }
+  </script>
 </body>
 </html>
