@@ -13,22 +13,22 @@ User = get_user_model()
 
 @login_required
 def connections(request):
-    # Get all accepted connection requests involving the current user
+    user = request.user
+
+    # Get all accepted connections
     friends = ConnectionRequest.objects.filter(
-        Q(receiver=request.user, status='accepted') |
-        Q(sender=request.user, status='accepted')
+        Q(receiver=user, status='accepted') |
+        Q(sender=user, status='accepted')
     )
 
     connections = []
 
     for friend_request in friends:
-        # Identify the other user in the connection
-        other_user = friend_request.sender if friend_request.receiver == request.user else friend_request.receiver
-        
+        # Identify the other user
+        other_user = friend_request.sender if friend_request.receiver == user else friend_request.receiver
+
         # Default values
-        name = None
-        profile_picture = None
-        user_model_name = None
+        name = profile_picture = user_model_name = None
 
         # Check and get extended user info
         if hasattr(other_user, 'gymuser'):
@@ -44,12 +44,16 @@ def connections(request):
             profile_picture = other_user.gymowner.profile_picture
             user_model_name = 'gymowner'
 
-        # Append enriched user data
+        # Check for unread messages FROM other_user TO current user
+        has_unread = PrivateMessage.objects.filter(sender=other_user, receiver=user, is_delivered=False).exists()
+
+        # Append enriched data with unread status
         connections.append({
             'id': other_user.id,
             'name': name,
             'profile_picture': profile_picture,
             'user_model_name': user_model_name,
+            'unread': has_unread,
         })
 
     return render(request, 'network/connections.html', {'connections': connections})
@@ -220,5 +224,6 @@ def fetch_messages(request, id):
             'timestamp': msg.timestamp.strftime("%Y-%m-%d %H:%M"),
         } for msg in messages
     ]
+    # print(message_list)
 
     return JsonResponse({'messages': message_list})

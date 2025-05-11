@@ -3,6 +3,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 from .models import PrivateMessage
+import datetime
 
 User =  get_user_model()
 
@@ -39,7 +40,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             {
                 'type': 'chat_message',
                 'message': message,
-                'sender': self.user.id
+                'sender': self.user.id,
+                'timestamp': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
         )
 
@@ -48,7 +50,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if event['sender'] != self.user.id:
             await self.send(text_data=json.dumps({
                 'message': event['message'],
-                'sender': event['sender']
+                'sender': event['sender'],
+                'timestamp': event['timestamp'],
             }))
 
     @database_sync_to_async
@@ -59,10 +62,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def get_undelivered_messages(self):
-        """ Get undelivered messages as a list of dictionaries (not model objects) """
         messages = PrivateMessage.objects.filter(receiver__id=self.user.id, is_delivered=False)
         return [
-            {"message": msg.message, "sender": msg.sender.id}
+            {
+                "message": msg.message,
+                "sender": msg.sender.id,
+                "timestamp": msg.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+            }
             for msg in messages
         ]
 
@@ -77,3 +83,27 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def mark_messages_as_delivered(self):
         PrivateMessage.objects.filter(receiver__id=self.user.id, is_delivered=False).update(is_delivered=True)
+
+
+
+# notifications
+
+# consumers.py
+
+
+class NotificationConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        if self.scope["user"].is_anonymous:
+            await self.close()
+        else:
+            self.group_name = f"user_notify_{self.scope['user'].id}"
+            await self.channel_layer.group_add(self.group_name, self.channel_name)
+            await self.accept()
+
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(self.group_name, self.channel_name)
+
+    async def reload_connections(self, event):
+        await self.send(text_data=json.dumps({
+            "action": "reload"
+        }))
