@@ -11,21 +11,38 @@
     {% if memberships %}
       <ul class="space-y-6">
         {% for membership in memberships %}
-          <li class="bg-[#cbccc6]/50 rounded-xl p-4 shadow-sm border border-[#e8ddaf]">
-            <h3 class="text-lg font-semibold text-[#4399c5]">{{ membership.gym.name }}</h3>
-            <p class="text-sm text-gray-700 mb-2">
-              From <span class="font-medium">{{ membership.start_date }}</span> to <span class="font-medium">{{ membership.expire_date }}</span>
-            </p>
-            {% if membership.gym.id not in rated_gym_ids %}
-              <a href="{% url 'membership:rate_gym' membership.gym.id %}"
-                 class="inline-block mt-2 bg-[#51b6ab] text-black px-4 py-2 rounded-md hover:bg-[#4399c5] transition">
-                Rate & Review
-              </a>
-            {% else %}
-              <p class="text-green-700 italic mt-2">You have already rated this gym.</p>
-            {% endif %}
-          </li>
-        {% endfor %}
+  <li class="bg-[#cbccc6]/50 rounded-xl p-4 shadow-sm border border-[#e8ddaf]">
+    <h3 class="text-lg font-semibold text-[#4399c5]">{{ membership.gym.name }}</h3>
+
+    <p class="text-sm text-gray-700 mb-1">
+      <strong>Token:</strong> {{ membership.token_code }}
+    </p>
+    <p class="text-sm text-gray-700 mb-1">
+      <strong>Paid:</strong> {{ membership.paid|yesno:"Yes,No" }}
+    </p>
+    <p class="text-sm text-gray-700 mb-1">
+      <strong>Start Date:</strong> {{ membership.start_date }}
+    </p>
+    <p class="text-sm text-gray-700 mb-2">
+      <strong>Expire Date:</strong> {{ membership.expire_date }}
+    </p>
+
+    {% if membership.gym.id not in rated_gym_ids %}
+      <a href="{% url 'membership:rate_gym' membership.gym.id %}"
+         class="inline-block mt-2 bg-[#51b6ab] text-black px-4 py-2 rounded-md hover:bg-[#4399c5] transition">
+        Rate & Review
+      </a>
+    {% else %}
+      <p class="text-green-700 italic mt-2">You have already rated this gym.</p>
+    {% endif %}
+
+    <a href="{% url 'membership:generate_membership_pdf' membership.id %}"
+       class="inline-block mt-2 bg-[#e7ba58] text-black px-4 py-2 rounded-md hover:bg-[#d9a53f] transition ml-2">
+      Generate PDF with QR
+    </a>
+  </li>
+{% endfor %}
+
       </ul>
     {% else %}
       <p class="text-center text-gray-600 text-lg">You don't have any memberships yet.</p>
