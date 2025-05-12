@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  {% load static %}
   
   {% block head_block %}
   {% endblock head_block %}
   
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{% static 'core/css/animation.css' %}">
   <title>GymConnect | {% block title %}My Site{% endblock %}</title>
 
   <style>

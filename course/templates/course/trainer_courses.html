@@ -1,47 +1,71 @@
 {% extends 'core/base.html' %}
 {% load static %}
+
 {% block content %}
   {% include 'core/header.html' %}
 
-<div class="max-w-5xl mx-auto p-6 mt-[7rem] text-black">
-    <h2 class="text-2xl font-bold mb-6">My Courses & Videos</h2>
 
-    {% for course in courses %}
-    <div class="mb-8 p-4 bg-white rounded-xl shadow text-black">
-        <div class="flex items-center space-x-4">
-            {% if course.thumbnail %}
-                <img src="{{ course.thumbnail.url }}" class="w-28 h-20 object-cover rounded-lg">
-            {% endif %}
-            <div>
-                <h3 class="text-xl font-bold">{{ course.title }}</h3>
-                <p class="text-sm text-gray-700">{{ course.description|truncatewords:15 }}</p>
-            </div>
-        </div>
-
-        <div class="mt-4 space-y-3">
-            <h4 class="text-lg font-semibold mb-2">Videos:</h4>
-            {% for video in course.videos.all %}
-                <div class="bg-gray-100 p-3 rounded-lg shadow-sm text-black">
-                    <p class="font-semibold">{{ video.sequence }}. {{ video.title }}</p>
-                    {% comment %}
-                    <video controls class="w-full mt-2 rounded-lg">
-                        <source src="{{ video.video_file.url }}" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    {% endcomment %}
-                </div>
-            {% empty %}
-                <p class="text-sm text-gray-500">No videos added yet.</p>
-            {% endfor %}
-
-            <a href="{% url 'add_course_video' course.id %}" class="text-[#4399c5] mt-2 inline-block font-semibold hover:underline">
-                + Add Video
-            </a>
-        </div>
+<div class="max-w-5xl mx-auto px-4 mt-[7rem]">
+  <div class="bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl shadow-xl p-6 animate-fadeIn">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-black">Your Created Courses</h2>
+      <a href="{% url 'create_course' %}" class="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-xl shadow transition">
+        + Create New Course
+      </a>
     </div>
-    {% empty %}
-    <p class="text-black">No courses found.</p>
-    {% endfor %}
+
+    {% if courses %}
+      <div class="space-y-6">
+        {% for course in courses %}
+          <div class="bg-white/5 border border-white/10 rounded-xl p-4 shadow-md transition hover:shadow-lg animate-fadeIn">
+            <div class="flex items-center space-x-4">
+              {% if course.thumbnail %}
+                <img src="{{ course.thumbnail.url }}" class="w-28 h-20 object-cover rounded-lg border border-white/20 shadow-sm">
+              {% endif %}
+              <div>
+                <h3 class="text-xl font-semibold text-black">{{ course.title }}</h3>
+                <p class="text-sm text-black/50">{{ course.description|truncatewords:15 }}</p>
+              </div>
+            </div>
+
+            <div class="mt-4 space-y-2">
+              <h4 class="text-lg font-medium text-black mb-2">Videos</h4>
+              {% for video in course.videos.all %}
+                <div class="bg-white/10 border border-white/10 p-3 rounded-lg text-white">
+                  <p class="font-semibold text-black/80">{{ video.sequence }}. {{ video.title }}</p>
+                </div>
+              {% empty %}
+                <p class="text-sm text-black">No videos added yet.</p>
+              {% endfor %}
+
+              <a href="{% url 'add_course_video' course.id %}" 
+   class="inline-block mt-2 bg-red-600/70 hover:bg-red-700/90 transition text-white font-semibold px-4 py-2 rounded-lg shadow">
+  + Add Video
+</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-gray-300 mt-6">No courses found.</p>
+    {% endif %}
+  </div>
 </div>
+
+<style>
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-fadeIn {
+    animation: fadeIn 0.6s ease-in-out;
+  }
+</style>
 
 {% endblock %}

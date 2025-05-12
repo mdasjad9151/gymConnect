@@ -1,6 +1,11 @@
 from django.shortcuts import render,get_object_or_404,redirect
 from django.contrib.auth.decorators import login_required
-
+from django.http import JsonResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from PIL import Image
+from django.http import FileResponse, Http404
+from django.core.files.storage import default_storage
 from django.db.models import Avg
 from datetime import date, timedelta
 from gymOwner.models import Gym,GymRating, GymImage
@@ -8,6 +13,8 @@ from .models import Membership
 from gymOwner.utils import get_lat_lon_from_address
 from .utils import calculate_distance
 from accounts.models import GymOwner, Trainer, GymUser
+import io
+import qrcode
 import uuid
 
 @login_required
@@ -170,3 +177,108 @@ def gym_detail(request, gym_id):
         'average_rating': average_rating,
         'review_count': review_count,
     })
+
+
+def get_user_display_name(user):
+    try:
+        if hasattr(user, 'gymuser'):
+            return user.gymuser.name,user.gymuser.profile_picture
+        elif hasattr(user, 'gymowner'):
+            return user.gymowner.name,user.gymuser.profile_picture
+        elif hasattr(user, 'trainer'):
+            return user.trainer.name,user.gymuser.profile_picture
+        else:
+            return user.email
+    except Exception:
+        return user.email
+
+@login_required
+def generate_membership_pdf(request, membership_id):
+    try:
+        membership = Membership.objects.select_related('gym', 'user').get(id=membership_id, user=request.user)
+    except Membership.DoesNotExist:
+        raise Http404("Membership not found")
+
+    # Create QR code
+    qr_img = qrcode.make(membership.token_code)
+    if qr_img.mode != 'RGB':
+        qr_img = qr_img.convert('RGB')
+
+    # Prepare profile picture
+    profile_img = None
+    user_info = get_user_display_name(membership.user)
+    image_field_file = user_info[1]
+    if image_field_file and default_storage.exists(image_field_file.name):
+        with default_storage.open(image_field_file.name, 'rb') as f:
+            profile_img = Image.open(f)
+            if profile_img.mode != 'RGB':
+                profile_img = profile_img.convert('RGB')
+
+    # Create PDF
+    buffer = io.BytesIO()
+    p = canvas.Canvas(buffer, pagesize=letter)
+
+    # Header
+    p.setFont("Helvetica-Bold", 20)
+    p.drawString(50, 740, "GymConnect Membership Details")
+    p.line(50, 680, 550, 680)
+
+    # Left: Text Info
+    p.setFont("Helvetica", 12)
+    y = 640
+    line_height = 20
+    p.drawString(50, y, f"Name: {user_info[0]} ({membership.user.email})")
+    y -= line_height
+    p.drawString(50, y, f"Gym: {membership.gym.name}")
+    y -= line_height
+    p.drawString(50, y, f"Token Code: {membership.token_code}")
+    y -= line_height
+    p.drawString(50, y, f"Paid: {'Yes' if membership.paid else 'No'}")
+    y -= line_height
+    p.drawString(50, y, f"Start Date: {membership.start_date}")
+    y -= line_height
+    p.drawString(50, y, f"Expire Date: {membership.expire_date}")
+
+    # Right Top: QR Code
+    p.drawInlineImage(qr_img, 400, 500, width=200, height=200)
+    
+    # Right Bottom: Profile Picture
+    if profile_img:
+        p.drawInlineImage(profile_img, 400, 400, width=130, height=130)
+
+    p.showPage()
+    p.save()
+    buffer.seek(0)
+
+    return FileResponse(buffer, as_attachment=True, filename=f"membership_{membership.gym.name}.pdf")
+
+
+
+
+
+
+@login_required
+def verify_membership_qr(request):
+    if request.method == 'POST':
+        token = request.POST.get('token_code')
+        try:
+            membership = Membership.objects.select_related('user', 'gym').get(token_code=token)
+
+
+            data = {
+                'success': True,
+                'user_email': membership.user.email,
+                'gym_name': membership.gym.name,
+                'token_code': membership.token_code,
+                'paid': membership.paid,
+                'start_date': membership.start_date.strftime("%Y-%m-%d"),
+                'expire_date': membership.expire_date.strftime("%Y-%m-%d"),
+                'status': 'Active' if membership.start_date <= date.today() <= membership.expire_date else 'Expired',
+            }
+            return JsonResponse(data)
+        except Membership.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Invalid token.'})
+    return JsonResponse({'success': False, 'message': 'Invalid request.'})
+
+def open(request):
+    return render(request, 'membership/verify_membership.html')

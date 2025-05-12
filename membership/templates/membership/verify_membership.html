@@ -1,0 +1,75 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block content %}
+  {% include 'core/header.html' %}
+
+  <main class="max-w-3xl mx-auto px-6 py-10 mt-[7rem] bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-2xl shadow-xl animate-fadeIn">
+    <h1 class="text-2xl font-bold text-center text-black mb-6">Scan Membership QR Code</h1>
+
+    <!-- QR Code Reader -->
+    <div id="reader" class="w-full max-w-md mx-auto border border-white/20 rounded-xl p-4 bg-white/5 shadow-lg"></div>
+  </main>
+
+  <!-- Modal -->
+  <div id="resultModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden z-50">
+    <div class="bg-white text-black rounded-2xl p-6 w-full max-w-md shadow-xl animate-fadeIn">
+      <h2 class="text-xl font-bold mb-4 text-red-500">Membership Details</h2>
+      <div id="membershipData" class="text-sm space-y-2"></div>
+      <button onclick="closeModal()" class="mt-4 bg-red-500 hover:bg-red-600 transition text-white px-4 py-2 rounded-xl">
+        Close
+      </button>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <script>
+    function closeModal() {
+      document.getElementById('resultModal').classList.add('hidden');
+    }
+
+    function showModal(data) {
+      const content = `
+        <p><strong>User Email:</strong> ${data.user_email}</p>
+        <p><strong>Gym:</strong> ${data.gym_name}</p>
+        <p><strong>Token:</strong> ${data.token_code}</p>
+        <p><strong>Paid:</strong> ${data.paid ? 'Yes' : 'No'}</p>
+        <p><strong>Start Date:</strong> ${data.start_date}</p>
+        <p><strong>Expire Date:</strong> ${data.expire_date}</p>
+        <p><strong>Status:</strong> ${data.status}</p>
+      `;
+      document.getElementById('membershipData').innerHTML = content;
+      document.getElementById('resultModal').classList.remove('hidden');
+    }
+
+    function startQRScanner() {
+      const html5QrCode = new Html5Qrcode("reader");
+      const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+        html5QrCode.stop();
+        fetch("{% url 'membership:verify_membership_qr' %}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: `token_code=${encodeURIComponent(decodedText)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            showModal(data);
+          } else {
+            alert(data.message);
+          }
+          setTimeout(() => html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback), 3000);
+        })
+        .catch(err => alert("Error verifying QR"));
+      };
+
+      const config = { fps: 10, qrbox: 250 };
+      html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
+    }
+
+    document.addEventListener("DOMContentLoaded", startQRScanner);
+  </script>
+{% endblock %}
