@@ -18,39 +18,56 @@
       </div> {% endcomment %}
     </div>
 
-    <!-- Navigation Links (Center) -->
-    <div class="flex space-x-6 justify-center">
-      <a
-        href="{% url 'blog:post_list' %}"
-        class="text-lg font-medium text-white hover:text-[#e8ddaf] transition"
-        >Post</a
-      >
-      <a
-        href="{% url 'course_list' %}"
-        class="text-lg font-medium text-white hover:text-[#e8ddaf] transition"
-        >Class</a
-      >
-      <a
-        href="{% url 'network:add_friends' %}"
-        class="text-lg font-medium text-white hover:text-[#e8ddaf] transition"
-        >Network</a
-      >
-      <a
-        href="{%url 'network:connections' %}"
-        class="text-lg font-medium text-white hover:text-[#e8ddaf] transition"
-        >Message</a
-      >
-      <a
-        href="{% url 'accounts:dashboard' %}"
-        class="text-lg font-medium text-white hover:text-[#e8ddaf] transition"
-        >Manage</a
-      >
-      <a
-        href="{% url 'membership:search_gyms' %}"
-        class="text-lg font-medium text-white hover:text-[#e8ddaf] transition"
-        >Membership</a
-      >
-    </div>
+   <!-- Navigation Links (Center) -->
+<div class="flex space-x-8 justify-center items-center">
+  <!-- Post -->
+  <div class="flex flex-col items-center">
+    <a href="{% url 'blog:post_list' %}" class="flex flex-col items-center text-white hover:text-[#e8ddaf] transition">
+      <img src="{% static 'core/icons/post.png' %}" alt="Post" class="w-6 h-6 mb-1 filter invert brightness-200" />
+      <span class="text-sm font-medium">Post</span>
+    </a>
+  </div>
+
+  <!-- Class -->
+  <div class="flex flex-col items-center">
+    <a href="{% url 'course_list' %}" class="flex flex-col items-center text-white hover:text-[#e8ddaf] transition">
+      <img src="{% static 'core/icons/class.png' %}" alt="Class" class="w-6 h-6 mb-1 filter invert brightness-200" />
+      <span class="text-sm font-medium">Class</span>
+    </a>
+  </div>
+
+  <!-- Network -->
+  <div class="flex flex-col items-center">
+    <a href="{% url 'network:add_friends' %}" class="flex flex-col items-center text-white hover:text-[#e8ddaf] transition">
+      <img src="{% static 'core/icons/network.png' %}" alt="Network" class="w-6 h-6 mb-1 filter invert brightness-200" />
+      <span class="text-sm font-medium">Network</span>
+    </a>
+  </div>
+
+  <!-- Message -->
+  <div class="flex flex-col items-center">
+    <a href="{% url 'network:connections' %}" class="flex flex-col items-center text-white hover:text-[#e8ddaf] transition">
+      <img src="{% static 'core/icons/message.png' %}" alt="Message" class="w-6 h-6 mb-1 filter invert brightness-200" />
+      <span class="text-sm font-medium">Message</span>
+    </a>
+  </div>
+
+  <!-- Manage -->
+  <div class="flex flex-col items-center">
+    <a href="{% url 'accounts:dashboard' %}" class="flex flex-col items-center text-white hover:text-[#e8ddaf] transition">
+      <img src="{% static 'core/icons/manage.png' %}" alt="Manage" class="w-6 h-6 mb-1 filter invert brightness-200" />
+      <span class="text-sm font-medium">Manage</span>
+    </a>
+  </div>
+
+  <!-- Membership -->
+  <div class="flex flex-col items-center">
+    <a href="{% url 'membership:search_gyms' %}" class="flex flex-col items-center text-white hover:text-[#e8ddaf] transition">
+      <img src="{% static 'core/icons/membership.png' %}" alt="Membership" class="w-6 h-6 mb-1 filter invert brightness-200" />
+      <span class="text-sm font-medium">Membership</span>
+    </a>
+  </div>
+</div>
 
     <!-- Authentication Buttons (Right) -->
     <div class="flex items-center space-x-4">

@@ -12,5 +12,5 @@ urlpatterns = [
     path('gym/<int:gym_id>/', views.gym_detail, name='gym_detail'),
 
     path('verify-membership-qr/', views.verify_membership_qr, name='verify_membership_qr'),
-    path('open/',views.open, name= 'open'),
+    path('qr/open/',views.open, name= 'open'),
 ]

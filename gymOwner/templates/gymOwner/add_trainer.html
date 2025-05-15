@@ -1,173 +1,153 @@
 {% extends 'core/base.html' %}
 {% load static %}
+
+{% block head_block %}
+
+<meta name="csrf-token" content="{{ csrf_token }}">
+{% endblock head_block %}
+
 {% block content %}
+<script src="{% static 'gymOwner\js\add_trainer.js' %}"></script>
   {% include 'core/header.html' %}
-    <style>
-      /* Popup styling */
-      .popup {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: white;
-        padding: 20px;
-        border: 1px solid #ccc;
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-        z-index: 1000;
-        width: 300px;
-        max-width: 90%;
-        border-radius: 8px;
-      }
-      .overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-      }
-      /* Style the success message */
-      #success-message {
-        display: none; /* Initially hidden */
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 10px 20px;
-        background-color: #38a169; /* Green background */
-        color: white;
-        border-radius: 5px;
-        font-size: 16px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        opacity: 0; /* Initially invisible */
-      }
-    </style>
 
+  <style>
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      width: 340px;
+      max-width: 90%;
+      border-radius: 12px;
+      backdrop-filter: blur(12px);
+    }
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+    #success-message {
+      display: none;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background-color: #38a169;
+      color: white;
+      border-radius: 5px;
+      font-size: 16px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+    }
+  </style>
 
-{% load static %}
-    <!-- Main Content -->
-    <main class="flex-grow flex">
-    <!-- The container for the success message -->
-    <div
-      id="success-message"
-      class="fixed top-1/2 right-0 p-4 bg-green-500 text-white rounded-lg shadow-md opacity-0 transition-opacity duration-500"
-    >
+  
+
+  <main class="max-w-4xl mx-auto px-4 mt-[7rem] animate-fadeIn">
+    <div id="success-message" class="bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl shadow-xl p-6">
       <span id="success-text"></span>
     </div>
+    <div class="grid grid-cols-2 gap-4 text-center justify-center mb-8">
+      <a href="{% url 'add_trainer' %}"
+         class="px-6 py-2 rounded-md transition text-white font-semibold 
+         {% if request.resolver_match.url_name == 'add_trainer' %}
+             bg-[#71211C]
+         {% else %}
+             bg-red-600 hover:bg-[#71211C]
+         {% endif %}">
+          Grow
+      </a>
+
+      <a href="{% url 'sent_request' %}"
+         class="px-6 py-2 rounded-md transition text-white font-semibold 
+         {% if request.resolver_match.url_name == 'sent_request' %}
+             bg-[#71211C]
+         {% else %}
+             bg-red-600 hover:bg-[#71211C]
+         {% endif %}">
+          Requests
+      </a>
+  </div>
 
     <div class="container mx-auto px-10">
-      <h1 class="text-2xl font-bold my-3">Search</h1>
+      <h1 class="text-2xl font-bold my-3 text-black ">Search</h1>
 
-      <!-- Search bar for filtering trainers -->
       <div class="mb-4">
         <input
           type="text"
           id="search-input"
-          class="border p-2 rounded w-1/4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="border p-2 rounded w-full bg-white/40 backdrop-blur-lg focus:outline-none focus:ring-1 focus:ring-red-500 text-black"
           placeholder="Search trainers..."
           oninput="searchTrainers()"
         />
       </div>
 
-<div id="trainer-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-  {% for trainer in trainers %}
-  <div
-    class="trainer-item bg-white p-4 shadow-lg rounded-lg transform hover:scale-105 transition-transform"
-    data-trainer-id="{{ trainer.id }}"
-  >
-    <!-- Trainer Profile Picture (centered) -->
-    <div class="mb-4 flex justify-center">
-      <img
-        src="{{ trainer.profile_picture.url }}"
-        alt="Trainer Image"
-        class="w-24 h-24 rounded-full object-cover"
-      />
-    </div>
+      <div id="trainer-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for trainer in trainers %}
+        <div class="trainer-item bg-white/30 backdrop-blur-lg p-4 shadow-lg rounded-xl transform hover:scale-105 transition-transform border border-white/20  " data-trainer-id="{{ trainer.id }}">
+          <div class="mb-4 flex justify-center" >
+            <img src="{{ trainer.profile_picture.url }}" alt="Trainer Image" class="w-24 h-24 rounded-full object-cover border border-white shadow" />
+          </div>
 
-    <!-- Trainer Name -->
-    <h2
-      class="text-xl font-semibold text-center cursor-pointer hover:text-blue-600 mb-2"
-      onclick="openTrainerPopup({{ trainer.id }})"
-    >
-      {{ trainer.name }}
-    </h2>
+          <h2 class="text-xl font-semibold text-center cursor-pointer hover:text-red-600/90 mb-2" onclick="openTrainerPopup({{ trainer.id }})">
+            {{ trainer.name }}
+          </h2>
 
-    <!-- Trainer Gym Name or "No Gym" -->
-    <p class="text-sm text-gray-500 text-center mb-4">
-      {% if trainer.gym_id %}
-        {{ trainer.gym_id.gym_name }}
-      {% else %}
-        No Gym
-      {% endif %}
-    </p>
-
-    <!-- Connect Button -->
-    <form method="post" class="text-center">
-      {% csrf_token %}
-      <button
-        id="connect-btn-{{ trainer.id }}"
-        onclick="sendConnectionRequest({{ trainer.id }})"
-        class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
-      >
-        Connect
-      </button>
-    </form>
-  </div>
-  {% empty %}
-  <p>No trainers available.</p>
-  {% endfor %}
-</div>
-
-</div>
-    </main>
-      <!-- Trainer Details Popup -->
-      <div class="overlay" id="overlay" onclick="closePopup()"></div>
-      <div class="popup p-6" id="popup">
-        <!-- Hidden input for storing trainer ID -->
-        <input type="hidden" id="trainer-id" />
-        <div class="mb-4">
-          <h2 class="text-xl font-semibold" id="trainer-name"></h2>
-          <img
-            id="trainer-image"
-            src=""
-            alt="Trainer Image"
-            class="w-32 h-32 object-cover mb-4 rounded-full mx-auto"
-          />
-          <p><strong>Address:</strong> <span id="trainer-address"></span></p>
-          <p><strong>Contact No:</strong> <span id="trainer-contact"></span></p>
-          <p><strong>Gym:</strong> <span id="trainer-gym"></span></p>
-          <p>
-            <strong>Gym Address:</strong> <span id="trainer-gym-address"></span>
-          </p>
-          <p>
-            <strong>Certificate:</strong>
-            <a
-              href="#"
-              id="trainer-certificate"
-              class="text-blue-500 hover:underline"
-              target="_blank"
-              >View Certificate</a
-            >
-          </p>
+          <form method="post" class="text-center">
+            {% csrf_token %}
+            <button
+              id="connect-btn-{{ trainer.id }}"
+              onclick="sendConnectionRequest({{ trainer.id }})"
+              class="bg-red-600/70 text-white px-6 py-2 rounded-lg hover:bg-red-700/90 transition transform hover:scale-105 animate-fadeIn"
+              data-id="{{ trainer.id }}" >
+              Connect
+            </button>
+          </form>
         </div>
-
-        <div class="mt-4 flex justify-between">
-          <button
-            class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-            onclick="closePopup()"
-          >
-            Close
-          </button>
-          <button
-            class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-            onclick="sendConnectionRequestPopup()"
-          >
-            Connect
-          </button>
-        </div>
+        {% empty %}
+        <p>No trainers available.</p>
+        {% endfor %}
       </div>
     </div>
+  </main>
 
-   {% endblock content %}
+  <!-- Trainer Details Popup -->
+  <div class="overlay" id="overlay" onclick="closePopup()"></div>
+  <div class="popup" id="popup">
+    <input type="hidden" id="trainer-id" />
+    <div class="mb-4 text-black">
+      <h2 class="text-xl font-semibold" id="trainer-name"></h2>
+      <img id="trainer-image" src="" alt="Trainer Image" class="w-32 h-32 object-cover mb-4 rounded-full mx-auto" />
+      <p><strong>Address:</strong> <span id="trainer-address"></span></p>
+      <p><strong>Contact No:</strong> <span id="trainer-contact"></span></p>
+      <p><strong>Gym:</strong> <span id="trainer-gym"></span></p>
+      <p><strong>Gym Address:</strong> <span id="trainer-gym-address"></span></p>
+      <p>
+        <strong>Certificate:</strong>
+        <a href="#" id="trainer-certificate" class="text-blue-500 hover:underline" target="_blank">View Certificate</a>
+      </p>
+    </div>
+
+    <div class="mt-4 flex justify-between">
+      <button class="bg-red-600/70 text-white px-4 py-2 rounded-lg hover:bg-red-700/90 transition animate-fadeIn" onclick="closePopup()">
+        Close
+      </button>
+      <button class="bg-red-600/70 text-white px-4 py-2 rounded-lg hover:bg-red-700/90 transition animate-fadeIn" onclick="sendConnectionRequestPopup()">
+        Connect
+      </button>
+    </div>
+  </div>
+
+ 
+{% endblock content %}

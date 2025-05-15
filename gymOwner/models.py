@@ -22,7 +22,7 @@ class TrainerRequest(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     request_date = models.DateTimeField(auto_now_add=True)
     def __str__(self):
-        return str(self.gym.gym_name)+" - "+ self.trainer.name
+        return str(self.gym.name)+" - "+ self.trainer.name
 
 class Gym(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)

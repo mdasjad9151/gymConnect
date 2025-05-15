@@ -10,6 +10,8 @@ urlpatterns = [
     path('add-trainer/', views.add_trainer, name='add_trainer'),
     path('get-trainer-details/<int:trainer_id>/', views.get_trainer_details, name='get_trainer_details'),
     path('create-trainer-request/', views.create_trainer_request, name='create-trainer-request'),
+    path('request-sent/', views.trainer_sent_request, name='sent_request'),
+    path('delete-request/<int:trainer_id>/', views.delete_sent_request, name='delete_sent_request'),
 
     
     path('list-users/', views.list_users, name='list_users'),

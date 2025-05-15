@@ -23,3 +23,21 @@ document.querySelectorAll(".add-friend-btn").forEach((button) => {
       });
   });
 });
+
+
+// Search function to filter trainers
+function searchTrainers() {
+  const input = document.getElementById("search-input").value.toLowerCase();
+  const trainerItems = document.querySelectorAll(".trainer-item");
+
+  trainerItems.forEach((item) => {
+    const trainerName = item.querySelector("h2").textContent.toLowerCase();
+
+    // If the trainer name includes the search input, show the item, otherwise hide it
+    if (trainerName.includes(input)) {
+      item.classList.remove("hidden"); // Show by removing hidden class
+    } else {
+      item.classList.add("hidden"); // Hide by adding hidden class
+    }
+  });
+}

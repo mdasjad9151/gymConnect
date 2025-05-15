@@ -13,5 +13,8 @@ urlpatterns = [
     path('trainer-add-plans/', views.trainer_add_plans, name='trainer_add_plans'),
     path('get-user-plan/<int:user_id>/', views.get_user_plan, name='get_user_plan'),
     path('update-plan/', views.update_plan, name='update_plan'),
+
+
+    path('gym/<int:gym_id>/', views.get_gym_list, name='get_gym_list'),
     
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

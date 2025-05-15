@@ -62,7 +62,7 @@ def connections(request):
 @login_required
 def chat_with_user(request, id):
     other_user = get_object_or_404(User, id=id)
-
+    print(other_user)
     # Enrich user with name and profile_picture
     name = profile_picture = user_model_name = None
     if hasattr(other_user, 'gymuser'):

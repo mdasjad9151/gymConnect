@@ -70,7 +70,7 @@ class GymOwner(BaseUser):
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
 
     def __str__(self):
-        return f"GymOwner: {self.gym_name} - {self.email}"
+        return f"GymOwner: {self.name} - {self.email}"
 
 # Trainer class
 class Trainer(BaseUser):

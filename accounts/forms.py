@@ -25,7 +25,7 @@ class GymOwnerRegistrationForm(forms.ModelForm):
         ]
         widgets = {
             'password': forms.PasswordInput(attrs={
-                'class': 'w-full px-4 py-2 border border-gray-300  text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200',
+                'class': 'w-full px-4 py-2 focus:outline-none focus:ring-1 focus:ring-red-500 border border-gray-300  text-black rounded-lg  transition duration-200',
                 'placeholder': 'Enter your password'
             }),
         }
@@ -34,7 +34,7 @@ class GymOwnerRegistrationForm(forms.ModelForm):
         super(GymOwnerRegistrationForm, self).__init__(*args, **kwargs)
         
         # Add Tailwind CSS classes to all fields for consistent styling
-        common_classes = 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200'
+        common_classes = 'w-full px-4 py-2 focus:outline-none focus:ring-1 focus:ring-red-500 border border-gray-300 rounded-lg  transition duration-200'
         
         # Apply the styles to each field
         for field in self.fields:
@@ -55,7 +55,7 @@ class TrainerRegistrationForm(forms.ModelForm):
         ]
         widgets = {
             'password': forms.PasswordInput(attrs={
-                'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200',
+                'class': 'w-full px-4 py-2 focus:outline-none focus:ring-1 focus:ring-red-500 border  border-gray-300 rounded-lg  transition duration-200',
                 'placeholder': 'Enter your password'
             }),
         }
@@ -64,7 +64,7 @@ class TrainerRegistrationForm(forms.ModelForm):
         super(TrainerRegistrationForm, self).__init__(*args, **kwargs)
         
         # Common Tailwind CSS classes for form fields
-        common_classes = 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200'
+        common_classes = 'w-full px-4 py-2 border focus:outline-none focus:ring-1 focus:ring-red-500 border-gray-300 rounded-lg  transition duration-200'
         
         # Apply Tailwind styles to each field
         for field in self.fields:
@@ -84,7 +84,7 @@ class GymUserRegistrationForm(forms.ModelForm):
         ]
         widgets = {
             'password': forms.PasswordInput(attrs={
-                'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200',
+                'class': 'w-full px-4 py-2 border focus:outline-none focus:ring-1 focus:ring-red-500 border-gray-300 rounded-lg text-black transition duration-200',
                 'placeholder': 'Enter your password'
             }),
         }
@@ -93,7 +93,7 @@ class GymUserRegistrationForm(forms.ModelForm):
         super(GymUserRegistrationForm, self).__init__(*args, **kwargs)
         
         # Common Tailwind CSS classes for form fields
-        common_classes = 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200'
+        common_classes = 'w-full px-4 py-2 border focus:outline-none focus:ring-1 focus:ring-red-500 border-gray-300 rounded-lg  transition duration-200'
         
         # Apply Tailwind styles to each field
         for field in self.fields:
@@ -106,7 +106,7 @@ class CustomLoginForm(AuthenticationForm):
     username = forms.EmailField(
         label="Email",
         widget=forms.EmailInput(attrs={
-            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg text-black bg-while/40 backdrop-blur-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-200',
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg text-black bg-while/40 backdrop-blur-lg focus:outline-none focus:ring-1 focus:ring-red-500 transition duration-200',
             'placeholder': 'Enter your email',
         })
     )

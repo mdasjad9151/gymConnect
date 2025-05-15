@@ -1,0 +1,43 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+  {% include "core/header.html" %}
+
+  <!-- Main Content -->
+  <main class="flex-grow flex items-center justify-center py-10 mt-[7rem] text-white animate-fadeIn">
+    <div class="container mx-auto px-6 flex flex-col items-center justify-center">
+
+      <h1 class="text-3xl font-bold text-center mb-8 text-black">Trainer Dashboard</h1>
+
+      <!-- Button Grid Container -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 w-full max-w-3xl backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-6 shadow-xl">
+
+        <!-- Requests Button -->
+        <a href="{% url 'trainer_requests' %}"
+           class="block text-center p-6 rounded-xl shadow-lg transition transform hover:scale-105 bg-red-600/70 hover:bg-red-700/90 text-white">
+          <h2 class="text-xl font-semibold">Job Requests</h2>
+        </a>
+
+        <!-- Add Plans Button -->
+        <a href="{% url 'trainer_add_plans' %}"
+           class="block text-center p-6 rounded-xl shadow-lg transition transform hover:scale-105 bg-red-600/70 hover:bg-red-700/90 text-white">
+          <h2 class="text-xl font-semibold">Add Plans</h2>
+        </a>
+
+        <!-- Create Course Button -->
+        <a href="{% url 'trainer_courses' %}"
+           class="block text-center p-6 rounded-xl shadow-lg transition transform hover:scale-105 bg-red-600/70 hover:bg-red-700/90 text-white">
+          <h2 class="text-xl font-semibold">Create Course</h2>
+        </a>
+
+        <!-- Create Post Button -->
+        <a href="{% url 'blog:create_post' %}"
+           class="block text-center p-6 rounded-xl shadow-lg transition transform hover:scale-105 bg-red-600/70 hover:bg-red-700/90 text-white">
+          <h2 class="text-xl font-semibold">Create Post</h2>
+        </a>
+
+      </div>
+    </div>
+  </main>
+{% endblock %}

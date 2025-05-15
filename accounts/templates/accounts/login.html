@@ -11,6 +11,9 @@
             {{ form.as_p }}
             <button type="submit" class="w-full py-2 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 transition duration-200">Login</button>
         </form>
+        <div class="text-center mt-4">
+            <a href="{% url 'accounts:login' %}" class="text-black/50 hover:text-black/70 transition duration-200">Forget Password?</a>
+        </div>
     </div>
 </main>
 

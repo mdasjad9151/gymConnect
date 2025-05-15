@@ -1,3 +1,9 @@
+// Read CSRF Token
+function getCsrfToken() {
+  return document
+    .querySelector('meta[name="csrf-token"]')
+    .getAttribute("content");
+}
 // Function to show the success message
 function showSuccessMessage(message) {
   const messageElement = document.getElementById("success-message");
@@ -58,7 +64,7 @@ function closePopup() {
 
 // Function to send a connection request from the trainer list
 function sendConnectionRequest(trainerId) {
-  const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+  const csrftoken = getCsrfToken();
   console.log(csrftoken);
   // Check if the csrftoken is properly fetched
   if (!csrftoken) {
@@ -81,7 +87,7 @@ function sendConnectionRequest(trainerId) {
     method: "POST", // Ensure POST method is used
     headers: {
       "Content-Type": "application/json", // Send as JSON
-      "X-CSRFToken": csrftoken,
+      "X-CSRFToken": getCsrfToken(),
     },
     body: JSON.stringify({ trainer_id: trainerId }), // Send trainer_id as JSON
   })

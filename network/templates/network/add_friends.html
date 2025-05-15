@@ -31,6 +31,18 @@
             Requests
         </a>
     </div>
+    <div class="container mx-auto px-10">
+        <h1 class="text-2xl font-bold my-3 text-black ">Search</h1>
+  
+        <div class="mb-4">
+          <input
+            type="text"
+            id="search-input"
+            class="border p-2 rounded w-full bg-white/40 backdrop-blur-lg focus:outline-none focus:ring-1 focus:ring-red-500 text-black"
+            placeholder="Search trainers..."
+            oninput="searchTrainers()"
+          />
+        </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {% for user in users %}

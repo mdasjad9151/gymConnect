@@ -1,0 +1,76 @@
+{% extends 'core/base.html' %}
+{% block content %}
+{% include 'core/header.html' %}
+
+<main class="max-w-4xl mx-auto px-4 mt-[7rem] animate-fadeIn">
+
+    {% if messages %}
+  {% for message in messages %}
+    <div class="alert {{ message.tags }} text-red text-right pr-10">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+
+  <!-- Navigation Buttons -->
+  <div class="grid  grid-cols-2 gap-4 text-center justify-center mb-8">
+    <a href="{% url 'add_trainer' %}"
+       class="px-6 py-2 rounded-md transition text-white font-semibold 
+       {% if request.resolver_match.url_name == 'add_trainer' %}
+           bg-red-700/90
+       {% else %}
+           bg-red-600/70 hover:bg-red-700/90
+       {% endif %}">
+        Hire
+    </a>
+
+    <a href="{% url 'sent_request' %}"
+       class="px-6 py-2 rounded-md transition text-white font-semibold 
+       {% if request.resolver_match.url_name == 'sent_request' %}
+           bg-red-700/90
+       {% else %}
+           bg-red-600/70 hover:bg-red-700/90
+       {% endif %}">
+        Requests
+    </a>
+  </div>
+
+  <!-- Trainer Requests Grid -->
+  <div class="">
+    {% if trainers %}
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        {% for request in trainers %}
+          <div class="p-4 rounded-xl bg-white/20 backdrop-blur-md border border-white/20 shadow transition hover:bg-white/30">
+            <div class="flex items-center space-x-4">
+              <!-- Profile Picture -->
+              <img src="{{ request.trainer.profile_picture.url }}" alt="Trainer Image"
+                   class="w-14 h-14 rounded-full object-cover border border-white/20 shadow-sm" />
+
+              <!-- Trainer Info -->
+              <div>
+                <div class="text-lg text-black font-semibold">{{ request.trainer.name }}</div>
+                <div class="text-sm text-black/50">{{ request.trainer.address }}, {{ request.trainer.city }}, {{ request.trainer.state }}</div>
+                <div class="text-sm text-gray-400 mt-1">Requested on: {{ request.request_date }}</div>
+              </div>
+            </div>
+
+            <!-- Message Button -->
+            <div class="mt-4 flex space-x-2 justify-center">
+                <a href="{% url 'delete_sent_request' request.trainer.id %}" 
+                   class="px-4 py-2 rounded bg-red-600/70 hover:bg-red-700/90 text-white justify-center items-center transition"
+                   onclick="return confirm('Are you sure you want to delete this request?');">
+                  Delete
+                </a>
+              <a href="{% url 'network:chat_with_user' request.trainer.id %}" 
+                 class="px-4 py-2 rounded bg-red-600/70 hover:bg-red-700/90 text-white justify-center items-center transition">
+                Message
+              </a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-gray-300 text-center text-lg">You haven't sent any trainer requests yet.</p>
+    {% endif %}
+  </div>
+
+</main>
+{% endblock %}

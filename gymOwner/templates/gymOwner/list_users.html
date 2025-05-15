@@ -3,37 +3,65 @@
 {% block content %}
   {% include 'core/header.html' %}
 
-    <div class="container mx-auto p-6">
-      <h1 class="text-3xl font-bold text-center mb-8">Users in Your Gym</h1>
+  <style>
+    .fade-toggle {
+      transition: max-height 0.4s ease, opacity 0.4s ease;
+      overflow: hidden;
+    }
 
-      <ul class="space-y-4 grid space-x-4 grid-4">
-        {% for user in users %}
-        <li
-          class="bg-white p-4 w-1/2 rounded-lg shadow-md transition duration-300 transform hover:scale-105 cursor-pointer"
-          onclick="toggleDetails('{{ user.username }}')"
+    .fade-toggle.hidden {
+      max-height: 0;
+      opacity: 0;
+    }
+
+    .fade-toggle.show {
+      max-height: 200px;
+      opacity: 1;
+    }
+  </style>
+
+  <div class="container mx-auto px-16 mt-[7rem] animate-fadeIn">
+    <h1 class="text-3xl font-bold text-center mb-8 text-black">Users in Your Gym</h1>
+
+    <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for user in users %}
+      <li
+        class="bg-white/30 backdrop-blur-lg border border-white/20 p-4 rounded-xl shadow-md hover:shadow-lg transform transition duration-300 hover:scale-105 cursor-pointer"
+        onclick="toggleDetails('{{ user.username }}')"
+      >
+        <div class="flex items-center">
+          <img
+            src="{{ user.profile.url }}"
+            class="w-12 h-12 rounded-full mr-4 border shadow"
+            alt="User Profile Picture"
+          />
+          <div>
+            <p class="text-lg font-semibold text-black">{{ user.username }}</p>
+            <p class="text-sm text-gray-700">Trainer: {{ user.trainer_name }}</p>
+          </div>
+        </div>
+
+        <!-- Toggle Details -->
+        <div
+          id="details-{{ user.username }}"
+          class="fade-toggle hidden mt-3 text-black"
         >
-          <div class="flex items-center">
-            <img
-              src="{{ user.profile.url }}"
-              class="w-12 h-12 rounded-full mr-4"
-              alt="User Profile Picture"
-            />
-            <div>
-              <p class="text-lg font-semibold">{{ user.username }}</p>
-              <p class="text-gray-500">Trainer: {{ user.trainer_name }}</p>
-            </div>
-          </div>
-          <!-- Hidden Details Section -->
-          <div
-            id="details-{{ user.username }}"
-            class="hidden mt-2 text-gray-700 transition-max-height duration-500 overflow-hidden"
-          >
-            <p>Email: {{ user.email }}</p>
-            <p>Phone: {{ user.phone }}</p>
-          </div>
-        </li>
-        {% endfor %}
-      </ul>
-    </div>
+          <p><strong>Email:</strong> {{ user.email }}</p>
+          <p><strong>Phone:</strong> {{ user.phone }}</p>
+          <p><strong>Gym:</strong> {{ user.gym_name }}</p>
+        </div>
+      </li>
+      {% empty %}
+        <p class="text-center text-gray-500 col-span-full">No users found in your gym.</p>
+      {% endfor %}
+    </ul>
+  </div>
 
-   {% endblock content %}
+  <script>
+    function toggleDetails(username) {
+      const el = document.getElementById(`details-${username}`);
+      el.classList.toggle('hidden');
+      el.classList.toggle('show');
+    }
+  </script>
+{% endblock content %}

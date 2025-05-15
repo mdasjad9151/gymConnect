@@ -1,20 +1,23 @@
 from django.shortcuts import render,redirect,get_object_or_404
+from django.core.serializers import serialize
 from django.http import HttpResponse,Http404,JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
-
-from accounts.models import GymUser,Trainer
-from gymOwner.models import TrainerRequest
+from django.contrib.auth import get_user_model
+from accounts.models import GymUser,Trainer,GymOwner
+from gymOwner.models import TrainerRequest,Gym
 from .models import Plan
 from .forms import PlanForm
+
+User = get_user_model()
 
 @login_required
 def trainer_dashboard(request):
     trainer = request.user
     profile =  Trainer.objects.get(id=  trainer.id)
     # Render the main dashboard with buttons
-    return render(request, 'trainer/trainer_dashboard.html',{'profile':profile})
+    return render(request, 'trainer/dashboard.html',{'profile':profile})
 
 
 @login_required
@@ -23,12 +26,26 @@ def trainer_requests(request):
     trainer = request.user
     profile =  Trainer.objects.get(id=  trainer.id)
     trainer_requests = TrainerRequest.objects.filter(trainer=request.user, status='pending')
-    # print(request.user)
+    # print(trainer_requests)
     return render(request, 'trainer/requests_list.html', {
         'trainer_requests': trainer_requests,
         'profile':profile
     })
 
+@login_required
+def get_gym_list(request, gym_id):
+    gym_owner_id = GymOwner.objects.get(id = gym_id)
+
+    print(gym_owner_id.email)
+    gym_owner_user_id = get_object_or_404(User, email =gym_owner_id.email )
+    # gym_owner_user_id= User.objects.get(email= gym_owner_id.email)
+    print(gym_owner_user_id)
+
+    gyms = Gym.objects.filter(owner=gym_owner_user_id)
+    # Convert to list of dictionaries
+    gym_list = list(gyms.values('name', 'address', 'city', 'state', 'pincode','average_rating','rating_count', 'price_per_day'))  # include relevant fields
+
+    return JsonResponse({'gyms': gym_list})
 
 @login_required
 def update_request_status(request, request_id, action):

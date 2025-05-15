@@ -1,11 +1,12 @@
 import json
 import requests
+from django.utils import timezone
 from django.shortcuts import render, get_object_or_404,redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-
+from django.contrib.auth import get_user_model
 from django.contrib import messages
 
 from django.views.decorators.http import require_POST
@@ -15,7 +16,10 @@ from accounts.models import GymUser, Trainer,GymOwner
 from .models import TrainerRequest, Gym, GymImage
 from .forms import TrainerSelectForm,GymForm,GymImageForm
 from accounts.decorators import gym_owner_required
+from membership.models import Membership
 from .utils import get_lat_lon_from_address
+
+User =  get_user_model()
 
 @login_required
 def gym_owner_deshboard(request):
@@ -52,11 +56,27 @@ def add_trainer(request):
             'profile':profile,  
         }
     )
+def trainer_sent_request(request):
+    trainers = TrainerRequest.objects.filter(gym=request.user, status='pending')
+    return render(request, 'gymOwner/sent_request.html',{'trainers':trainers})
+
+def delete_sent_request(request, trainer_id):
+    trainer = get_object_or_404(Trainer, id=trainer_id)
+    trainer_request = TrainerRequest.objects.filter(gym=request.user, trainer=trainer).first()
+
+    if trainer_request:
+        trainer_request.delete()
+        messages.success(request, "Your request has been successfully deleted.")
+    else:
+        messages.error(request, "Request not found or already deleted.")
+
+    return redirect('sent_request') 
+
 
 @login_required
 def get_trainer_details(request, trainer_id):
     trainer = get_object_or_404(Trainer, id=trainer_id)
-    gym_name = trainer.gym_id.gym_name if trainer.gym_id else "Unemployed"
+    name = trainer.gym_id.name if trainer.gym_id else "Unemployed"
     full_address = f"{trainer.address}, {trainer.city}, {trainer.state}"
     
     trainer_data = {
@@ -64,8 +84,8 @@ def get_trainer_details(request, trainer_id):
         'image_url': trainer.profile_picture.url if trainer.profile_picture else None,
         'address': full_address,
         'contact_no': trainer.contact_no,
-        'gym_name': gym_name,
-        'gym_address': gym_name,
+        'gym_name': name,
+        'gym_address': name,
         'certificate_link': trainer.certificate_image.url,
     }
     
@@ -120,58 +140,75 @@ def create_trainer_request(request):
 
 @gym_owner_required
 def assign_user(request):
-    # Get the logged-in user and ensure they are a gym owner
-    owner=  request.user
-    profile =  GymOwner.objects.get(id = owner.id)
-    gym_owner = GymOwner.objects.get(id=request.user.id)
+    owner = request.user
+    gym_owner = GymOwner.objects.get(id=owner.id)
+    profile = gym_owner
 
-        # Fetch users in the same gym who have trainers from other gyms
-    unassigned_users = GymUser.objects.filter(
-        gym_id=gym_owner,                       # Same gym as logged-in owner
-        # trainer_id__isnull=False,               # Users who have a trainer assigned
-    ).exclude(trainer_id__gym_id=gym_owner)     # Exclude users whose trainer belongs to this gym
-    # Get all trainers working under this gym owner
+    # Step 1: Get gyms owned by this owner
+    gyms = Gym.objects.filter(owner=gym_owner)
+
+    # Step 2: Get all current memberships in these gyms
+    today = timezone.now().date()
+    memberships = Membership.objects.filter(gym__in=gyms, expire_date__gte=today).select_related("user", "gym")
+
+    # Step 3: Collect GymUsers whose trainers are from another gym (or unassigned)
+    unassigned_users = []
+    for membership in memberships:
+        try:
+            gym_user = membership.user.gymuser  # Access GymUser from BaseUser
+            # Check if user's trainer is assigned AND belongs to another gym
+            if gym_user.trainer_id and gym_user.trainer_id.gym_id != gym_owner:
+                unassigned_users.append(gym_user)
+            elif gym_user.trainer_id is None:
+                unassigned_users.append(gym_user)
+        except GymUser.DoesNotExist:
+            continue
+
+    # Step 4: Get trainers under this gym owner
     trainers = Trainer.objects.filter(gym_id=gym_owner)
+    print(trainers)
 
     if request.method == "POST":
-        # Get selected user and trainer from POST data
         user_id = request.POST.get("user_id")
         trainer_id = request.POST.get("trainer_id")
 
-        # Assign the trainer to the selected user
-        GymUser.objects.filter(id=user_id, gym_id=gym_owner).update(trainer_id=trainer_id)
-
-        # Redirect to the same page to refresh the list
+        # Assign the trainer to the selected user (ensure they belong to this owner)
+        GymUser.objects.filter(id=user_id).update(trainer_id=trainer_id)
         return redirect("assign_trainer")
 
     return render(request, "gymowner/assign_trainer.html", {
         "unassigned_users": unassigned_users,
         "trainers": trainers,
-        'profile':profile
+        "profile": profile
     })
 
-@login_required
+@gym_owner_required
 def list_users(request):
-    # Get the gym ID from the logged-in user (assuming the gym owner is logged in)
-    gym_id =  request.user
-    gym_owner = GymOwner.objects.get(id=request.user.id)
-    # Fetch users under the logged-in user's gym, with related trainer details
-    users = GymUser.objects.filter(gym_id=gym_id).select_related('trainer_id')
+    gym_owner = user.objects.get(id=request.user.id)
 
-    # Prepare the user and trainer data for display
-    print(gym_owner.profile_picture)
+    # Get all gyms owned by the current owner
+    gyms = Gym.objects.filter(owner=gym_owner)
+
+    # Get all memberships in those gyms
+    active_memberships = Membership.objects.filter(gym__in=gyms).select_related('user', 'gym')
+
     user_data = []
-    for user in users:
-        user_data.append({
-            'profile': user.profile_picture,
-            "username": user.name,
-            'phone': user.contact_no,
-            'email':user.email,
-            "trainer_name": user.trainer_id.name if user.trainer_id else "No trainer assigned",
-        })
+    for membership in active_memberships:
+        try:
+            gym_user = membership.user.gymuser  # Access GymUser from BaseUser
+            user_data.append({
+                'profile': gym_user.profile_picture,
+                'username': gym_user.name,
+                'phone': gym_user.contact_no,
+                'email': gym_user.email,
+                'trainer_name': gym_user.trainer_id.name if gym_user.trainer_id else "No trainer assigned",
+                'gym_name': membership.gym.name,
+            })
+        except GymUser.DoesNotExist:
+            continue  # Skip if user is not a GymUser
 
-    # Render the user data as a response (or you could render it in a template)
-    return render(request, 'gymOwner/list_users.html', {"users": user_data,'owner_profile':gym_owner,})
+    return render(request, 'gymOwner/list_users.html', {"users": user_data, 'owner_profile': gym_owner})
+
 
 @login_required
 def list_trainers(request):

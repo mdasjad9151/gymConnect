@@ -1,116 +1,116 @@
-
 {% extends 'core/base.html' %}
-
 {% block content %}
 {% include "core/header.html" %}
-  
 
-  
-    <script>
-      function openGymDetails(gymName, email, contact, address) {
-        document.getElementById("gym-name").textContent = gymName;
-        document.getElementById("gym-email").textContent = email;
-        document.getElementById("gym-contact").textContent = contact;
-        document.getElementById("gym-address").textContent = address;
-        document.getElementById("gym-details-popup").style.display = "block";
-      }
+<main class=" animate-fadeIn container mx-auto px-6 mt-[7rem] animate-fadeIn text-black max-w-4xl">
+  <h3 class="text-2xl font-bold mb-6 ">Requests</h3>
 
-      function closePopup() {
-        document.getElementById("gym-details-popup").style.display = "none";
-      }
-        // Toggle dropdown visibility
-      
-    </script>
-  </head>
+  <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+    {% for request in trainer_requests %}
+    <div class="p-5 rounded-2xl shadow-xl bg-white/10 border border-white/20 backdrop-blur-md hover:bg-white/20 transition duration-200">
+      <div class="flex flex-col items-start space-y-4">
+        <!-- Gym Info -->
+        <div class="flex items-center space-x-4 w-full">
+          <img src="{{ request.gym.profile_picture.url }}" class="w-14 h-14 rounded-full object-cover border" alt="Gym Profile Picture" />
 
-
-    <!-- Main Content -->
-    <main class="flex-grow container mx-auto py-8 px-6">
-      <h3 class="text-2xl font-semibold mb-4">Trainer Requests</h3>
-      <div class="space-y-4 flex-col items-start">
-        {% for request in trainer_requests %}
-        <div
-          class="flex justify-between w-1/2 items-center bg-white shadow-sm rounded-lg p-4 hover:bg-gray-50 transition duration-200"
-        >
-          <div class="flex items-center space-x-4">
-            <!-- Gym Profile Picture -->
-            <span class="profile">
-              <img
-                src="{{ request.gym.profile_picture.url }}"
-                class="w-12 h-12 rounded-full object-cover"
-                alt="Gym Profile Picture"
-              />
-            </span>
-
-            <!-- Gym Name and Date -->
-            <div>
-              <span
-                class="text-lg font-medium text-gray-800 cursor-pointer"
-                onclick="openGymDetails('{{ request.gym.gym_name }}', '{{ request.gym.email }}', '{{ request.gym.contact_no }}', '{{ request.gym.address }}, {{request.gym.city}}')"
-              >
-                {{ request.gym.gym_name }}
-              </span>
-              <br />
-              <span class="text-sm text-gray-600"
-                >{{ request.request_date }}</span
-              >
-            </div>
-          </div>
-
-          <!-- Accept and Reject Buttons -->
-          <div class="flex space-x-2">
-            <form
-              action="{% url 'update_request_status' request.id 'accept' %}"
-              method="post"
-            >
-              {% csrf_token %}
-              <button
-                type="submit"
-                class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-              >
-                Accept
-              </button>
-            </form>
-            <form
-              action="{% url 'update_request_status' request.id 'reject' %}"
-              method="post"
-            >
-              {% csrf_token %}
-              <button
-                type="submit"
-                class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-              >
-                Reject
-              </button>
-            </form>
+          <div>
+            <span class="text-lg font-semibold cursor-pointer hover:underline"
+                  onclick="showGymUsers({{ request.gym.id }})">
+              {{ request.gym.name }}
+            </span><br>
+            <span class="text-sm text-gray-600">{{ request.request_date }}</span>
           </div>
         </div>
-        {% empty %}
-        <p>No requests.</p>
-        {% endfor %}
-      </div>
-    </main>
 
-    <!-- Gym Details Popup -->
+        <!-- Action Buttons -->
+        <div class="flex float-right items-center w-full space-x-2">
+          <form action="{% url 'update_request_status' request.id 'accept' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="px-4 py-2 rounded bg-red-600/70 hover:bg-red-700/90 text-white transition">
+              Accept
+            </button>
+          </form>
+
+          <form action="{% url 'update_request_status' request.id 'reject' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="px-4 py-2 rounded bg-red-600/70 hover:bg-red-700/90 text-white transition">
+              Reject
+            </button>
+          </form>
+
+          <a href="{% url 'network:chat_with_user' request.gym.id %}" 
+             class="px-4 py-2 rounded bg-red-600/70 hover:bg-red-700/90 text-white transition">
+            Message
+          </a>
+        </div>
+      
+    </div>
+    </div>
+    {% empty %}
+      <p class="text-gray-500 text-center text-lg col-span-full">No requests available.</p>
+    {% endfor %}
+  </div>
+</main>
+
+<!-- Gym Details Popup -->
 <div
   id="gym-details-popup"
-  class="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50"
-  style="display: none"
+  class="fixed inset-0 bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50 mt-[7rem]"
+  style="display: none;"
 >
-  <div class="bg-white/60 backdrop-blur-xl rounded-2xl shadow-2xl p-6 w-96 text-black border border-white/40">
-    <h3 class="text-2xl font-bold mb-4">🏋️ Gym Details</h3>
-    <p class="mb-1"><strong>Name:</strong> <span id="gym-name" class="font-medium"></span></p>
-    <p class="mb-1"><strong>Email:</strong> <span id="gym-email" class="font-medium"></span></p>
-    <p class="mb-1"><strong>Contact No:</strong> <span id="gym-contact" class="font-medium"></span></p>
-    <p class="mb-3"><strong>Address:</strong> <span id="gym-address" class="font-medium"></span></p>
-    <button
-      onclick="closePopup()"
-      class="mt-2 px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-    >
-      Close
-    </button>
+  <div class="bg-white rounded-2xl shadow-2xl p-6 w-[500px] text-black border border-white/40 max-h-[80vh] overflow-y-auto">
+    <h3 class="text-xl font-bold mb-4 text-center">🏋️ Gym(s) Details</h3>
+    <div id="gym-user-list" class="space-y-4"></div>
+    <div class="flex justify-center mt-6">
+      <button
+        onclick="closePopup()"
+        class="px-5 py-2 bg-red-600/70 text-white rounded hover:bg-red-700/90 transition"
+      >
+        Close
+      </button>
+    </div>
   </div>
 </div>
 
-    {% endblock content %}
-   
+<script>
+  function showGymUsers(gymId) {
+    fetch(`/gym-trainer/gym/${gymId}/`)
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById("gym-user-list");
+        container.innerHTML = "";
+
+        if (data.gyms.length === 0) {
+          container.innerHTML = "<p class='text-gray-700'>No gyms found for this gym owner.</p>";
+        } else {
+          data.gyms.forEach(gym => {
+            const div = document.createElement("div");
+            div.classList = "border-b border-gray-300 py-2 px-2";
+            div.innerHTML = `
+              <div class="font-semibold text-red-700">${gym.name}</div>
+              <div class="text-sm text-gray-700">
+                ${gym.address}, ${gym.city}, ${gym.state} - ${gym.pincode}
+              </div>
+              <div class="text-sm text-gray-600 mt-1">
+                Rating: ${gym.average_rating} (${gym.rating_count} reviews)<br>
+                Price per day: ₹${gym.price_per_day}
+              </div>
+            `;
+            container.appendChild(div);
+          });
+        }
+
+        document.getElementById("gym-details-popup").style.display = "flex";
+      })
+      .catch(error => {
+        console.error("Error fetching gym data:", error);
+        alert("Failed to fetch gym details.");
+      });
+  }
+
+  function closePopup() {
+    document.getElementById("gym-details-popup").style.display = "none";
+  }
+</script>
+
+{% endblock %}
