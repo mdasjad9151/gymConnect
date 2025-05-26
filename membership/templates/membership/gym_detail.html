@@ -18,7 +18,8 @@
       <p><strong>Opening:</strong> {{ gym.opening_time }} | <strong>Closing:</strong> {{ gym.closing_time }}</p>
       <p><strong>Price per day:</strong> ₹{{ gym.price_per_day }}</p>
       <p><strong>Description:</strong> {{ gym.description }}</p>
-      <p><strong>Rating:</strong> {{ average_rating }} / 5 ({{ review_count }} reviews)</p>
+      <p><strong>Rating:</strong> {{ average_rating|floatformat:2 }} ({{ review_count }} reviews)</p>
+
     </div>
 <div class="mt-6 ">
       <a href="{% url 'membership:buy_membership' gym.id %}"

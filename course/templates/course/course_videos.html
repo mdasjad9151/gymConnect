@@ -21,7 +21,7 @@
        </div>
         
         <div class ="pl-5">
-          <a href="{% url 'watch_video' video.id %}" class="text-black hover:underline  mt-2 inline-block"><h2 class="text-lg font-semibold">sp{{ video.title }}</h2> <span><p class="text-sm text-black">{{ video.duration }}</p></span></a>
+          <a href="{% url 'watch_video' video.id %}" class="text-black hover:underline  mt-2 inline-block"><h2 class="text-lg font-semibold">{{ video.title }}</h2> <span><p class="text-sm text-black">{{ video.duration }}</p></span></a>
         <p class="text-sm text-gray-600">{{ video.description }}</p>
         </div>
 

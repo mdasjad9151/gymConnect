@@ -17,9 +17,44 @@
         >
       </div> {% endcomment %}
     </div>
-
-   <!-- Navigation Links (Center) -->
-<div class="flex space-x-8 justify-center items-center">
+<!-- Mobile Menu Button -->
+    <button
+      @click="open = !open"
+      class="md:hidden text-white focus:outline-none"
+    >
+      <svg
+        x-show="!open"
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-6 h-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16"
+        />
+      </svg>
+      <svg
+        x-show="open"
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-6 h-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+    </button>
+   <!-- Desktop Navigation Links (Center) -->
+<div class="hidden md:flex space-x-8 justify-center items-center">
   <!-- Post -->
   <div class="flex flex-col items-center">
     <a href="{% url 'blog:post_list' %}" class="flex flex-col items-center text-white hover:text-[#e8ddaf] transition">
@@ -117,5 +152,30 @@
       >
       {% endif %}
     </div>
+  </div>
+
+  
+  <!-- Mobile Menu -->
+  <div
+    x-show="open"
+    @click.away="open = false"
+    class="md:hidden bg-[#660000]/90 backdrop-blur-md px-6 pt-4 pb-6 space-y-4 text-sm"
+  >
+    <a href="{% url 'blog:post_list' %}" class="block text-white hover:text-[#e8ddaf]">Post</a>
+    <a href="{% url 'course_list' %}" class="block text-white hover:text-[#e8ddaf]">Class</a>
+    <a href="{% url 'network:add_friends' %}" class="block text-white hover:text-[#e8ddaf]">Network</a>
+    <a href="{% url 'network:connections' %}" class="block text-white hover:text-[#e8ddaf]">Message</a>
+    <a href="{% url 'accounts:dashboard' %}" class="block text-white hover:text-[#e8ddaf]">Manage</a>
+    <a href="{% url 'membership:search_gyms' %}" class="block text-white hover:text-[#e8ddaf]">Membership</a>
+    
+    {% if not request.user.is_authenticated %}
+    <hr class="border-white/30" />
+    <a href="{% url 'accounts:register_gym_owner' %}" class="block text-white hover:text-blue-300">Register Gym Owner</a>
+    <a href="{% url 'accounts:register_trainer' %}" class="block text-white hover:text-blue-300">Register Trainer</a>
+    <a href="{% url 'accounts:register_gym_user' %}" class="block text-white hover:text-blue-300">Register Gym User</a>
+    <a href="{% url 'accounts:login' %}" class="block text-white hover:text-[#cbccc6]">Login</a>
+    {% else %}
+    <a href="{% url 'accounts:logout' %}" class="block text-white hover:text-[#cbccc6]">Logout</a>
+    {% endif %}
   </div>
 </header>

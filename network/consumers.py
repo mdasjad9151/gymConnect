@@ -84,12 +84,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def mark_messages_as_delivered(self):
         PrivateMessage.objects.filter(receiver__id=self.user.id, is_delivered=False).update(is_delivered=True)
 
-
-
 # notifications
-
-# consumers.py
-
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):

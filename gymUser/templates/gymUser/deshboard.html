@@ -12,11 +12,11 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 w-1/2 max-w-4xl backdrop-blur-lg bg-white/30 border border-white/30 rounded-2xl p-6 shadow-xl">
             
             <!-- Requests Button -->
-            <a href="{% url 'join_gym' %}"
+            {% comment %} <a href="{% url 'join_gym' %}"
                class="block text-center p-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
                style="background-color: #4399c5; color: white;">
                 <h2 class="text-xl font-semibold">Join</h2>
-            </a>
+            </a> {% endcomment %}
 
             <!-- Add Plans Button -->
             <a href="{% url 'view_plan' %}"

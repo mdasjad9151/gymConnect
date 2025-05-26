@@ -208,11 +208,14 @@ def generate_membership_pdf(request, membership_id):
     profile_img = None
     user_info = get_user_display_name(membership.user)
     image_field_file = user_info[1]
-    if image_field_file and default_storage.exists(image_field_file.name):
-        with default_storage.open(image_field_file.name, 'rb') as f:
-            profile_img = Image.open(f)
-            if profile_img.mode != 'RGB':
-                profile_img = profile_img.convert('RGB')
+    try:
+        if image_field_file and default_storage.exists(image_field_file.name):
+            with default_storage.open(image_field_file.name, 'rb') as f:
+                profile_img = Image.open(f)
+                if profile_img.mode != 'RGB':
+                    profile_img = profile_img.convert('RGB')
+    except:
+        pass
 
     # Create PDF
     buffer = io.BytesIO()

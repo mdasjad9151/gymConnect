@@ -29,11 +29,11 @@
 
               <a
                 href="{% url 'course_detail' course.id %}"
-                class="text-lg font-semibold text-blue-600 hover:underline block mb-1"
+                class="text-lg text-black font-semibold text-blue-600 hover:underline block mb-1"
               >
                 {{ course.title }}
               </a>
-              <p class="text-sm text-gray-200 mb-2">{{ course.description|truncatewords:15 }}</p>
+              <p class="text-sm  text-black/90 mb-2">{{ course.description|truncatewords:15 }}</p>
               <p class="font-bold text-black">₹{{ course.price }}</p>
             </div>
           {% endfor %}

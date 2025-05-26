@@ -68,15 +68,15 @@ def chat_with_user(request, id):
     if hasattr(other_user, 'gymuser'):
         name = other_user.gymuser.name
         profile_picture = other_user.gymuser.profile_picture
-        user_model_name = 'gymuser'
+        user_model_name = 'User'
     elif hasattr(other_user, 'trainer'):
         name = other_user.trainer.name
         profile_picture = other_user.trainer.profile_picture
-        user_model_name = 'trainer'
+        user_model_name = 'Trainer'
     elif hasattr(other_user, 'gymowner'):
         name = other_user.gymowner.name
         profile_picture = other_user.gymowner.profile_picture
-        user_model_name = 'gymowner'
+        user_model_name = 'Gym Owner'
 
     context = {
         "other_user": other_user,

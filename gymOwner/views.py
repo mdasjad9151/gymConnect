@@ -184,7 +184,7 @@ def assign_user(request):
 
 @gym_owner_required
 def list_users(request):
-    gym_owner = user.objects.get(id=request.user.id)
+    gym_owner = User.objects.get(id=request.user.id)
 
     # Get all gyms owned by the current owner
     gyms = Gym.objects.filter(owner=gym_owner)

@@ -4,7 +4,7 @@
 {% block content %}
 {% include 'core/header.html' %}
 
-<div class="max-w-4xl mx-auto px-4 mt-[7rem]">
+<div class="animate-fadeIn max-w-4xl mx-auto px-4 mt-[7rem]">
   <div class="bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl shadow-xl p-6">
 
     {% if connections %}
@@ -26,8 +26,8 @@
 
             <!-- User Info -->
             <div>
-              <div class="text-xl font-medium">{{ user.name }}</div>
-              <div class="text-md text-gray-300 capitalize">{{ user.user_model_name }}</div>
+              <div class="text-xl font-medium text-black">{{ user.name }}</div>
+              <div class="text-md text-gray-300 capitalize text-black/90">{{ user.user_model_name }}</div>
             </div>
           </div>
         </a>

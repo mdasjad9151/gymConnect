@@ -1,52 +1,65 @@
-{% extends 'core/base.html' %}
-{% load static %}
-{% block content %}
-{% include 'core/header.html' %}
+{% extends 'core/base.html' %} {% load static %} {% block content %} {% include 'core/header.html' %}
 
 <!-- Main Content -->
-<main class="flex-grow flex items-center justify-center py-10 mt-[7rem] animate-fadeIn text-white">
+<main
+  class="flex-grow flex items-center justify-center py-10 mt-[7rem] animate-fadeIn text-white"
+>
   <div class="container mx-auto p-10 flex flex-col items-center justify-center">
-    <h1 class="text-3xl font-bold text-center mb-8 text-black">Owner Dashboard</h1>
+    <h1 class="text-3xl font-bold text-center mb-8 text-black">
+      Owner Dashboard
+    </h1>
 
     <!-- Main Button Container -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 w-full max-w-3xl backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-6 shadow-xl">
-
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 w-full max-w-3xl backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-6 shadow-xl"
+    >
       <!-- Assign Trainer -->
-      <a href="{% url 'assign_trainer' %}"
-         class="block text-center p-6 rounded-xl shadow-xl bg-red-600/70 border border-white/30 backdrop-blur-md hover:bg-red-700/90 transition duration-300 ease-in-out transform hover:scale-105 text-white">
+      <a
+        href="{% url 'assign_trainer' %}"
+        class="block text-center p-6 rounded-xl shadow-xl bg-red-600/70 border border-white/30 backdrop-blur-md hover:bg-red-700/90 transition duration-300 ease-in-out transform hover:scale-105 text-white"
+      >
         <h2 class="text-xl font-semibold">Assign Trainer</h2>
       </a>
 
       <!-- Add Trainer -->
-      <a href="{% url 'add_trainer' %}"
-         class="block text-center p-6 rounded-xl shadow-xl bg-red-600/70 border border-white/30 backdrop-blur-md hover:bg-red-700/90 transition duration-300 ease-in-out transform hover:scale-105 text-white">
+      <a
+        href="{% url 'add_trainer' %}"
+        class="block text-center p-6 rounded-xl shadow-xl bg-red-600/70 border border-white/30 backdrop-blur-md hover:bg-red-700/90 transition duration-300 ease-in-out transform hover:scale-105 text-white"
+      >
         <h2 class="text-xl font-semibold">Add Trainer</h2>
       </a>
 
       <!-- List of Users -->
-      <a href="{% url 'list_users' %}"
-         class="block text-center p-6 rounded-xl shadow-xl bg-red-600/70 border border-white/30 backdrop-blur-md hover:bg-red-700/90 transition duration-300 ease-in-out transform hover:scale-105 text-white">
+      <a
+        href="{% url 'list_users' %}"
+        class="block text-center p-6 rounded-xl shadow-xl bg-red-600/70 border border-white/30 backdrop-blur-md hover:bg-red-700/90 transition duration-300 ease-in-out transform hover:scale-105 text-white"
+      >
         <h2 class="text-xl font-semibold">List of Users</h2>
       </a>
 
       <!-- List of Trainers -->
-      <a href="{% url 'list_trainers' %}"
-         class="block text-center p-6 rounded-xl shadow-xl bg-red-600/70 border border-white/30 backdrop-blur-md hover:bg-red-700/90 transition duration-300 ease-in-out transform hover:scale-105 text-white">
+      <a
+        href="{% url 'list_trainers' %}"
+        class="block text-center p-6 rounded-xl shadow-xl bg-red-600/70 border border-white/30 backdrop-blur-md hover:bg-red-700/90 transition duration-300 ease-in-out transform hover:scale-105 text-white"
+      >
         <h2 class="text-xl font-semibold">List of Trainers</h2>
       </a>
 
       <!-- My Gym -->
-      <a href="{% url 'list_trainers' %}"
-         class="block text-center p-6 rounded-xl shadow-xl bg-red-600/70 border border-white/30 backdrop-blur-md hover:bg-red-700/90 transition duration-300 ease-in-out transform hover:scale-105 text-white">
+      <a
+        href="{% url 'gym_list' %}"
+        class="block text-center p-6 rounded-xl shadow-xl bg-red-600/70 border border-white/30 backdrop-blur-md hover:bg-red-700/90 transition duration-300 ease-in-out transform hover:scale-105 text-white"
+      >
         <h2 class="text-xl font-semibold">My Gym</h2>
       </a>
 
       <!-- QR Verification -->
-      <a href="{% url 'membership:open' %}"
-         class="block text-center p-6 rounded-xl shadow-xl bg-red-600/70 border border-white/30 backdrop-blur-md hover:bg-red-700/90 transition duration-300 ease-in-out transform hover:scale-105 text-white">
+      <a
+        href="{% url 'membership:open' %}"
+        class="block text-center p-6 rounded-xl shadow-xl bg-red-600/70 border border-white/30 backdrop-blur-md hover:bg-red-700/90 transition duration-300 ease-in-out transform hover:scale-105 text-white"
+      >
         <h2 class="text-xl font-semibold">Verification</h2>
       </a>
-
     </div>
   </div>
 </main>
