@@ -31,6 +31,7 @@
   - Trainers post articles, users comment and follow trainers
 
 - **Real-Time Chat**
+
   - Private messaging using Django Channels and WebSockets
 
 - **📹 Custom Video Player Features** -
@@ -46,16 +47,17 @@
 
 ## ⚙️ Tech Stack
 
-| Layer       | Technologies                             |
-| ----------- | ---------------------------------------- |
-| Backend     | Django, Django REST Framework            |
-| Frontend    | HTML,JavaScript, Tailwind |
-| Realtime    | Django Channels, WebSockets              |
-| Video       | FFmpeg for transcoding and streaming     |
-| Database    | PostgreSQL (or SQLite for dev)           |                      |
-| APIs        | Google Maps API                          |
+| Layer    | Technologies                         |
+| -------- | ------------------------------------ | --- |
+| Backend  | Django, Django REST Framework        |
+| Frontend | HTML,JavaScript, Tailwind            |
+| Realtime | Django Channels, WebSockets          |
+| Video    | FFmpeg for transcoding and streaming |
+| Database | PostgreSQL (or SQLite for dev)       |     |
+| APIs     | Google Maps API                      |
 
 ---
+
 ## 🗂 Project Structure
 
 ```
@@ -74,21 +76,29 @@ gymconnect/
 └── manage.py
 ```
 
-
 ## 🚀 Setup Instructions
 
 ### 1. Clone the repository
 
 ```bash
+python -m venv env
+source env/bin/activate     # On Windows: env\Scripts\activate
+
 git clone https://github.com/yourusername/gymconnect.git
 cd gymconnect
 
+pip install -r requirements.txt
 
+python manage.py makemigrations
+python manage.py migrate
+
+python manage.py createsuperuser
+
+python manage.py runserver
 
 ```
 
 ## Create a .env file or add the following in settings.py:
-
 
 ```
 DEBUG = True
@@ -99,12 +109,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 ```
 
-
-
-
 ## 📝 License
 
 This project is licensed under the [MIT License](LICENSE) — feel free to use, modify, and distribute with attribution.
-
-
-
