@@ -1,83 +1,87 @@
-<h1>GymConnect: Gym Management System</h1>
-GymConnect is a comprehensive gym management system that streamlines gym operations by enabling gym owners, trainers, and gym users to interact efficiently. The platform provides features like managing trainer requests, assigning trainers to gym users, and facilitating workout and diet plans.
+# GymConnect
 
-<h2>Features</h2>
-<h3>Gym Owner</h3>
-Manage Trainers: View and handle trainer requests with options to accept or reject.
-Assign Trainers: Assign trainers to gym users and track assignments.
-User Management: View all users registered under the gym with assigned trainer details.
-<h3>Trainer</h3>
-Plan Management: Create and manage workout and diet plans for gym users.
-Requests Dashboard: View gym-specific requests and gym details.
-<h3>Gym User</h3>
-Trainer Assignment: Get assigned to trainers based on gym owner approvals.
-Workout and Diet Plans: Access personalized workout and diet plans created by trainers.
-Technologies Used
-<h3>Backend</h3>
-Django
-Authentication: Django's built-in authentication system
-<h3>Frontend</h3>
-CSS Framework: Tailwind CSS
-JavaScript: For interactive UI components
-Setup Instructions
-Clone the Repository:
+**GymConnect** is a full-featured gym management and fitness engagement platform built with Django. It allows users to discover and join gyms, connect with trainers, purchase video courses, interact via blogs, and chat in real-time. Gym owners can manage their gyms, trainers can upload content and engage clients, and users can explore fitness options across cities.
 
-bash
-Copy code
-https://github.com/mdasjad9151/Chat-Connect.git
-cd GymConnect
-Create a Virtual Environment:
+---
 
-bash
-Copy code
-python -m venv venv  
-source venv/bin/activate  # On Windows, use venv\Scripts\activate  
-Install Dependencies:
+## 🔍 Features
 
-bash
-Copy code
-pip install -r requirements.txt  
-Configure the Database:
+### 👥 User Roles
 
-Update DATABASES in settings.py with your database credentials.
-Run Migrations:
+- **Gym Owner**: Manages gym, trainers, and membership analytics.
+- **Trainer**: Creates video courses and blogs, manages user requests.
+- **Gym User**: Finds nearby gyms, books memberships, buys courses, and chats.
 
-bash
-Copy code
-python manage.py makemigrations  
-python manage.py migrate  
-Load Static Files:
+### 🎯 Core Modules
 
-bash
-Copy code
-python manage.py collectstatic  
-Run the Server:
+- **Gym Membership System**
 
-bash
-Copy code
-python manage.py runserver  
-Access the Application:
-Open http://127.0.0.1:8000/ in your browser.
+  - Location-based gym discovery
+  - One-day, monthly, or yearly membership options
+  - Digital ticket generation and rating system
 
-Usage
-Admin Credentials
-Default admin credentials can be created using:
-bash
-Copy code
-python manage.py createsuperuser  
-Gym Owner
-Log in as a gym owner to manage users and trainers.
-Trainer
-Use the dashboard to manage requests and create plans.
-Gym User
-View assigned trainers and access workout/diet plans.
-Contribution Guidelines
-We welcome contributions to enhance GymConnect. Follow these steps to contribute:
+- **Trainer & Course Management**
 
-Fork the repository.
-Create a feature branch: git checkout -b feature-name.
-Commit changes: git commit -m "Feature description".
-Push to your branch: git push origin feature-name.
-Submit a pull request.
+  - Course creation with video upload and quality settings
+  - Pay-per-course system
+  - Watch purchased courses in custom video player
+
+- **Blog System**
+
+  - Trainers post articles, users comment and follow trainers
+
+- **Real-Time Chat**
+  - Private messaging using Django Channels and WebSockets
+
+---
+
+## ⚙️ Tech Stack
+
+| Layer       | Technologies                             |
+| ----------- | ---------------------------------------- |
+| Backend     | Django, Django REST Framework            |
+| Frontend    | HTML, CSS, JavaScript, jQuery, Bootstrap |
+| Realtime    | Django Channels, WebSockets              |
+| Video       | FFmpeg for transcoding and streaming     |
+| Database    | PostgreSQL (or SQLite for dev)           |
+| Async Tasks | Celery (no Redis)                        |
+| APIs        | Google Maps API                          |
+
+---
+
+## 🗂 Project Structure
+
+gymconnect/
+├── accounts/ # Authentication & profiles
+├── blog/ # Blog system
+├── core/ # Base utilities
+├── course/ # Video course management
+├── gymOwner/ # Gym owner dashboard
+├── gymUser/ # Gym user dashboard
+├── membership/ # Memberships & bookings
+├── network/ # Real-time chat
+├── trainer/ # Trainer dashboard
+├── templates/ # HTML templates
+├── static/ # Static files (CSS/JS)
+├── media/ # Uploaded content
+└── manage.py
+
+---
+
+## 🚀 Setup Instructions
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/yourusername/gymconnect.git
+cd gymconnect
 
 
+## Create a .env file or add the following in settings.py:
+DEBUG = True
+SECRET_KEY = 'your-secret-key'
+GOOGLE_MAPS_API_KEY = 'your-google-maps-api-key'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+```
