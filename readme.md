@@ -102,6 +102,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 
+## 📝 License
+
+This project is licensed under the [MIT License](LICENSE) — feel free to use, modify, and distribute with attribution.
 
 
 
