@@ -33,6 +33,15 @@
 - **Real-Time Chat**
   - Private messaging using Django Channels and WebSockets
 
+- **📹 Custom Video Player Features** -
+- Dynamic video quality switching (144p, 360p, 480p)
+
+- Fullscreen, volume, and speed control
+
+- Auto-hide controls on inactivity
+
+- Secure access to purchased videos only
+
 ---
 
 ## ⚙️ Tech Stack
@@ -40,11 +49,10 @@
 | Layer       | Technologies                             |
 | ----------- | ---------------------------------------- |
 | Backend     | Django, Django REST Framework            |
-| Frontend    | HTML, CSS, JavaScript, jQuery, Bootstrap |
+| Frontend    | HTML,JavaScript, Tailwind |
 | Realtime    | Django Channels, WebSockets              |
 | Video       | FFmpeg for transcoding and streaming     |
-| Database    | PostgreSQL (or SQLite for dev)           |
-| Async Tasks | Celery (no Redis)                        |
+| Database    | PostgreSQL (or SQLite for dev)           |                      |
 | APIs        | Google Maps API                          |
 
 ---
@@ -61,7 +69,6 @@ gymconnect/
 ├── membership/ # Memberships & bookings
 ├── network/ # Real-time chat
 ├── trainer/ # Trainer dashboard
-├── templates/ # HTML templates
 ├── static/ # Static files (CSS/JS)
 ├── media/ # Uploaded content
 └── manage.py
@@ -91,3 +98,10 @@ GOOGLE_MAPS_API_KEY = 'your-google-maps-api-key'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 ```
+
+
+
+
+
+
+
