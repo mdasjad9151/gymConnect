@@ -49,8 +49,8 @@
 
 ---
 ## 🗂 Project Structure
----
 
+```
 gymconnect/
 ├── accounts/ # Authentication & profiles
 ├── blog/ # Blog system
@@ -65,8 +65,8 @@ gymconnect/
 ├── static/ # Static files (CSS/JS)
 ├── media/ # Uploaded content
 └── manage.py
+```
 
----
 
 ## 🚀 Setup Instructions
 
@@ -83,11 +83,11 @@ cd gymconnect
 ## Create a .env file or add the following in settings.py:
 
 
----
+```
 DEBUG = True
 SECRET_KEY = 'your-secret-key'
 GOOGLE_MAPS_API_KEY = 'your-google-maps-api-key'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
----
+```
