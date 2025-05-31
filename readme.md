@@ -77,6 +77,9 @@ git clone https://github.com/yourusername/gymconnect.git
 cd gymconnect
 
 
+
+```
+
 ## Create a .env file or add the following in settings.py:
 DEBUG = True
 SECRET_KEY = 'your-secret-key'
@@ -84,4 +87,3 @@ GOOGLE_MAPS_API_KEY = 'your-google-maps-api-key'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-```
