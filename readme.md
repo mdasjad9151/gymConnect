@@ -47,14 +47,14 @@
 
 ## ⚙️ Tech Stack
 
-| Layer    | Technologies                         |
-| -------- | ------------------------------------ | --- |
-| Backend  | Django, Django REST Framework        |
-| Frontend | HTML,JavaScript, Tailwind            |
-| Realtime | Django Channels, WebSockets          |
-| Video    | FFmpeg for transcoding and streaming |
-| Database | PostgreSQL (or SQLite for dev)       |     |
-| APIs     | Google Maps API                      |
+| Layer    | Technologies                             |
+| -------- | ---------------------------------------- |
+| Backend  | Django, Django REST Framework            |
+| Frontend | HTML, CSS, JavaScript, jQuery, Bootstrap |
+| Realtime | Django Channels, WebSockets              |
+| Video    | FFmpeg for transcoding and streaming     |
+| Database | PostgreSQL (or SQLite for dev)           |
+| APIs     | Google Maps API                          |
 
 ---
 
