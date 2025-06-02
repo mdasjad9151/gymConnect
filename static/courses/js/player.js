@@ -156,9 +156,9 @@ qualitySelect.addEventListener("change", () => {
 });
 
 // Seek on progress bar input
-progressBar.addEventListener("input", () => {
-  video.currentTime = (progressBar.value / 100) * duration;
-});
+// progressBar.addEventListener("input", () => {
+//   video.currentTime = (progressBar.value / 100) * duration;
+// });
 
 // Auto-hide controls
 let hideControlsTimeout;

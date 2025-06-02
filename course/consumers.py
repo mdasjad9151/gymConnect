@@ -99,7 +99,7 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
                     # print("inside")
                     break
                 await self.send(bytes_data=chunk)
-                await asyncio.sleep(0.02)  # Small delay to prevent overwhelming client
+                await asyncio.sleep(0.01)  # Small delay to prevent overwhelming client
         except Exception as e:
             print(f"Error streaming video: {e}")
         finally:

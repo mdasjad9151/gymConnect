@@ -24,12 +24,12 @@
           <button id="playPauseBtn" class="text-white text-xl focus:outline-none">
             ⏸
           </button>
-          <span id="durationDisplay" class="text-sm">7:30 / 15:00</span>
+          <span id="durationDisplay" class="text-sm">0:00 / 15:00</span>
           <button id="muteBtn">🔊</button>
         </div>
 
         <!-- Center: Progress Bar -->
-        <div class="flex-1 mx-4">
+        {% comment %} <div class="flex-1 mx-4">
           <input
             id="progressBar"
             type="range"
@@ -38,7 +38,7 @@
             max="100"
             class="w-full accent-[#4399c5]"
           />
-        </div>
+        </div> {% endcomment %}
 
         <!-- Right: Speed, Quality, Fullscreen -->
         <div class="flex items-center gap-4">
