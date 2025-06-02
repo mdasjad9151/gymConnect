@@ -13,14 +13,6 @@
     <div
       class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 w-full max-w-3xl backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-6 shadow-xl"
     >
-      <!-- Assign Trainer -->
-      <a
-        href="{% url 'assign_trainer' %}"
-        class="block text-center p-6 rounded-xl shadow-xl bg-red-600/70 border border-white/30 backdrop-blur-md hover:bg-red-700/90 transition duration-300 ease-in-out transform hover:scale-105 text-white"
-      >
-        <h2 class="text-xl font-semibold">Assign Trainer</h2>
-      </a>
-
       <!-- Add Trainer -->
       <a
         href="{% url 'add_trainer' %}"
@@ -29,6 +21,13 @@
         <h2 class="text-xl font-semibold">Add Trainer</h2>
       </a>
 
+      <!-- Assign Trainer -->
+      <a
+        href="{% url 'assign_trainer' %}"
+        class="block text-center p-6 rounded-xl shadow-xl bg-red-600/70 border border-white/30 backdrop-blur-md hover:bg-red-700/90 transition duration-300 ease-in-out transform hover:scale-105 text-white"
+      >
+        <h2 class="text-xl font-semibold">Assign Trainer</h2>
+      </a>
       <!-- List of Users -->
       <a
         href="{% url 'list_users' %}"

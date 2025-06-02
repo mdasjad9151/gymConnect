@@ -246,8 +246,8 @@ def generate_membership_pdf(request, membership_id):
     p.drawInlineImage(qr_img, 400, 500, width=200, height=200)
     
     # Right Bottom: Profile Picture
-    if profile_img:
-        p.drawInlineImage(profile_img, 400, 400, width=130, height=130)
+    # if profile_img:
+    #     p.drawInlineImage(profile_img, 400, 400, width=130, height=130)
 
     p.showPage()
     p.save()

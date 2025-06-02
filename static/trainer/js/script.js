@@ -1,5 +1,12 @@
 let gymUserId;
 
+
+function getCsrfToken() {
+  return document
+    .querySelector('meta[name="csrf-token"]')
+    .getAttribute("content");
+}
+
 function openPlanPopup(userId) {
   gymUserId = userId;
   fetch(`/gym-trainer/get-user-plan/${userId}`)
@@ -107,7 +114,7 @@ function submitPlan() {
   fetch("/gym-trainer/update-plan/", {
     method: "POST",
     body: formData,
-    headers: { "X-CSRFToken": "{{ csrf_token }}" },
+    headers: { "X-CSRFToken": getCsrfToken() },
   })
     .then((response) => response.json())
     .then((data) => {

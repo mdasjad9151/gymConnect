@@ -15,7 +15,7 @@ def register_admin(request):
         form = AdminRegistrationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('login')
+            return redirect('account:login')
     else:
         form = AdminRegistrationForm()
     return render(request, 'accounts/register.html', {'form': form, 'user_type': 'Admin'})
@@ -25,7 +25,7 @@ def register_gym_owner(request):
         form = GymOwnerRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('login')
+            return redirect('accounts:login')
     else:
         form = GymOwnerRegistrationForm()
     return render(request, 'accounts/register.html', {'form': form, 'user_type': 'Gym Owner'})
@@ -35,7 +35,7 @@ def register_trainer(request):
         form = TrainerRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('login')
+            return redirect('accounts:login')
     else:
         form = TrainerRegistrationForm()
     return render(request, 'accounts/register.html', {'form': form, 'user_type': 'Trainer'})
@@ -45,7 +45,7 @@ def register_gym_user(request):
         form = GymUserRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('login')
+            return redirect('accounts:login')
     else:
         form = GymUserRegistrationForm()
     return render(request, 'accounts/register.html', {'form': form, 'user_type': 'Gym User'})
