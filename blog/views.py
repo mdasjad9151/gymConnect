@@ -23,11 +23,11 @@ def create_post(request):
 def post_list(request):
     post_queryset = Post.objects.all().order_by('-created_at')
 
-    
+    # print(post_queryset)
+
     paginator = Paginator(post_queryset, 5)  # Show 5 posts per page
     page_number = request.GET.get('page')
     posts = paginator.get_page(page_number)
-
 
     # Enrich each post with user details
     for post in posts:
@@ -42,19 +42,22 @@ def post_list(request):
             user_model_name = 'gymuser'
         elif hasattr(user, 'trainer'):
             name = user.trainer.name
-
             profile_picture = user.trainer.profile_picture
             user_model_name = 'trainer'
         elif hasattr(user, 'gymowner'):
             name = user.gymowner.name
-
             profile_picture = user.gymowner.profile_picture
             user_model_name = 'gymowner'
 
-        # Attach them dynamically
+        # Attach extra user info
         user.name = name
         user.profile_picture = profile_picture
         user.user_model_name = user_model_name
+
+        # Extract content and image from JSONField
+        post.extracted_content = post.data.get('content') if post.data else ''
+        post.extracted_image = post.data.get('image') if post.data else None
+        print(post.extracted_image)
 
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
@@ -66,7 +69,10 @@ def post_list(request):
     else:
         form = PostForm()
 
-    return render(request, 'blog/post_list.html', {'posts': posts, 'form': form})
+    return render(request, 'blog/post_list.html', {
+        'posts': posts,
+        'form': form
+    })
 
 
 @login_required

@@ -5,14 +5,21 @@ User = get_user_model()
 
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blogs')
-    content = models.TextField()
-    image = models.ImageField(upload_to='Post/', blank=True, null=True)
+
+    data = models.JSONField(null=True, blank=True)  # new merged field
     created_at = models.DateTimeField(auto_now_add=True)
 
     
-    def __str__(self):
+    # def __str__(self):
         
-        return self.content
+    #     return self
+
+
+class Blog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='temp_blogs')
+    content = models.JSONField()  # Safe to use if Django >= 3.1 and not PostgreSQL
+    image = models.ImageField(upload_to='Post/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
