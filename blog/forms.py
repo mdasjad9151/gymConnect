@@ -1,11 +1,10 @@
 from django import forms
 from .models import Post, Comment
+from django.core.files.storage import FileSystemStorage
+import os
 
 from django import forms
-from .models import Post
 
-from django import forms
-from .models import Post
 
 class PostForm(forms.ModelForm):
     content = forms.CharField(
@@ -51,15 +50,22 @@ class PostForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super().save(commit=False)
 
+        content = self.cleaned_data['data'].get('content', '')
         image = self.cleaned_data.get('image')
+
+        image_path = None
+
         if image:
-            instance.image = image  # only needed if ImageField is present
-            image_path = f"Post/{image.name}"  # Add directory prefix manually
+            # Manually save the image file to media/Post/
+            fs = FileSystemStorage(location='media/Post', base_url='/media/Post/')
+            filename = fs.save(image.name, image)
+            image_path = f"Post/{filename}"
         else:
+            # Keep existing image path if editing post
             image_path = self.cleaned_data['data'].get('image')
 
         instance.data = {
-            'content': self.cleaned_data['data']['content'],
+            'content': content,
             'image': image_path
         }
 
