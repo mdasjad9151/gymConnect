@@ -82,7 +82,7 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
     async def stream_video(self):
         try:
             # Send header first (initial bytes)
-            init_chunk = await asyncio.to_thread(self.ffmpeg_process.stdout.read, 1024*32)
+            init_chunk = await asyncio.to_thread(self.ffmpeg_process.stdout.read, 1024*64)
             if init_chunk:
                 await self.send(bytes_data=init_chunk)
                 # Small delay to ensure the client processes the init segment

@@ -27,18 +27,19 @@ function formatTime(seconds) {
 }
 
 // === Update duration & progress ===
-function updateDuration() {
-  const current = formatTime(video.currentTime || 0);
-  const total = formatTime(totalDuration || video.duration || 0);
-  durationDisplay.textContent = `${current} / ${duration}`;
-  progressBar.value = (video.currentTime / (duration || 1)) * 100;
-}
+// function updateDuration() {
+//   const current = formatTime(video.currentTime || 0);
+//   console.log(current)
+//   const total = formatTime(totalDuration || video.duration || 0);
+//   durationDisplay.textContent = `${current} / ${duration}`;
+//   progressBar.value = (video.currentTime / (duration || 1)) * 100;
+// }
 
 video.addEventListener("loadedmetadata", () => {
   totalDuration = duration;
 });
 
-video.addEventListener("timeupdate", updateDuration);
+// video.addEventListener("timeupdate", updateDuration);
 
 // === Stream video over WebSocket with MediaSource ===
 function startStream(quality) {
